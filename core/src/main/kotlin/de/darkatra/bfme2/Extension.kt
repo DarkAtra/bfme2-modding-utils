@@ -14,12 +14,15 @@ fun Long.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.
 fun Long.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(this).array()
 
 // Bytes to Data
+// TODO: fix integer underflow
 fun ByteArray.toBigEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).short
 fun ByteArray.toLittleEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).short
 
+// TODO: fix integer underflow
 fun ByteArray.toBigEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int
 fun ByteArray.toLittleEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int
 
+// TODO: fix integer underflow
 fun ByteArray.toBigEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).float
 fun ByteArray.toLittleEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).float
 
@@ -30,17 +33,18 @@ fun Byte.toBoolean(): Boolean = when (this) {
 }
 
 // InputStream
-fun InputStream.readByte() = this.readNBytes(1).first()
-fun InputStream.readShort() = this.readNBytes(2).toLittleEndianShort()
-fun InputStream.readInt() = this.readNBytes(4).toLittleEndianShort()
-fun InputStream.readBoolean() = this.readByte().toBoolean()
+fun InputStream.readByte(): Byte = this.readNBytes(1).first()
+fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
+fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
+fun InputStream.readFloat(): Float = this.readNBytes(4).toLittleEndianFloat()
+fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
 
 fun InputStream.readShortPrefixedString(): String {
 	val stringLength = this.readNBytes(2).toLittleEndianShort()
 	return this.readNBytes(stringLength.toInt()).toString(StandardCharsets.US_ASCII)
 }
 
-fun InputStream.readString(): String {
+fun InputStream.read7BitString(): String {
 
 	fun determineStringLength(): Int {
 		var result = 0

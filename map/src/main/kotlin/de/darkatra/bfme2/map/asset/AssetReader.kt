@@ -2,7 +2,7 @@ package de.darkatra.bfme2.map.asset
 
 import de.darkatra.bfme2.map.MapFileParseContext
 import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.toLittleEndianShort
+import de.darkatra.bfme2.readShort
 import org.apache.commons.io.input.CountingInputStream
 
 interface AssetReader<T> {
@@ -11,7 +11,7 @@ interface AssetReader<T> {
 
 		inline fun <reified T> readAsset(reader: CountingInputStream, context: MapFileParseContext, callback: (assetVersion: Short) -> T): T {
 
-			val assetVersion = reader.readNBytes(2).toLittleEndianShort()
+			val assetVersion = reader.readShort()
 
 			val dataSize = reader.readInt()
 			val startPosition = reader.byteCount

@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.asset
 
 import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.toLittleEndianInt
+import de.darkatra.bfme2.readInt
 import org.apache.commons.io.input.CountingInputStream
 
 data class AssetListItem(
@@ -14,8 +14,8 @@ data class AssetListItem(
 		override fun read(reader: CountingInputStream, context: MapFileParseContext): AssetListItem {
 
 			return AssetListItem(
-				typeId = reader.readNBytes(4).toLittleEndianInt(),
-				instanceId = reader.readNBytes(4).toLittleEndianInt()
+				typeId = reader.readInt(),
+				instanceId = reader.readInt()
 			)
 		}
 	}

@@ -3,18 +3,21 @@ package de.darkatra.bfme2.refpack
 import de.darkatra.bfme2.InvalidDataException
 import java.io.BufferedInputStream
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
 import kotlin.math.min
 
+/**
+ * Allows reading RefPack compressed data.
+ *
+ * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.RefPack/RefPackStream.cs
+ */
 class RefPackInputStream(
 	inputStream: InputStream
 ) : BufferedInputStream(inputStream) {
 
 	companion object {
-		const val FOUR_CC = "EAR\u0000"
-		const val MAX_REFERENCED_DATA_DISTANCE = 131072
-		const val MAX_BYTES_READ_COUNT = MAX_REFERENCED_DATA_DISTANCE * 300
-		const val WINDOW_SIZE = MAX_REFERENCED_DATA_DISTANCE * 600
+		private const val MAX_REFERENCED_DATA_DISTANCE = 131072
+		private const val MAX_BYTES_READ_COUNT = MAX_REFERENCED_DATA_DISTANCE * 300
+		private const val WINDOW_SIZE = MAX_REFERENCED_DATA_DISTANCE * 600
 	}
 
 	private val decompressedSize: Int
@@ -23,14 +26,6 @@ class RefPackInputStream(
 	private var reachedEndOfFile: Boolean = false
 
 	init {
-		// check fourCC
-		val fourCC = `in`.readNBytes(4).toString(StandardCharsets.UTF_8)
-		if (fourCC != FOUR_CC) {
-			throw InvalidDataException("Invalid four character code. Expected '$FOUR_CC' but found '$fourCC'.")
-		}
-
-		// skip uncompressed size bytes
-		`in`.skip(4)
 
 		// read uncompressed size
 		val firstByte = `in`.read()

@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.asset
 
 import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.toBigEndianInt
+import de.darkatra.bfme2.readShort
 import org.apache.commons.io.input.CountingInputStream
 
 class WorldInfo(
@@ -22,7 +22,7 @@ class WorldInfo(
 		private fun readProperties(reader: CountingInputStream, context: MapFileParseContext): Map<String, Any> {
 
 			val map: MutableMap<String, Any> = mutableMapOf()
-			val numberOfProperties = reader.readNBytes(2).toBigEndianInt()
+			val numberOfProperties = reader.readShort()
 
 			for (i in 0 until numberOfProperties step 1) {
 				val assetProperty = AssetProperty.read(reader, context)

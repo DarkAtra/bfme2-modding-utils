@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.map.asset
 
 import de.darkatra.bfme2.map.MapFileParseContext
+import de.darkatra.bfme2.readInt
 import de.darkatra.bfme2.readShortPrefixedString
-import de.darkatra.bfme2.toLittleEndianInt
 import org.apache.commons.io.input.CountingInputStream
 
 class BuildList(
@@ -10,7 +10,7 @@ class BuildList(
 	val buildListItems: List<BuildListItem>
 ) {
 
-	companion object : AssetReader<BuildList>() {
+	companion object : AssetReader<BuildList> {
 
 		override fun read(reader: CountingInputStream, context: MapFileParseContext): BuildList {
 
@@ -20,7 +20,7 @@ class BuildList(
 				false -> AssetPropertyKey.read(reader, context).name
 			}
 
-			val numberOfBuildListItems = reader.readNBytes(4).toLittleEndianInt()
+			val numberOfBuildListItems = reader.readInt()
 
 			val buildListItems = mutableListOf<BuildListItem>()
 			for (i in 0 until numberOfBuildListItems step 1) {

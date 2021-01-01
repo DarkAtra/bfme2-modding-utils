@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.asset
 
 import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.toLittleEndianInt
+import de.darkatra.bfme2.readInt
 import org.apache.commons.io.input.CountingInputStream
 
 class BuildLists(
@@ -15,7 +15,7 @@ class BuildLists(
 
 			return AssetReader.readAsset(reader, context) {
 
-				val numberOfBuildLists = reader.readNBytes(4).toLittleEndianInt()
+				val numberOfBuildLists = reader.readInt()
 
 				val buildLists = mutableListOf<BuildList>()
 				for (i in 0 until numberOfBuildLists step 1) {

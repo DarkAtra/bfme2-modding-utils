@@ -9,6 +9,7 @@ data class MapFile(
 	private val buildLists: BuildLists,
 	private val worldInfo: WorldInfo
 ) {
+
 	class Builder {
 		var assetList: AssetList? = null
 			private set
@@ -22,9 +23,13 @@ data class MapFile(
 		fun worldInfo(worldInfo: WorldInfo) = apply { this.worldInfo = worldInfo }
 
 		fun build() = MapFile(
-			assetList = assetList!!,
-			buildLists = buildLists!!,
-			worldInfo = worldInfo!!
+			assetList = assetList ?: throwIllegalStateExceptionForField("assetList"),
+			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
+			worldInfo = worldInfo ?: throwIllegalStateExceptionForField("worldInfo")
 		)
+
+		private fun throwIllegalStateExceptionForField(fieldName: String): Nothing {
+			throw IllegalStateException("Field '$fieldName' is null.")
+		}
 	}
 }

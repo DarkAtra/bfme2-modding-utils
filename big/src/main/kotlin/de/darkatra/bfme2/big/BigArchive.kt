@@ -5,6 +5,11 @@ import de.darkatra.bfme2.toLittleEndianBytes
 import java.io.OutputStream
 import java.nio.file.Path
 
+/**
+ * Allows writing data as BIG archive.
+ *
+ * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.Big/BigArchive.cs
+ */
 class BigArchive(
 	private val version: BigArchiveVersion
 ) {
