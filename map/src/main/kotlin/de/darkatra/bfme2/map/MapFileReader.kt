@@ -3,7 +3,10 @@ package de.darkatra.bfme2.map
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.asset.AssetList
+import de.darkatra.bfme2.map.asset.AssetReader
 import de.darkatra.bfme2.map.asset.BuildLists
+import de.darkatra.bfme2.map.asset.GlobalVersion
+import de.darkatra.bfme2.map.asset.MPPositionList
 import de.darkatra.bfme2.map.asset.WorldInfo
 import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readInt
@@ -44,12 +47,12 @@ class MapFileReader {
 
 		val mapBuilder = MapFile.Builder()
 
-		while (reader.byteCount < context.currentEndPosition) {
-			val assetIndex = reader.readInt()
-			val assetName = context.getAssetName(assetIndex)
+		AssetReader.readAssets(reader, context) { assetName ->
 			when (assetName) {
 				AssetList.ASSET_NAME -> mapBuilder.assetList(AssetList.read(reader, context))
 				BuildLists.ASSET_NAME -> mapBuilder.buildLists(BuildLists.read(reader, context))
+				GlobalVersion.ASSET_NAME -> mapBuilder.globalVersion(GlobalVersion.read(reader, context))
+				MPPositionList.ASSET_NAME -> mapBuilder.mpPositionList(MPPositionList.read(reader, context))
 				WorldInfo.ASSET_NAME -> mapBuilder.worldInfo(WorldInfo.read(reader, context))
 			}
 		}

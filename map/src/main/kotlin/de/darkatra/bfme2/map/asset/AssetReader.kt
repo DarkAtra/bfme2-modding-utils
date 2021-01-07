@@ -23,6 +23,16 @@ interface AssetReader<T> {
 				context.pop()
 			}
 		}
+
+		inline fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
+
+			while (reader.byteCount < context.currentEndPosition) {
+				val assetIndex = reader.readInt()
+				val assetName = context.getAssetName(assetIndex)
+
+				callback(assetName)
+			}
+		}
 	}
 
 	fun read(reader: CountingInputStream, context: MapFileParseContext): T
