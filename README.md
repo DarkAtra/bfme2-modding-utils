@@ -15,4 +15,4 @@ mvn clean install
 ```
 The jar files are located in the target folders of the respective applications. E.g.: `updater/target/updater.jar`
 
-**Thanks to the [OpenSage](https://github.com/OpenSAGE/OpenSAGE) for providing a reference implementation for most of these formats.**
+**Thanks to the [OpenSage Team](https://github.com/OpenSAGE/OpenSAGE) for providing a reference implementation for most of these formats.**
