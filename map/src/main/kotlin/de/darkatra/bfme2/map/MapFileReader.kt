@@ -2,14 +2,15 @@ package de.darkatra.bfme2.map
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
-import de.darkatra.bfme2.map.asset.AssetList
-import de.darkatra.bfme2.map.asset.AssetReader
-import de.darkatra.bfme2.map.asset.BuildLists
-import de.darkatra.bfme2.map.asset.GlobalVersion
-import de.darkatra.bfme2.map.asset.MPPositionList
-import de.darkatra.bfme2.map.asset.WorldInfo
+import de.darkatra.bfme2.map.reader.AssetListReader
+import de.darkatra.bfme2.map.reader.BuildListsReader
+import de.darkatra.bfme2.map.reader.GlobalVersionReader
+import de.darkatra.bfme2.map.reader.MultiplayerPositionsReader
+import de.darkatra.bfme2.map.reader.SidesReader
+import de.darkatra.bfme2.map.reader.WorldSettingsReader
 import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readInt
+import de.darkatra.bfme2.readShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import org.apache.commons.io.input.CountingInputStream
 import java.io.InputStream
@@ -21,10 +22,45 @@ import java.util.zip.InflaterInputStream
 
 class MapFileReader {
 
+	private val assetListReader = AssetListReader()
+	private val buildLists = BuildListsReader()
+	private val globalVersionReader = GlobalVersionReader()
+	private val multiplayerPositionsReader = MultiplayerPositionsReader()
+	private val sidesReader = SidesReader()
+	private val worldSettingsReader = WorldSettingsReader()
+
 	companion object {
+		const val ASSET_NAME = "Map"
 		const val UNCOMPRESSED_FOUR_CC = "CkMp"
 		const val REFPACK_FOUR_CC = "EAR\u0000"
 		const val ZLIB_FOUR_CC = "ZL5\u0000"
+
+		// TODO: find a better name for this (maybe readList)
+		fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
+
+			while (reader.byteCount < context.currentEndPosition) {
+				val assetIndex = reader.readInt()
+				val assetName = context.getAssetName(assetIndex)
+
+				callback(assetName)
+			}
+		}
+
+		// TODO: find a better name for this (maybe readObject)
+		fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: Short) -> Unit) {
+
+			val assetVersion = reader.readShort()
+
+			val dataSize = reader.readInt()
+			val startPosition = reader.byteCount
+			val endPosition = dataSize + startPosition
+
+			context.push(assetName, endPosition)
+
+			callback(assetVersion)
+
+			context.pop()
+		}
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -43,23 +79,30 @@ class MapFileReader {
 		val assetNames = readAssetNames(reader)
 
 		val context = MapFileParseContext(assetNames)
-		context.push("Map", inputFile.length())
+		context.push(ASSET_NAME, inputFile.length())
 
 		val mapBuilder = MapFile.Builder()
 
-		AssetReader.readAssets(reader, context) { assetName ->
+		readAssets(reader, context) { assetName ->
 			when (assetName) {
-				AssetList.ASSET_NAME -> mapBuilder.assetList(AssetList.read(reader, context))
-				BuildLists.ASSET_NAME -> mapBuilder.buildLists(BuildLists.read(reader, context))
-				GlobalVersion.ASSET_NAME -> mapBuilder.globalVersion(GlobalVersion.read(reader, context))
-				MPPositionList.ASSET_NAME -> mapBuilder.mpPositionList(MPPositionList.read(reader, context))
-				WorldInfo.ASSET_NAME -> mapBuilder.worldInfo(WorldInfo.read(reader, context))
+				// TODO: find a better name for ASSET_NAME
+				AssetListReader.ASSET_NAME -> assetListReader
+				BuildListsReader.ASSET_NAME -> buildLists
+				GlobalVersionReader.ASSET_NAME -> globalVersionReader
+				MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
+				SidesReader.ASSET_NAME -> sidesReader
+				WorldSettingsReader.ASSET_NAME -> worldSettingsReader
+				// TODO: implement the remaining readers... (see OpenFeign)
+				else -> throw InvalidDataException("Unknown asset name '$assetName'.")
+			}.also {
+				it.read(reader, context, mapBuilder)
 			}
 		}
 
 		return mapBuilder.build()
 	}
 
+	// TODO: find a better name for this (maybe readObjectNames)
 	private fun readAssetNames(reader: CountingInputStream): Map<Int, String> {
 
 		val numberOfAssetStrings = reader.readInt()
