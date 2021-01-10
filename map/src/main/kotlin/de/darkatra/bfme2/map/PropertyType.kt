@@ -22,7 +22,7 @@ enum class PropertyType {
 				3.toByte() -> ASCII_STRING
 				4.toByte() -> UNICODE_STRING
 				5.toByte() -> UNKNOWN
-				else -> throw ConversionException("Unknown AssetPropertyType for byte '$byte'.")
+				else -> throw ConversionException("Unknown PropertyType for byte '$byte'.")
 			}
 		}
 	}

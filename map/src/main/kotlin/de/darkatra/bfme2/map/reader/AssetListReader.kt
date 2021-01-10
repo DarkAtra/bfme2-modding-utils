@@ -2,8 +2,6 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.map.AssetListItem
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.map.MapFileReader
 import de.darkatra.bfme2.readInt
 import org.apache.commons.io.input.CountingInputStream
 

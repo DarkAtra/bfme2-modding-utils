@@ -1,3 +1,5 @@
 package de.darkatra.bfme2.map
 
-class Team
+data class Team(
+	val properties: List<Property>
+)

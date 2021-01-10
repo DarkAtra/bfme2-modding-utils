@@ -2,8 +2,6 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.map.MapFileReader
 import de.darkatra.bfme2.map.MultiplayerPosition
 import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readInt

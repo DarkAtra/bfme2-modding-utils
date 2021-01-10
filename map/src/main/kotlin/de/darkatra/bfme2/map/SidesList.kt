@@ -4,5 +4,5 @@ data class SidesList(
 	val unknown: Boolean,
 	val players: List<Player>,
 	val teams: List<Team>,
-	val playerScripts: PlayerScripts,
+	val playerScripts: List<PlayerScript>,
 )

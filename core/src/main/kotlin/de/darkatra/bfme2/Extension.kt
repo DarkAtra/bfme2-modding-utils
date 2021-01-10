@@ -7,22 +7,24 @@ import java.nio.charset.StandardCharsets
 import kotlin.experimental.and
 
 // Data to Bytes
+// TODO: switch to unsigned datatypes
 fun Int.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(this).array()
 fun Int.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(this).array()
 
+// TODO: switch to unsigned datatypes
 fun Long.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(this).array()
 fun Long.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(this).array()
 
 // Bytes to Data
-// TODO: fix integer underflow
+// TODO: switch to unsigned datatypes
 fun ByteArray.toBigEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).short
 fun ByteArray.toLittleEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).short
 
-// TODO: fix integer underflow
+// TODO: switch to unsigned datatypes
 fun ByteArray.toBigEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int
 fun ByteArray.toLittleEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int
 
-// TODO: fix integer underflow
+// TODO: switch to unsigned datatypes
 fun ByteArray.toBigEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).float
 fun ByteArray.toLittleEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).float
 
@@ -33,6 +35,7 @@ fun Byte.toBoolean(): Boolean = when (this) {
 }
 
 // InputStream
+// TODO: switch to unsigned datatypes
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
 fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()

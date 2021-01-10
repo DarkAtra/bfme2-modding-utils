@@ -1,8 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.map.MapFileParseContext
-import de.darkatra.bfme2.map.MapFileReader
 import org.apache.commons.io.input.CountingInputStream
 
 class GlobalVersionReader : AssetReader {

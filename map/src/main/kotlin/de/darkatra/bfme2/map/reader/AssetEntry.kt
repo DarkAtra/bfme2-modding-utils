@@ -1,4 +1,4 @@
-package de.darkatra.bfme2.map
+package de.darkatra.bfme2.map.reader
 
 data class AssetEntry(
 	val assetType: String,

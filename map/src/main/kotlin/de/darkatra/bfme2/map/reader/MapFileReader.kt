@@ -1,18 +1,14 @@
-package de.darkatra.bfme2.map
+package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
-import de.darkatra.bfme2.map.reader.AssetListReader
-import de.darkatra.bfme2.map.reader.BuildListsReader
-import de.darkatra.bfme2.map.reader.GlobalVersionReader
-import de.darkatra.bfme2.map.reader.MultiplayerPositionsReader
-import de.darkatra.bfme2.map.reader.SidesReader
-import de.darkatra.bfme2.map.reader.WorldSettingsReader
+import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readInt
 import de.darkatra.bfme2.readShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import org.apache.commons.io.input.CountingInputStream
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.PushbackInputStream
 import java.io.UnsupportedEncodingException
@@ -22,12 +18,19 @@ import java.util.zip.InflaterInputStream
 
 class MapFileReader {
 
+	private val propertyKeyReader = PropertyKeyReader()
+	private val propertyReader = PropertyReader(propertyKeyReader)
+	private val propertiesReader = PropertiesReader(propertyReader)
 	private val assetListReader = AssetListReader()
-	private val buildLists = BuildListsReader()
+	private val buildListReader = BuildListReader(propertyKeyReader)
+	private val buildLists = BuildListsReader(buildListReader)
 	private val globalVersionReader = GlobalVersionReader()
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
-	private val sidesReader = SidesReader()
-	private val worldSettingsReader = WorldSettingsReader()
+	private val playerReader = PlayerReader(buildListReader, propertiesReader)
+	private val playerScriptsReader = PlayerScriptsReader()
+	private val teamsReader = TeamsReader(propertiesReader)
+	private val sidesReader = SidesReader(playerReader, playerScriptsReader, teamsReader)
+	private val worldSettingsReader = WorldSettingsReader(propertiesReader)
 
 	companion object {
 		const val ASSET_NAME = "Map"
@@ -71,31 +74,40 @@ class MapFileReader {
 	fun read(file: Path): MapFile {
 
 		val inputFile = file.toFile()
+
+		if (!inputFile.exists()) {
+			throw FileNotFoundException("File '${inputFile.absolutePath}' does not exist.")
+		}
+
 		val inputStream = CountingInputStream(decodeIfNecessary(inputFile.inputStream()))
-
-		readAndValidateFourCC(inputStream)
-
-		val reader = CountingInputStream(inputStream)
-		val assetNames = readAssetNames(reader)
-
-		val context = MapFileParseContext(assetNames)
-		context.push(ASSET_NAME, inputFile.length())
 
 		val mapBuilder = MapFile.Builder()
 
-		readAssets(reader, context) { assetName ->
-			when (assetName) {
-				// TODO: find a better name for ASSET_NAME
-				AssetListReader.ASSET_NAME -> assetListReader
-				BuildListsReader.ASSET_NAME -> buildLists
-				GlobalVersionReader.ASSET_NAME -> globalVersionReader
-				MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
-				SidesReader.ASSET_NAME -> sidesReader
-				WorldSettingsReader.ASSET_NAME -> worldSettingsReader
-				// TODO: implement the remaining readers... (see OpenFeign)
-				else -> throw InvalidDataException("Unknown asset name '$assetName'.")
-			}.also {
-				it.read(reader, context, mapBuilder)
+		inputStream.use {
+			readAndValidateFourCC(inputStream)
+
+			val reader = CountingInputStream(inputStream)
+			val assetNames = readAssetNames(reader)
+
+			val context = MapFileParseContext(assetNames)
+			context.push(ASSET_NAME, inputFile.length())
+
+			readAssets(reader, context) { assetName ->
+				when (assetName) {
+					// TODO: find a better name for ASSET_NAME
+					AssetListReader.ASSET_NAME -> assetListReader
+					BuildListsReader.ASSET_NAME -> buildLists
+					GlobalVersionReader.ASSET_NAME -> globalVersionReader
+					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
+					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
+					SidesReader.ASSET_NAME -> sidesReader
+					TeamsReader.ASSET_NAME -> teamsReader
+					WorldSettingsReader.ASSET_NAME -> worldSettingsReader
+					// TODO: implement the remaining readers... (see OpenFeign)
+					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
+				}.also {
+					it.read(reader, context, mapBuilder)
+				}
 			}
 		}
 
