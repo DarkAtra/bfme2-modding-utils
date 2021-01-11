@@ -68,7 +68,9 @@ class HeightMapReader : AssetReader {
 					borderWidth = borderWidth,
 					borders = borders,
 					elevations = elevations
-				)
+				).also { heightMap ->
+					context.heightMap = heightMap
+				}
 			)
 		}
 	}

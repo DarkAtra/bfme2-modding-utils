@@ -27,7 +27,7 @@ data class Script(
 	val sequentialTargetName: String?,
 
 	// allowed values: ALL, Planning, X
-	val unknown: String?,
+	val unknown1: String?,
 	val unknown2: Int?,
 	val unknown3: Short?
 ) {
@@ -51,7 +51,7 @@ data class Script(
 		private var loopCount: Int? = null
 		private var sequentialTargetType: SequentialScriptTarget? = null
 		private var sequentialTargetName: String? = null
-		private var unknown: String? = null
+		private var unknown1: String? = null
 		private var unknown2: Int? = null
 		private var unknown3: Short? = null
 
@@ -73,9 +73,9 @@ data class Script(
 		fun loopCount(loopCount: Int) = apply { this.loopCount = loopCount }
 		fun sequentialTargetType(sequentialTargetType: SequentialScriptTarget) = apply { this.sequentialTargetType = sequentialTargetType }
 		fun sequentialTargetName(sequentialTargetName: String) = apply { this.sequentialTargetName = sequentialTargetName }
-		fun unknown(unknown: String) = apply { this.unknown = unknown }
-		fun unknown2(unknown: Int) = apply { this.unknown2 = unknown2 }
-		fun unknown3(unknown: Short) = apply { this.unknown3 = unknown3 }
+		fun unknown1(unknown1: String) = apply { this.unknown1 = unknown1 }
+		fun unknown2(unknown2: Int) = apply { this.unknown2 = unknown2 }
+		fun unknown3(unknown3: Short) = apply { this.unknown3 = unknown3 }
 
 		fun build() = Script(
 			name = name ?: throwIllegalStateExceptionForField("name"),
@@ -96,7 +96,7 @@ data class Script(
 			loopCount = loopCount ?: throwIllegalStateExceptionForField("loopCount"),
 			sequentialTargetType = sequentialTargetType ?: throwIllegalStateExceptionForField("sequentialTargetType"),
 			sequentialTargetName = sequentialTargetName ?: throwIllegalStateExceptionForField("sequentialTargetName"),
-			unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),
+			unknown1 = unknown1 ?: throwIllegalStateExceptionForField("unknown1"),
 			unknown2 = unknown2 ?: throwIllegalStateExceptionForField("unknown2"),
 			unknown3 = unknown3 ?: throwIllegalStateExceptionForField("unknown3")
 		)

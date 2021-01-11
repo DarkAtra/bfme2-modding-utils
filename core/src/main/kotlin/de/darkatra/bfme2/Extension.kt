@@ -90,3 +90,46 @@ fun InputStream.read7BitString(): String {
 
 	return this.readNBytes(stringLength).toString(StandardCharsets.UTF_8)
 }
+
+@Suppress("UNCHECKED_CAST")
+private inline fun <reified T> read2DArray(width: Int, height: Int, readFunction: (x: Int, y: Int) -> T): Array<Array<T>> {
+	val result = Array(width) { arrayOfNulls<T>(height) }
+	for (y in 0 until width step 1) {
+		for (x in 0 until width step 1) {
+			result[x][y] = readFunction(x, y)
+		}
+	}
+	return result as Array<Array<T>>
+}
+
+inline fun <reified T> InputStream.read2DByteArray(width: Int, height: Int, mappingFunction: (byte: Byte) -> T): Array<Array<T>> {
+	return read2DByteArray(width, height).map { innerArray ->
+		innerArray.map { mappingFunction(it) }.toTypedArray()
+	}.toTypedArray()
+}
+
+fun InputStream.read2DShortArray(width: Int, height: Int): Array<Array<Short>> = read2DArray(width, height) { _, _ -> readShort() }
+fun InputStream.read2DIntArray(width: Int, height: Int): Array<Array<Int>> = read2DArray(width, height) { _, _ -> readInt() }
+fun InputStream.read2DBooleanArray(width: Int, height: Int): Array<Array<Boolean>> = read2DArray(width, height) { _, _ -> readBoolean() }
+fun InputStream.read2DByteArray(width: Int, height: Int): Array<Array<Byte>> = read2DArray(width, height) { _, _ -> readByte() }
+
+@Suppress("UNCHECKED_CAST")
+fun InputStream.read2DSageBooleanArray(width: Int, height: Int): Array<Array<Boolean>> {
+	val result = Array(width) { arrayOfNulls<Boolean>(height) }
+	for (y in 0 until width step 1) {
+		var temp = 0.toByte()
+		for (x in 0 until width step 1) {
+			if (x % 8 == 0) {
+				temp = readByte()
+			}
+			result[x][y] = temp and (1 shl x % 8).toByte() != 0.toByte()
+		}
+	}
+	return result as Array<Array<Boolean>>
+}
+
+fun Array<Array<Short>>.to2DIntArray(): Array<Array<Int>> {
+	return this.map { innerArray ->
+		innerArray.map { value -> value.toInt() }.toTypedArray()
+	}.toTypedArray()
+}

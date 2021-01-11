@@ -62,7 +62,7 @@ class ScriptReader {
 				if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
 					throw InvalidDataException("Unexpected value '$unknown'.")
 				}
-				scriptBuilder.unknown(unknown)
+				scriptBuilder.unknown1(unknown)
 			}
 
 			if (version >= 6) {

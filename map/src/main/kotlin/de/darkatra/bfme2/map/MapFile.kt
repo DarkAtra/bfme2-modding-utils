@@ -9,6 +9,7 @@ package de.darkatra.bfme2.map
 data class MapFile(
 	// TODO: add version fields
 	val assetList: List<AssetListItem>,
+//	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
 	val globalVersion: Short,
 	val heightMap: HeightMap,

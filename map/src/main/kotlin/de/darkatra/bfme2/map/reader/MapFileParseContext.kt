@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.HeightMap
 import java.util.Stack
 
 class MapFileParseContext(
@@ -12,6 +13,9 @@ class MapFileParseContext(
 
 	var mapHasAssetList: Boolean = false
 
+	var heightMap: HeightMap? = null
+
+	// TODO: fix the unsigned datatype issue (overflows into negative after reading BlendTileData)
 	fun getAssetName(assetIndex: Int): String = assetNames[assetIndex]
 		?: throw IllegalArgumentException("Could not find name for assetIndex '$assetIndex'.")
 

@@ -21,7 +21,9 @@ class MapFileReader {
 	private val propertyKeyReader = PropertyKeyReader()
 	private val propertyReader = PropertyReader(propertyKeyReader)
 	private val propertiesReader = PropertiesReader(propertyReader)
+
 	private val assetListReader = AssetListReader()
+	private val blendTileDataReader = BlendTileDataReader()
 	private val buildListReader = BuildListReader(propertyKeyReader)
 	private val buildLists = BuildListsReader(buildListReader)
 	private val globalVersionReader = GlobalVersionReader()
@@ -91,12 +93,13 @@ class MapFileReader {
 			val assetNames = readAssetNames(reader)
 
 			val context = MapFileParseContext(assetNames)
-			context.push(ASSET_NAME, inputFile.length())
+			context.push(ASSET_NAME, decodeIfNecessary(inputFile.inputStream()).readBytes().size.toLong())
 
 			readAssets(reader, context) { assetName ->
 				when (assetName) {
 					// TODO: find a better name for ASSET_NAME
 					AssetListReader.ASSET_NAME -> assetListReader
+					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
 					BuildListsReader.ASSET_NAME -> buildLists
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
 					HeightMapReader.ASSET_NAME -> heightMapReader
