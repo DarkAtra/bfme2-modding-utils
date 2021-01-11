@@ -7,9 +7,11 @@ package de.darkatra.bfme2.map
  * Can be serialized and deserialized via [MapFileWriter][de.darkatra.bfme2.map.reader.MapFileWriter] and [MapFileReader][de.darkatra.bfme2.map.reader.MapFileReader]
  */
 data class MapFile(
+	// TODO: add version fields
 	val assetList: List<AssetListItem>,
 	val buildLists: List<BuildList>,
 	val globalVersion: Short,
+	val heightMap: HeightMap,
 	val multiplayerPositions: List<MultiplayerPosition>,
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
@@ -22,6 +24,7 @@ data class MapFile(
 		private var assetList: List<AssetListItem>? = null
 		private var buildLists: List<BuildList>? = null
 		private var globalVersion: Short? = null
+		private var heightMap: HeightMap? = null
 		private var multiplayerPositions: List<MultiplayerPosition>? = null
 		private var players: List<Player>? = null
 		private var playerScripts: List<PlayerScript>? = null
@@ -32,6 +35,7 @@ data class MapFile(
 		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun globalVersion(globalVersion: Short) = apply { this.globalVersion = globalVersion }
+		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
 		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>) = apply { this.multiplayerPositions = multiplayerPositions }
 		fun players(players: List<Player>) = apply { this.players = players }
 		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
@@ -43,6 +47,7 @@ data class MapFile(
 			assetList = assetList ?: throwIllegalStateExceptionForField("assetList"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
+			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
 			multiplayerPositions = multiplayerPositions ?: throwIllegalStateExceptionForField("multiplayerPositions"),
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),

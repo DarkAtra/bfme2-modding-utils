@@ -25,6 +25,7 @@ class MapFileReader {
 	private val buildListReader = BuildListReader(propertyKeyReader)
 	private val buildLists = BuildListsReader(buildListReader)
 	private val globalVersionReader = GlobalVersionReader()
+	private val heightMapReader = HeightMapReader()
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
 	private val playerScriptsReader = PlayerScriptsReader()
@@ -98,6 +99,7 @@ class MapFileReader {
 					AssetListReader.ASSET_NAME -> assetListReader
 					BuildListsReader.ASSET_NAME -> buildLists
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
+					HeightMapReader.ASSET_NAME -> heightMapReader
 					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
 					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
 					SidesReader.ASSET_NAME -> sidesReader
