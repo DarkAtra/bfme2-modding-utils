@@ -31,7 +31,7 @@ class HeightMapReader : AssetReader {
 			val borders = mutableListOf<HeightMapBorder>()
 			for (i in 0 until numberOfBorders step 1) {
 				borders.add(
-					when (version >= MIN_VERSION_WITH_HEIGHT_MAP_BORDER_OFFSET) {
+					when (version >= MIN_VERSION_WITH_HEIGHT_MAP_BORDER_OFFSET.toUShort()) {
 						true -> HeightMapBorder(
 							x1 = reader.readInt(),
 							y1 = reader.readInt(),
@@ -54,7 +54,7 @@ class HeightMapReader : AssetReader {
 			val elevations = Array(width) { ShortArray(height) }
 			for (x in 0 until width step 1) {
 				for (y in 0 until height step 1) {
-					elevations[x][y] = when (version >= MIN_VERSION_WITH_ELEVATIONS_AS_SHORT) {
+					elevations[x][y] = when (version >= MIN_VERSION_WITH_ELEVATIONS_AS_SHORT.toUShort()) {
 						true -> reader.readShort()
 						false -> reader.readByte().toShort()
 					}

@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.map.Property
-import de.darkatra.bfme2.readShort
+import de.darkatra.bfme2.readUShort
 import org.apache.commons.io.input.CountingInputStream
 
 class PropertiesReader(
@@ -10,10 +10,10 @@ class PropertiesReader(
 
 	fun read(reader: CountingInputStream, context: MapFileParseContext): List<Property> {
 
-		val numberOfProperties = reader.readShort()
+		val numberOfProperties = reader.readUShort()
 
 		val properties = mutableListOf<Property>()
-		for (i in 0 until numberOfProperties step 1) {
+		for (i in 0.toUShort() until numberOfProperties step 1) {
 			properties.add(
 				propertyReader.read(reader, context)
 			)

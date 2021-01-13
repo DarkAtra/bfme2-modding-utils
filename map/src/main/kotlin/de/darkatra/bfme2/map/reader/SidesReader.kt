@@ -24,7 +24,7 @@ class SidesReader(
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
 			// TODO: what is this? is `false` a reasonable default?
-			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG) {
+			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG.toUShort()) {
 				true -> reader.readBoolean()
 				else -> false
 			}
@@ -45,7 +45,7 @@ class SidesReader(
 			)
 
 			// version 5 or above has data for teams and scripts in a separate top-level chunk
-			if (version >= VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK) {
+			if (version >= VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK.toUShort()) {
 				return@readAsset
 			}
 

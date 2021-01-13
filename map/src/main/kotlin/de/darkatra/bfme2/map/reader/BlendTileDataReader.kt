@@ -28,7 +28,7 @@ class BlendTileDataReader(
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
-			if (version < 6) {
+			if (version < 6.toUShort()) {
 				throw InvalidDataException("Unexpected version '$version' for $ASSET_NAME.")
 			}
 
@@ -48,7 +48,7 @@ class BlendTileDataReader(
 
 			val tiles = reader.read2DShortArray(width, height)
 
-			val isUsing32BitBlendsAndCliffs = version in 14 until 23
+			val isUsing32BitBlendsAndCliffs = version in 14.toUShort() until 23.toUShort()
 
 			val blends = when (isUsing32BitBlendsAndCliffs) {
 				true -> reader.read2DIntArray(width, height)
@@ -63,10 +63,10 @@ class BlendTileDataReader(
 				false -> reader.read2DShortArray(width, height).to2DIntArray()
 			}
 
-			if (version > 6) {
+			if (version > 6.toUShort()) {
 
 				var passabilityWidth = width
-				if (version == 7.toShort()) {
+				if (version == 7.toUShort()) {
 					// if the border width is large enough to fully contain the clipped data.
 					if (passabilityWidth % 8 <= 6 && passabilityWidth % 8 <= borderWidth) {
 						passabilityWidth -= passabilityWidth % 8
@@ -77,38 +77,38 @@ class BlendTileDataReader(
 				val impassability = reader.read2DSageBooleanArray(passabilityWidth, height)
 			}
 
-			if (version >= 10) {
+			if (version >= 10.toUShort()) {
 				val impassabilityToPlayers = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 11) {
+			if (version >= 11.toUShort()) {
 				val passageWidths = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version in 14 until 24) {
+			if (version in 14.toUShort() until 24.toUShort()) {
 				val taintability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 15) {
+			if (version >= 15.toUShort()) {
 				val extraPassability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version in 16 until 24) {
+			if (version in 16.toUShort() until 24.toUShort()) {
 				val flammability = reader.read2DByteArray(width, height, TileFlammability::ofByte)
 			}
 
-			if (version >= 17) {
+			if (version >= 17.toUShort()) {
 				val visibility = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 24) {
+			if (version >= 24.toUShort()) {
 				// TODO: are these in the right order?
 				val buildability = reader.read2DSageBooleanArray(width, height)
 				val impassabilityToAirUnits = reader.read2DSageBooleanArray(width, height)
 				val tiberiumGrowability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 25) {
+			if (version >= 25.toUShort()) {
 				val dynamicShrubberyDensity = reader.read2DByteArray(width, height)
 			}
 
@@ -147,20 +147,18 @@ class BlendTileDataReader(
 			}
 
 			val blendDescriptions = mutableListOf<BlendDescription>()
-			for (i in 0 until blendsCount) {
+			for (i in 0 until blendsCount step 1) {
 				blendDescriptions.add(
 					blendDescriptionReader.read(reader)
 				)
 			}
 
 			val cliffTextureMappings = mutableListOf<CliffTextureMapping>()
-			for (i in 0 until cliffBlendsCount) {
+			for (i in 0 until cliffBlendsCount step 1) {
 				cliffTextureMappings.add(
 					cliffTextureMappingReader.read(reader)
 				)
 			}
-
-			println("BlendTileData end")
 		}
 	}
 }

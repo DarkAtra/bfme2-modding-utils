@@ -107,6 +107,9 @@
 				</executions>
 				<configuration>
 					<jvmTarget>${java.version}</jvmTarget>
+					<args>
+						<arg>-Xopt-in=kotlin.ExperimentalUnsignedTypes</arg>
+					</args>
 				</configuration>
 			</plugin>
 		</plugins>

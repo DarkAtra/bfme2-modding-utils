@@ -4,8 +4,8 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.read7BitString
-import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.readShort
+import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import org.apache.commons.io.input.CountingInputStream
 import java.io.FileNotFoundException
@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.zip.InflaterInputStream
+import kotlin.system.measureTimeMillis
 
 class MapFileReader {
 
@@ -45,7 +46,7 @@ class MapFileReader {
 		fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
 
 			while (reader.byteCount < context.currentEndPosition) {
-				val assetIndex = reader.readInt()
+				val assetIndex = reader.readUInt()
 				val assetName = context.getAssetName(assetIndex)
 
 				callback(assetName)
@@ -53,24 +54,28 @@ class MapFileReader {
 		}
 
 		// TODO: find a better name for this (maybe readObject)
-		fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: Short) -> Unit) {
+		fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: UShort) -> Unit) {
 
-			val assetVersion = reader.readShort()
+			val assetVersion = reader.readUShort()
 
-			val dataSize = reader.readInt()
+			val dataSize = reader.readUInt()
 			val startPosition = reader.byteCount
-			val endPosition = dataSize + startPosition
+			val endPosition = dataSize.toLong() + startPosition
 
 			context.push(assetName, endPosition)
 
 			callback(assetVersion)
 
 			context.pop()
+
+			if (reader.byteCount != endPosition) {
+				throw InvalidDataException("Error reading '$assetName'. Expected reader to be at position $endPosition, but was at ${reader.byteCount}.")
+			}
 		}
 
 		@JvmStatic
 		fun main(args: Array<String>) {
-			MapFileReader().read(Path.of("Legendary War.refpack"))
+			MapFileReader().read(Path.of("Legendary War.txt"))
 		}
 	}
 
@@ -82,20 +87,20 @@ class MapFileReader {
 			throw FileNotFoundException("File '${inputFile.absolutePath}' does not exist.")
 		}
 
-		val inputStream = CountingInputStream(decodeIfNecessary(inputFile.inputStream()))
+		val inputStream = CountingInputStream(decodeIfNecessary(inputFile.inputStream().buffered()))
 
 		val mapBuilder = MapFile.Builder()
 
 		inputStream.use {
 			readAndValidateFourCC(inputStream)
 
-			val reader = CountingInputStream(inputStream)
-			val assetNames = readAssetNames(reader)
+			val assetNames = readAssetNames(inputStream)
 
 			val context = MapFileParseContext(assetNames)
-			context.push(ASSET_NAME, decodeIfNecessary(inputFile.inputStream()).readBytes().size.toLong())
+			// TODO: find a better way to determine the size of the actual data
+			context.push(ASSET_NAME, decodeIfNecessary(inputFile.inputStream().buffered()).readBytes().size.toLong())
 
-			readAssets(reader, context) { assetName ->
+			readAssets(inputStream, context) { assetName ->
 				when (assetName) {
 					// TODO: find a better name for ASSET_NAME
 					AssetListReader.ASSET_NAME -> assetListReader
@@ -111,7 +116,10 @@ class MapFileReader {
 					// TODO: implement the remaining readers... (see OpenFeign)
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
 				}.also {
-					it.read(reader, context, mapBuilder)
+					val timeElapsedToRead = measureTimeMillis {
+						it.read(inputStream, context, mapBuilder)
+					}
+					println("Reading $assetName took $timeElapsedToRead millis.")
 				}
 			}
 		}
@@ -120,14 +128,14 @@ class MapFileReader {
 	}
 
 	// TODO: find a better name for this (maybe readObjectNames)
-	private fun readAssetNames(reader: CountingInputStream): Map<Int, String> {
+	private fun readAssetNames(reader: CountingInputStream): Map<UInt, String> {
 
-		val numberOfAssetStrings = reader.readInt()
+		val numberOfAssetStrings = reader.readUInt()
 
-		val assetNames = mutableMapOf<Int, String>()
-		for (i in numberOfAssetStrings downTo 1 step 1) {
+		val assetNames = mutableMapOf<UInt, String>()
+		for (i in numberOfAssetStrings downTo 1u step 1) {
 			val assetName = reader.read7BitString()
-			val assetIndex = reader.readInt()
+			val assetIndex = reader.readUInt()
 			if (assetIndex != i) {
 				throw IllegalStateException("Illegal assetIndex for '$assetName'.")
 			}

@@ -24,13 +24,13 @@ class PlayerScriptsReader : AssetReader {
 		MapFileReader.readAsset(reader, context, ASSET_NAME) {
 
 			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName !== SCRIPTS_LIST_ASSET_NAME) {
+				if (assetName != SCRIPTS_LIST_ASSET_NAME) {
 					throw InvalidDataException("Unexpected asset name '$assetName' reading ${SCRIPTS_LIST_ASSET_NAME}.")
 				}
 
 				MapFileReader.readAsset(reader, context, SCRIPTS_LIST_ASSET_NAME) { version ->
 
-					if (version != 1.toShort()) {
+					if (version != 1.toUShort()) {
 						throw InvalidDataException("Unsupported version of ${SCRIPTS_LIST_ASSET_NAME}.")
 					}
 

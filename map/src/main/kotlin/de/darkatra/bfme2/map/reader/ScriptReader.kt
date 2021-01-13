@@ -37,10 +37,10 @@ class ScriptReader {
 
 			scriptBuilder.subroutine(reader.readBoolean())
 
-			if (version >= 2) {
+			if (version >= 2.toUShort()) {
 				scriptBuilder.evaluationInterval(reader.readInt())
 
-				if (version == 5.toShort()) {
+				if (version == 5.toUShort()) {
 					// default to false?
 					scriptBuilder.usesEvaluationIntervalType(reader.readBoolean())
 					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.ofInt(reader.readInt()))
@@ -49,7 +49,7 @@ class ScriptReader {
 				}
 			}
 
-			if (version >= 3) {
+			if (version >= 3.toUShort()) {
 				scriptBuilder.actionsFireSequentially(reader.readBoolean())
 				scriptBuilder.loopActions(reader.readBoolean())
 				scriptBuilder.loopCount(reader.readInt())
@@ -57,7 +57,7 @@ class ScriptReader {
 				scriptBuilder.sequentialTargetName(reader.readShortPrefixedString())
 			}
 
-			if (version >= 4) {
+			if (version >= 4.toUShort()) {
 				val unknown = reader.readShortPrefixedString()
 				if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
 					throw InvalidDataException("Unexpected value '$unknown'.")
@@ -65,7 +65,7 @@ class ScriptReader {
 				scriptBuilder.unknown1(unknown)
 			}
 
-			if (version >= 6) {
+			if (version >= 6.toUShort()) {
 				scriptBuilder.unknown2(reader.readInt())
 				val unknown3 = reader.readShort()
 				if (unknown3 != 0.toShort()) {

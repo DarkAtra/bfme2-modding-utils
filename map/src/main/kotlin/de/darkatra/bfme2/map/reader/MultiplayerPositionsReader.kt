@@ -22,7 +22,7 @@ class MultiplayerPositionsReader : AssetReader {
 			val multiplayerPositions = mutableListOf<MultiplayerPosition>()
 
 			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName !== MULTIPLAYER_POSITION_ASSET_NAME) {
+				if (assetName != MULTIPLAYER_POSITION_ASSET_NAME) {
 					throw InvalidDataException("Unexpected asset name '$assetName' reading $ASSET_NAME.")
 				}
 
@@ -31,7 +31,7 @@ class MultiplayerPositionsReader : AssetReader {
 					val isHuman = reader.readBoolean()
 					val isComputer = reader.readBoolean()
 
-					val loadAIScript = when (version > 0) {
+					val loadAIScript = when (version > 0.toUShort()) {
 						true -> reader.readBoolean()
 						else -> null
 					}
@@ -39,7 +39,7 @@ class MultiplayerPositionsReader : AssetReader {
 					val team = reader.readInt()
 
 					val sideRestrictions = mutableListOf<String>()
-					if (version > 0) {
+					if (version > 0.toUShort()) {
 						val sideRestrictionsLength = reader.readInt()
 						for (i in 0 until sideRestrictionsLength step 1) {
 							sideRestrictions.add(

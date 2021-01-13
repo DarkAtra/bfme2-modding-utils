@@ -3,7 +3,7 @@ package de.darkatra.bfme2.map.reader
 import de.darkatra.bfme2.map.PropertyKey
 import de.darkatra.bfme2.map.PropertyType
 import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.toLittleEndianInt
+import de.darkatra.bfme2.toLittleEndianUInt
 import org.apache.commons.io.input.CountingInputStream
 
 class PropertyKeyReader {
@@ -12,7 +12,7 @@ class PropertyKeyReader {
 
 		val propertyType = PropertyType.ofByte(reader.readByte())
 
-		val nameIndex = reader.readNBytes(3).toLittleEndianInt()
+		val nameIndex = reader.readNBytes(3).toLittleEndianUInt()
 		val name = context.getAssetName(nameIndex)
 
 		return PropertyKey(

@@ -11,7 +11,7 @@ data class MapFile(
 	val assetList: List<AssetListItem>,
 //	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
-	val globalVersion: Short,
+	val globalVersion: UShort,
 	val heightMap: HeightMap,
 	val multiplayerPositions: List<MultiplayerPosition>,
 	val players: List<Player>,
@@ -24,7 +24,7 @@ data class MapFile(
 	class Builder {
 		private var assetList: List<AssetListItem>? = null
 		private var buildLists: List<BuildList>? = null
-		private var globalVersion: Short? = null
+		private var globalVersion: UShort? = null
 		private var heightMap: HeightMap? = null
 		private var multiplayerPositions: List<MultiplayerPosition>? = null
 		private var players: List<Player>? = null
@@ -35,7 +35,7 @@ data class MapFile(
 
 		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
-		fun globalVersion(globalVersion: Short) = apply { this.globalVersion = globalVersion }
+		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
 		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>) = apply { this.multiplayerPositions = multiplayerPositions }
 		fun players(players: List<Player>) = apply { this.players = players }

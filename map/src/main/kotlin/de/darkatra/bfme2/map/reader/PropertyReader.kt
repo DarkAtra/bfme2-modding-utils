@@ -3,7 +3,9 @@ package de.darkatra.bfme2.map.reader
 import de.darkatra.bfme2.map.Property
 import de.darkatra.bfme2.map.PropertyType
 import de.darkatra.bfme2.readBoolean
-import de.darkatra.bfme2.readInt
+import de.darkatra.bfme2.readFloat
+import de.darkatra.bfme2.readShortPrefixedString
+import de.darkatra.bfme2.readUInt
 import org.apache.commons.io.input.CountingInputStream
 import java.nio.charset.StandardCharsets
 
@@ -17,11 +19,11 @@ class PropertyReader(
 
 		val value = when (propertyKey.propertyType) {
 			PropertyType.BOOLEAN -> reader.readBoolean()
-			PropertyType.INTEGER -> reader.readInt()
-			PropertyType.FLOAT -> reader.readInt()
-			PropertyType.ASCII_STRING -> reader.readNBytes(2).toString(StandardCharsets.US_ASCII)
-			PropertyType.UNICODE_STRING -> reader.readNBytes(2).toString(StandardCharsets.UTF_8)
-			PropertyType.UNKNOWN -> reader.readNBytes(2).toString(StandardCharsets.US_ASCII)
+			PropertyType.INTEGER -> reader.readUInt()
+			PropertyType.FLOAT -> reader.readFloat()
+			PropertyType.ASCII_STRING -> reader.readShortPrefixedString()
+			PropertyType.UNICODE_STRING -> reader.readShortPrefixedString(StandardCharsets.UTF_8)
+			PropertyType.UNKNOWN -> reader.readShortPrefixedString()
 		}
 
 		return Property(

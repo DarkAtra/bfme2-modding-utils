@@ -10,6 +10,7 @@ import kotlin.math.min
  *
  * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.RefPack/RefPackStream.cs
  */
+// TODO: something is broken, compare with OpenSages implementation and fix it
 class RefPackInputStream(
 	inputStream: InputStream
 ) : BufferedInputStream(inputStream) {
@@ -86,21 +87,23 @@ class RefPackInputStream(
 	}
 
 	private fun execute2ByteCommand(byte1: Int) {
-		val byte2 = `in`.read() and 0xFF
+		val byte2 = `in`.read()
+		println("Read 2 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}]")
 		val proceedingDataLength = byte1 and 0x03
 		copyProceeding(proceedingDataLength)
-		val referencedDataLength = (byte1 and 0x1C shr 2) + 3
-		val referencedDataDistance = (byte1 and 0x60 shl 3) + byte2 + 1
+		val referencedDataLength = ((byte1 and 0x1C) shr 2) + 3
+		val referencedDataDistance = ((byte1 and 0x60) shl 3) + byte2 + 1
 		copyReferencedData(referencedDataLength, referencedDataDistance)
 	}
 
 	private fun execute3ByteCommand(byte1: Int) {
 		val byte2 = `in`.read()
 		val byte3 = `in`.read()
+		println("Read 3 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}, ${byte3.toUByte()}]")
 		val proceedingDataLength: Int = byte2 and 0xC0 shr 6
 		copyProceeding(proceedingDataLength)
 		val referencedDataLength = (byte1 and 0x3F) + 4
-		val referencedDataDistance: Int = (byte2 and 0x3F shl 8) + byte3 + 1
+		val referencedDataDistance: Int = ((byte2 and 0x3F) shl 8) + byte3 + 1
 		copyReferencedData(referencedDataLength, referencedDataDistance)
 	}
 
@@ -108,15 +111,17 @@ class RefPackInputStream(
 		val byte2 = `in`.read()
 		val byte3 = `in`.read()
 		val byte4 = `in`.read()
+		println("Read 4 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}, ${byte3.toUByte()}, ${byte4.toUByte()}]")
 		val proceedingDataLength = byte1 and 0x03
 		copyProceeding(proceedingDataLength)
-		val referencedDataLength: Int = (byte1 and 0x0C shl 6) + byte4 + 5
-		val referencedDataDistance: Int = (byte1 and 0x10 shl 12) + (byte2 shl 8) + byte3 + 1
+		val referencedDataLength: Int = ((byte1 and 0x0C) shl 6) + byte4 + 5
+		val referencedDataDistance: Int = ((byte1 and 0x10) shl 12) + (byte2 shl 8) + byte3 + 1
 		copyReferencedData(referencedDataLength, referencedDataDistance)
 	}
 
 	private fun execute1ByteCommand(byte1: Int) {
-		val proceedingDataLength = (byte1 and 0x1F) + 1 shl 2
+		println("Read 1 byte command: [${byte1.toUByte()}]")
+		val proceedingDataLength = ((byte1 and 0x1F) + 1) shl 2
 		copyProceeding(proceedingDataLength)
 	}
 
@@ -128,7 +133,7 @@ class RefPackInputStream(
 
 	private fun copyProceeding(proceedingDataLength: Int) {
 		if (proceedingDataLength > 112) {
-			throw InvalidDataException("ProceedingDataLength is bigger than 112")
+			throw InvalidDataException("ProceedingDataLength is greater than 112")
 		}
 
 		val readBytes = readFrom(nextPosition, proceedingDataLength)
@@ -163,7 +168,9 @@ class RefPackInputStream(
 			bytesRead += `in`.read(buf, 0, count - numBytesToWriteAtEnd)
 			bytesRead
 		} else {
-			`in`.read(buf, offset % WINDOW_SIZE, count)
+			`in`.read(buf, offset % WINDOW_SIZE, count).also {
+				println("Read $it bytes: ${buf.slice(offset until offset + count).map(Byte::toUByte)}")
+			}
 		}
 	}
 
@@ -214,10 +221,6 @@ class RefPackInputStream(
 
 	private fun readBigEndianSize(largeFilesFlagPresent: Boolean): Int {
 		val count = if (largeFilesFlagPresent) 4 else 3
-		var size = 0
-		for (i in 0 until count step 1) {
-			size = (size shl 8) or `in`.read()
-		}
-		return size
+		return `in`.readNBytes(count).map { it.toInt() and 0xFF }.reduce { acc, byte -> acc shl 8 or byte }
 	}
 }

@@ -30,7 +30,7 @@ class ScriptFolderReader(
 
 			MapFileReader.readAssets(reader, context) { assetName ->
 				when {
-					assetName == ASSET_NAME && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS -> scriptFolders.add(
+					assetName == ASSET_NAME && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS.toUShort() -> scriptFolders.add(
 						read(reader, context)
 					)
 					assetName == ScriptReader.ASSET_NAME -> scripts.add(
