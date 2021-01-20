@@ -1,3 +1,5 @@
+![Maven Package](https://github.com/DarkAtra/bfme2-modding-utils/workflows/Maven%20Package/badge.svg)
+
 # About
 This project provides functions to read and write some of the EA file formats, such as:
 - [BIG](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
