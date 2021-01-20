@@ -4,6 +4,31 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<developers>
+		<developer>
+			<id>DarkAtra</id>
+			<name>Tommy Schmidt</name>
+			<email>darkatra@web.de</email>
+			<url>https://github.com/DarkAtra</url>
+			<roles>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:DarkAtra/bfme2-modding-utils.git</connection>
+		<url>https://github.com/DarkAtra/bfme2-modding-utils</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/DarkAtra/bfme2-modding-utils</url>
+		</repository>
+	</distributionManagement>
+
 	<groupId>de.darkatra.bfme2</groupId>
 	<artifactId>bfme2-modding-utils</artifactId>
 	<version>1.0-SNAPSHOT</version>
@@ -78,28 +103,20 @@
 	<build>
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/main/kotlin</testSourceDirectory>
-		<finalName>${pom.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
 				<executions>
 					<execution>
 						<id>compile</id>
-						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
-						<configuration>
-							<sourceDirs>
-								<source>target/generated-sources/annotations</source>
-								<source>src/main/java</source>
-							</sourceDirs>
-						</configuration>
 					</execution>
 					<execution>
 						<id>test-compile</id>
-						<phase>test-compile</phase>
 						<goals>
 							<goal>test-compile</goal>
 						</goals>
