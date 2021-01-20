@@ -3,28 +3,31 @@ package de.darkatra.bfme2
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import kotlin.experimental.and
 
 // Data to Bytes
 fun Int.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(this).array()
 fun Int.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(this).array()
+fun UInt.toBigEndianBytes(): ByteArray = toInt().toBigEndianBytes()
+fun UInt.toLittleEndianBytes(): ByteArray = toInt().toLittleEndianBytes()
 
 fun Long.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(this).array()
 fun Long.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(this).array()
+fun ULong.toBigEndianBytes(): ByteArray = toLong().toBigEndianBytes()
+fun ULong.toLittleEndianBytes(): ByteArray = toLong().toLittleEndianBytes()
 
 // Bytes to Data
-// TODO: fix integer underflow
 fun ByteArray.toBigEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).short
 fun ByteArray.toLittleEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).short
+fun ByteArray.toBigEndianUShort(): UShort = toBigEndianUInt().toUShort()
+fun ByteArray.toLittleEndianUShort(): UShort = toLittleEndianUInt().toUShort()
 
-// TODO: fix integer underflow
 fun ByteArray.toBigEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int
 fun ByteArray.toLittleEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int
-
-// TODO: fix integer underflow
-fun ByteArray.toBigEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).float
-fun ByteArray.toLittleEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).float
+fun ByteArray.toBigEndianUInt(): UInt = this.map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
+fun ByteArray.toLittleEndianUInt(): UInt = this.reversedArray().map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
 
 fun Byte.toBoolean(): Boolean = when (this) {
 	0.toByte() -> false
@@ -35,13 +38,19 @@ fun Byte.toBoolean(): Boolean = when (this) {
 // InputStream
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
+fun InputStream.readUShort(): UShort = this.readNBytes(2).toLittleEndianUShort()
 fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
-fun InputStream.readFloat(): Float = this.readNBytes(4).toLittleEndianFloat()
+fun InputStream.readUInt(): UInt = this.readNBytes(4).toLittleEndianUInt()
+fun InputStream.readFloat(): Float = java.lang.Float.intBitsToFloat(readInt())
 fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
 
-fun InputStream.readShortPrefixedString(): String {
-	val stringLength = this.readNBytes(2).toLittleEndianShort()
-	return this.readNBytes(stringLength.toInt()).toString(StandardCharsets.US_ASCII)
+fun InputStream.readShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
+	val amountOfBytesPerCharacter = when (charsets) {
+		StandardCharsets.UTF_8 -> 2
+		else -> 1
+	}
+	val stringLength = this.readNBytes(2).toLittleEndianUShort()
+	return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charsets)
 }
 
 fun InputStream.read7BitString(): String {
@@ -86,4 +95,47 @@ fun InputStream.read7BitString(): String {
 	}
 
 	return this.readNBytes(stringLength).toString(StandardCharsets.UTF_8)
+}
+
+@Suppress("UNCHECKED_CAST")
+private inline fun <reified T> read2DArray(width: Int, height: Int, readFunction: (x: Int, y: Int) -> T): Array<Array<T>> {
+	val result = Array(width) { arrayOfNulls<T>(height) }
+	for (y in 0 until width step 1) {
+		for (x in 0 until width step 1) {
+			result[x][y] = readFunction(x, y)
+		}
+	}
+	return result as Array<Array<T>>
+}
+
+inline fun <reified T> InputStream.read2DByteArray(width: Int, height: Int, mappingFunction: (byte: Byte) -> T): Array<Array<T>> {
+	return read2DByteArray(width, height).map { innerArray ->
+		innerArray.map { mappingFunction(it) }.toTypedArray()
+	}.toTypedArray()
+}
+
+fun InputStream.read2DShortArray(width: Int, height: Int): Array<Array<Short>> = read2DArray(width, height) { _, _ -> readShort() }
+fun InputStream.read2DIntArray(width: Int, height: Int): Array<Array<Int>> = read2DArray(width, height) { _, _ -> readInt() }
+fun InputStream.read2DBooleanArray(width: Int, height: Int): Array<Array<Boolean>> = read2DArray(width, height) { _, _ -> readBoolean() }
+fun InputStream.read2DByteArray(width: Int, height: Int): Array<Array<Byte>> = read2DArray(width, height) { _, _ -> readByte() }
+
+@Suppress("UNCHECKED_CAST")
+fun InputStream.read2DSageBooleanArray(width: Int, height: Int): Array<Array<Boolean>> {
+	val result = Array(width) { arrayOfNulls<Boolean>(height) }
+	for (y in 0 until width step 1) {
+		var temp = 0.toByte()
+		for (x in 0 until width step 1) {
+			if (x % 8 == 0) {
+				temp = readByte()
+			}
+			result[x][y] = temp and (1 shl x % 8).toByte() != 0.toByte()
+		}
+	}
+	return result as Array<Array<Boolean>>
+}
+
+fun Array<Array<Short>>.to2DIntArray(): Array<Array<Int>> {
+	return this.map { innerArray ->
+		innerArray.map { value -> value.toInt() }.toTypedArray()
+	}.toTypedArray()
 }
