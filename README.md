@@ -1,4 +1,4 @@
-![Maven Package](https://github.com/DarkAtra/bfme2-modding-utils/workflows/Maven%20Package/badge.svg)
+[![Maven Package](https://github.com/DarkAtra/bfme2-modding-utils/workflows/Maven%20Package/badge.svg)](https://github.com/DarkAtra/bfme2-modding-utils/releases)
 
 # About
 
