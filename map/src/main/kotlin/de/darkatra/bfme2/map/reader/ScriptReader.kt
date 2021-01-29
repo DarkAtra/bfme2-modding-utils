@@ -7,8 +7,9 @@ import de.darkatra.bfme2.map.SequentialScriptTarget
 import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readByte
 import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.readShort
-import de.darkatra.bfme2.readShortPrefixedString
+import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUShort
+import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
 class ScriptReader {
@@ -23,10 +24,10 @@ class ScriptReader {
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
-			scriptBuilder.name(reader.readShortPrefixedString())
-			scriptBuilder.comment(reader.readShortPrefixedString())
-			scriptBuilder.conditionsComment(reader.readShortPrefixedString())
-			scriptBuilder.actionsComment(reader.readShortPrefixedString())
+			scriptBuilder.name(reader.readUShortPrefixedString())
+			scriptBuilder.comment(reader.readUShortPrefixedString())
+			scriptBuilder.conditionsComment(reader.readUShortPrefixedString())
+			scriptBuilder.actionsComment(reader.readUShortPrefixedString())
 
 			scriptBuilder.active(reader.readBoolean())
 			scriptBuilder.deactivateUponSuccess(reader.readBoolean())
@@ -37,38 +38,38 @@ class ScriptReader {
 
 			scriptBuilder.subroutine(reader.readBoolean())
 
-			if (version >= 2.toUShort()) {
-				scriptBuilder.evaluationInterval(reader.readInt())
+			if (version >= 2u) {
+				scriptBuilder.evaluationInterval(reader.readUInt())
 
 				if (version == 5.toUShort()) {
 					// default to false?
 					scriptBuilder.usesEvaluationIntervalType(reader.readBoolean())
-					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.ofInt(reader.readInt()))
+					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.ofUInt(reader.readUInt()))
 				} else {
 					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.FRAME_OR_SECONDS)
 				}
 			}
 
-			if (version >= 3.toUShort()) {
+			if (version >= 3u) {
 				scriptBuilder.actionsFireSequentially(reader.readBoolean())
 				scriptBuilder.loopActions(reader.readBoolean())
-				scriptBuilder.loopCount(reader.readInt())
+				scriptBuilder.loopCount(reader.readUInt())
 				scriptBuilder.sequentialTargetType(SequentialScriptTarget.ofByte(reader.readByte()))
-				scriptBuilder.sequentialTargetName(reader.readShortPrefixedString())
+				scriptBuilder.sequentialTargetName(reader.readUShortPrefixedString())
 			}
 
-			if (version >= 4.toUShort()) {
-				val unknown = reader.readShortPrefixedString()
+			if (version >= 4u) {
+				val unknown = reader.readUShortPrefixedString()
 				if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
 					throw InvalidDataException("Unexpected value '$unknown'.")
 				}
 				scriptBuilder.unknown1(unknown)
 			}
 
-			if (version >= 6.toUShort()) {
+			if (version >= 6u) {
 				scriptBuilder.unknown2(reader.readInt())
-				val unknown3 = reader.readShort()
-				if (unknown3 != 0.toShort()) {
+				val unknown3 = reader.readUShort()
+				if (unknown3 != 0.toUShort()) {
 					throw InvalidDataException("Unexpected value '$unknown3'.")
 				}
 				scriptBuilder.unknown3(unknown3)

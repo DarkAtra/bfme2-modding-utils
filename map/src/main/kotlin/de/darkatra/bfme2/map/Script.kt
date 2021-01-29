@@ -14,14 +14,14 @@ data class Script(
 
 	val subroutine: Boolean, // TODO: is this a setting in the worldbuilder?
 
-	val evaluationInterval: Int?,
+	val evaluationInterval: UInt?,
 	val usesEvaluationIntervalType: Boolean,
 	val evaluationIntervalType: EvaluationIntervalType,
 
 	val actionsFireSequentially: Boolean?,
 
 	val loopActions: Boolean?,
-	val loopCount: Int?,
+	val loopCount: UInt?,
 
 	val sequentialTargetType: SequentialScriptTarget?,
 	val sequentialTargetName: String?,
@@ -29,7 +29,7 @@ data class Script(
 	// allowed values: ALL, Planning, X
 	val unknown1: String?,
 	val unknown2: Int?,
-	val unknown3: Short?
+	val unknown3: UShort?
 ) {
 
 	class Builder {
@@ -43,17 +43,17 @@ data class Script(
 		private var activeInMedium: Boolean? = null
 		private var activeInHard: Boolean? = null
 		private var subroutine: Boolean? = null
-		private var evaluationInterval: Int? = null
+		private var evaluationInterval: UInt? = null
 		private var usesEvaluationIntervalType: Boolean? = null
 		private var evaluationIntervalType: EvaluationIntervalType? = null
 		private var actionsFireSequentially: Boolean? = null
 		private var loopActions: Boolean? = null
-		private var loopCount: Int? = null
+		private var loopCount: UInt? = null
 		private var sequentialTargetType: SequentialScriptTarget? = null
 		private var sequentialTargetName: String? = null
 		private var unknown1: String? = null
 		private var unknown2: Int? = null
-		private var unknown3: Short? = null
+		private var unknown3: UShort? = null
 
 		fun name(name: String) = apply { this.name = name }
 		fun comment(comment: String) = apply { this.comment = comment }
@@ -65,17 +65,17 @@ data class Script(
 		fun activeInMedium(activeInMedium: Boolean) = apply { this.activeInMedium = activeInMedium }
 		fun activeInHard(activeInHard: Boolean) = apply { this.activeInHard = activeInHard }
 		fun subroutine(subroutine: Boolean) = apply { this.subroutine = subroutine }
-		fun evaluationInterval(evaluationInterval: Int) = apply { this.evaluationInterval = evaluationInterval }
+		fun evaluationInterval(evaluationInterval: UInt) = apply { this.evaluationInterval = evaluationInterval }
 		fun usesEvaluationIntervalType(usesEvaluationIntervalType: Boolean) = apply { this.usesEvaluationIntervalType = usesEvaluationIntervalType }
 		fun evaluationIntervalType(evaluationIntervalType: EvaluationIntervalType) = apply { this.evaluationIntervalType = evaluationIntervalType }
 		fun actionsFireSequentially(actionsFireSequentially: Boolean) = apply { this.actionsFireSequentially = actionsFireSequentially }
 		fun loopActions(loopActions: Boolean) = apply { this.loopActions = loopActions }
-		fun loopCount(loopCount: Int) = apply { this.loopCount = loopCount }
+		fun loopCount(loopCount: UInt) = apply { this.loopCount = loopCount }
 		fun sequentialTargetType(sequentialTargetType: SequentialScriptTarget) = apply { this.sequentialTargetType = sequentialTargetType }
 		fun sequentialTargetName(sequentialTargetName: String) = apply { this.sequentialTargetName = sequentialTargetName }
 		fun unknown1(unknown1: String) = apply { this.unknown1 = unknown1 }
 		fun unknown2(unknown2: Int) = apply { this.unknown2 = unknown2 }
-		fun unknown3(unknown3: Short) = apply { this.unknown3 = unknown3 }
+		fun unknown3(unknown3: UShort) = apply { this.unknown3 = unknown3 }
 
 		fun build() = Script(
 			name = name ?: throwIllegalStateExceptionForField("name"),

@@ -13,16 +13,16 @@ enum class EvaluationIntervalType {
 
 	companion object {
 
-		fun ofInt(int: Int): EvaluationIntervalType {
-			return when (int) {
-				0 -> OPERATION
-				1 -> MOVE_FORCES
-				2 -> BATTLE
-				3 -> UPKEEP
-				4 -> COMPLETE
-				5 -> ANY
-				6 -> FRAME_OR_SECONDS
-				else -> throw ConversionException("Unknown EvaluationIntervalType for int '$int'.")
+		fun ofUInt(uInt: UInt): EvaluationIntervalType {
+			return when (uInt) {
+				0u -> OPERATION
+				1u -> MOVE_FORCES
+				2u -> BATTLE
+				3u -> UPKEEP
+				4u -> COMPLETE
+				5u -> ANY
+				6u -> FRAME_OR_SECONDS
+				else -> throw ConversionException("Unknown EvaluationIntervalType for int '$uInt'.")
 			}
 		}
 	}

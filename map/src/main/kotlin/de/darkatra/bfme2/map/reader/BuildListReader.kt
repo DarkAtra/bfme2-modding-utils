@@ -5,8 +5,8 @@ import de.darkatra.bfme2.map.BuildList
 import de.darkatra.bfme2.map.BuildListItem
 import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readFloat
-import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.readShortPrefixedString
+import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
 class BuildListReader(
@@ -17,7 +17,7 @@ class BuildListReader(
 
 		// hacky way to detect if the map is using the c&c map format
 		val factionName = when (context.mapHasAssetList) {
-			true -> reader.readShortPrefixedString()
+			true -> reader.readUShortPrefixedString()
 			false -> propertyKeyReader.read(reader, context).name
 		}
 
@@ -31,10 +31,10 @@ class BuildListReader(
 
 	fun readBuildListItems(reader: CountingInputStream, context: MapFileParseContext): List<BuildListItem> {
 
-		val numberOfBuildListItems = reader.readInt()
+		val numberOfBuildListItems = reader.readUInt()
 
 		val buildListItems = mutableListOf<BuildListItem>()
-		for (i in 0 until numberOfBuildListItems step 1) {
+		for (i in 0u until numberOfBuildListItems step 1) {
 			buildListItems.add(
 				readBuildListItem(reader, context)
 			)
@@ -45,8 +45,8 @@ class BuildListReader(
 
 	private fun readBuildListItem(reader: CountingInputStream, context: MapFileParseContext): BuildListItem {
 
-		val buildingName = reader.readShortPrefixedString()
-		val name = reader.readShortPrefixedString()
+		val buildingName = reader.readUShortPrefixedString()
+		val name = reader.readUShortPrefixedString()
 		val position = Vector3(
 			x = reader.readFloat(),
 			y = reader.readFloat(),
@@ -61,9 +61,9 @@ class BuildListReader(
 			false -> null
 		}
 
-		val rebuilds = reader.readInt()
-		val script = reader.readShortPrefixedString()
-		val startingHealth = reader.readInt()
+		val rebuilds = reader.readUInt()
+		val script = reader.readUShortPrefixedString()
+		val startingHealth = reader.readUInt()
 
 		// one of these unknown booleans reflects the "Unsellable" checkbox in Building Properties
 		val unknown2 = reader.readBoolean()

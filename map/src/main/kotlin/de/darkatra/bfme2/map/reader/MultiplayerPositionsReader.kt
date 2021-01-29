@@ -4,8 +4,8 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MultiplayerPosition
 import de.darkatra.bfme2.readBoolean
-import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.readShortPrefixedString
+import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
 class MultiplayerPositionsReader : AssetReader {
@@ -31,19 +31,19 @@ class MultiplayerPositionsReader : AssetReader {
 					val isHuman = reader.readBoolean()
 					val isComputer = reader.readBoolean()
 
-					val loadAIScript = when (version > 0.toUShort()) {
+					val loadAIScript = when (version > 0u) {
 						true -> reader.readBoolean()
 						else -> null
 					}
 
-					val team = reader.readInt()
+					val team = reader.readUInt()
 
 					val sideRestrictions = mutableListOf<String>()
-					if (version > 0.toUShort()) {
-						val sideRestrictionsLength = reader.readInt()
-						for (i in 0 until sideRestrictionsLength step 1) {
+					if (version > 0u) {
+						val sideRestrictionsLength = reader.readUInt()
+						for (i in 0u until sideRestrictionsLength step 1) {
 							sideRestrictions.add(
-								reader.readShortPrefixedString()
+								reader.readUShortPrefixedString()
 							)
 						}
 					}

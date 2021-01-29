@@ -6,12 +6,12 @@ import de.darkatra.bfme2.map.BlendTileTexture
 import de.darkatra.bfme2.map.CliffTextureMapping
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.TileFlammability
-import de.darkatra.bfme2.read2DByteArray
-import de.darkatra.bfme2.read2DIntArray
+import de.darkatra.bfme2.read2DByteArrayAsMap
 import de.darkatra.bfme2.read2DSageBooleanArray
-import de.darkatra.bfme2.read2DShortArray
-import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.to2DIntArray
+import de.darkatra.bfme2.read2DUIntArrayAsMap
+import de.darkatra.bfme2.read2DUShortArrayAsMap
+import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.to2DUIntArrayAsMap
 import org.apache.commons.io.input.CountingInputStream
 
 class BlendTileDataReader(
@@ -28,7 +28,7 @@ class BlendTileDataReader(
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
-			if (version < 6.toUShort()) {
+			if (version < 6u) {
 				throw InvalidDataException("Unexpected version '$version' for $ASSET_NAME.")
 			}
 
@@ -41,35 +41,36 @@ class BlendTileDataReader(
 			val area = context.heightMap!!.area
 			val borderWidth = context.heightMap!!.borderWidth
 
-			val numberOfTiles = reader.readInt()
+			val numberOfTiles = reader.readUInt()
 			if (numberOfTiles != area) {
 				throw InvalidDataException("Expected the number of bend tiles to be equal to the height maps area.")
 			}
 
-			val tiles = reader.read2DShortArray(width, height)
+			// TODO: read as Map<UInt, Map<UInt, Short>>
+			val tiles = reader.read2DUShortArrayAsMap(width, height)
 
-			val isUsing32BitBlendsAndCliffs = version in 14.toUShort() until 23.toUShort()
+			val isUsing32BitBlendsAndCliffs = version in 14u until 23u
 
 			val blends = when (isUsing32BitBlendsAndCliffs) {
-				true -> reader.read2DIntArray(width, height)
-				false -> reader.read2DShortArray(width, height).to2DIntArray()
+				true -> reader.read2DUIntArrayAsMap(width, height)
+				false -> reader.read2DUShortArrayAsMap(width, height).to2DUIntArrayAsMap()
 			}
 			val threeWayBlends = when (isUsing32BitBlendsAndCliffs) {
-				true -> reader.read2DIntArray(width, height)
-				false -> reader.read2DShortArray(width, height).to2DIntArray()
+				true -> reader.read2DUIntArrayAsMap(width, height)
+				false -> reader.read2DUShortArrayAsMap(width, height).to2DUIntArrayAsMap()
 			}
 			val cliffTextures = when (isUsing32BitBlendsAndCliffs) {
-				true -> reader.read2DIntArray(width, height)
-				false -> reader.read2DShortArray(width, height).to2DIntArray()
+				true -> reader.read2DUIntArrayAsMap(width, height)
+				false -> reader.read2DUShortArrayAsMap(width, height).to2DUIntArrayAsMap()
 			}
 
-			if (version > 6.toUShort()) {
+			if (version > 6u) {
 
 				var passabilityWidth = width
 				if (version == 7.toUShort()) {
 					// if the border width is large enough to fully contain the clipped data.
-					if (passabilityWidth % 8 <= 6 && passabilityWidth % 8 <= borderWidth) {
-						passabilityWidth -= passabilityWidth % 8
+					if (passabilityWidth % 8u <= 6u && passabilityWidth % 8u <= borderWidth) {
+						passabilityWidth -= passabilityWidth % 8u
 					}
 				}
 
@@ -77,84 +78,84 @@ class BlendTileDataReader(
 				val impassability = reader.read2DSageBooleanArray(passabilityWidth, height)
 			}
 
-			if (version >= 10.toUShort()) {
+			if (version >= 10u) {
 				val impassabilityToPlayers = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 11.toUShort()) {
+			if (version >= 11u) {
 				val passageWidths = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version in 14.toUShort() until 24.toUShort()) {
+			if (version in 14u until 24u) {
 				val taintability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 15.toUShort()) {
+			if (version >= 15u) {
 				val extraPassability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version in 16.toUShort() until 24.toUShort()) {
-				val flammability = reader.read2DByteArray(width, height, TileFlammability::ofByte)
+			if (version in 16u until 24u) {
+				val flammability = reader.read2DByteArrayAsMap(width, height, TileFlammability::ofByte)
 			}
 
-			if (version >= 17.toUShort()) {
+			if (version >= 17u) {
 				val visibility = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 24.toUShort()) {
+			if (version >= 24u) {
 				// TODO: are these in the right order?
 				val buildability = reader.read2DSageBooleanArray(width, height)
 				val impassabilityToAirUnits = reader.read2DSageBooleanArray(width, height)
 				val tiberiumGrowability = reader.read2DSageBooleanArray(width, height)
 			}
 
-			if (version >= 25.toUShort()) {
-				val dynamicShrubberyDensity = reader.read2DByteArray(width, height)
+			if (version >= 25u) {
+				val dynamicShrubberyDensity = reader.read2DByteArrayAsMap(width, height)
 			}
 
-			val textureCellCount = reader.readInt()
+			val textureCellCount = reader.readUInt()
 
 			// TODO: why are we subtracting 1?
-			val blendsCount = reader.readInt().let {
+			val blendsCount = reader.readUInt().let {
 				when {
-					it > 0 -> it - 1
+					it > 0u -> it - 1u
 					else -> it
 				}
 			}
 
 			// TODO: why are we subtracting 1?
-			val cliffBlendsCount = reader.readInt().let {
+			val cliffBlendsCount = reader.readUInt().let {
 				when {
-					it > 0 -> it - 1
+					it > 0u -> it - 1u
 					else -> it
 				}
 			}
 
-			val numberOfTextures = reader.readInt()
+			val numberOfTextures = reader.readUInt()
 			val textures = mutableListOf<BlendTileTexture>()
-			for (i in 0 until numberOfTextures step 1) {
+			for (i in 0u until numberOfTextures step 1) {
 				textures.add(
 					blendTileTextureReader.read(reader)
 				)
 			}
 
 			// Can be a variety of values, don't know what it means.
-			val magicValue1 = reader.readInt()
-			val magicValue2 = reader.readInt()
+			val magicValue1 = reader.readUInt()
+			val magicValue2 = reader.readUInt()
 
-			if (magicValue2 != 0) {
+			if (magicValue2 != 0u) {
 				throw InvalidDataException("Expected magic value 2 to be 0.")
 			}
 
 			val blendDescriptions = mutableListOf<BlendDescription>()
-			for (i in 0 until blendsCount step 1) {
+			for (i in 0u until blendsCount step 1) {
 				blendDescriptions.add(
 					blendDescriptionReader.read(reader)
 				)
 			}
 
 			val cliffTextureMappings = mutableListOf<CliffTextureMapping>()
-			for (i in 0 until cliffBlendsCount step 1) {
+			for (i in 0u until cliffBlendsCount step 1) {
 				cliffTextureMappings.add(
 					cliffTextureMappingReader.read(reader)
 				)

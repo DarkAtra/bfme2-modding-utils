@@ -44,12 +44,12 @@ fun InputStream.readUInt(): UInt = this.readNBytes(4).toLittleEndianUInt()
 fun InputStream.readFloat(): Float = java.lang.Float.intBitsToFloat(readInt())
 fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
 
-fun InputStream.readShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
+fun InputStream.readUShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
 	val amountOfBytesPerCharacter = when (charsets) {
 		StandardCharsets.UTF_8 -> 2
 		else -> 1
 	}
-	val stringLength = this.readNBytes(2).toLittleEndianUShort()
+	val stringLength = this.readUShort()
 	return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charsets)
 }
 
@@ -97,45 +97,44 @@ fun InputStream.read7BitString(): String {
 	return this.readNBytes(stringLength).toString(StandardCharsets.UTF_8)
 }
 
-@Suppress("UNCHECKED_CAST")
-private inline fun <reified T> read2DArray(width: Int, height: Int, readFunction: (x: Int, y: Int) -> T): Array<Array<T>> {
-	val result = Array(width) { arrayOfNulls<T>(height) }
-	for (y in 0 until width step 1) {
-		for (x in 0 until width step 1) {
-			result[x][y] = readFunction(x, y)
+private inline fun <reified T> read2DArrayAsMap(width: UInt, height: UInt, readFunction: (x: UInt, y: UInt) -> T): Map<UInt, Map<UInt, T>> {
+	val result = mutableMapOf<UInt, MutableMap<UInt, T>>()
+	for (y in 0u until height step 1) {
+		for (x in 0u until width step 1) {
+			result[x] = mutableMapOf()
+			result[x]!![y] = readFunction(x, y)
 		}
 	}
-	return result as Array<Array<T>>
+	return result
 }
 
-inline fun <reified T> InputStream.read2DByteArray(width: Int, height: Int, mappingFunction: (byte: Byte) -> T): Array<Array<T>> {
-	return read2DByteArray(width, height).map { innerArray ->
-		innerArray.map { mappingFunction(it) }.toTypedArray()
-	}.toTypedArray()
+inline fun <reified T> InputStream.read2DByteArrayAsMap(width: UInt, height: UInt, mappingFunction: (byte: Byte) -> T): Map<UInt, Map<UInt, T>> {
+	return read2DByteArrayAsMap(width, height).mapValues { (_, inner) ->
+		inner.mapValues { (_, value) -> mappingFunction(value) }
+	}
 }
 
-fun InputStream.read2DShortArray(width: Int, height: Int): Array<Array<Short>> = read2DArray(width, height) { _, _ -> readShort() }
-fun InputStream.read2DIntArray(width: Int, height: Int): Array<Array<Int>> = read2DArray(width, height) { _, _ -> readInt() }
-fun InputStream.read2DBooleanArray(width: Int, height: Int): Array<Array<Boolean>> = read2DArray(width, height) { _, _ -> readBoolean() }
-fun InputStream.read2DByteArray(width: Int, height: Int): Array<Array<Byte>> = read2DArray(width, height) { _, _ -> readByte() }
+fun InputStream.read2DUShortArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, UShort>> = read2DArrayAsMap(width, height) { _, _ -> readUShort() }
+fun InputStream.read2DUIntArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, UInt>> = read2DArrayAsMap(width, height) { _, _ -> readUInt() }
+fun InputStream.read2DByteArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, Byte>> = read2DArrayAsMap(width, height) { _, _ -> readByte() }
 
-@Suppress("UNCHECKED_CAST")
-fun InputStream.read2DSageBooleanArray(width: Int, height: Int): Array<Array<Boolean>> {
-	val result = Array(width) { arrayOfNulls<Boolean>(height) }
-	for (y in 0 until width step 1) {
+fun InputStream.read2DSageBooleanArray(width: UInt, height: UInt): Map<UInt, Map<UInt, Boolean>> {
+	val result = mutableMapOf<UInt, MutableMap<UInt, Boolean>>()
+	for (y in 0u until height step 1) {
 		var temp = 0.toByte()
-		for (x in 0 until width step 1) {
-			if (x % 8 == 0) {
+		for (x in 0u until width step 1) {
+			if (x % 8u == 0u) {
 				temp = readByte()
 			}
-			result[x][y] = temp and (1 shl x % 8).toByte() != 0.toByte()
+			result[x] = mutableMapOf()
+			result[x]!![y] = temp and (1u shl (x % 8u).toInt()).toByte() != 0.toByte()
 		}
 	}
-	return result as Array<Array<Boolean>>
+	return result
 }
 
-fun Array<Array<Short>>.to2DIntArray(): Array<Array<Int>> {
-	return this.map { innerArray ->
-		innerArray.map { value -> value.toInt() }.toTypedArray()
-	}.toTypedArray()
+fun Map<UInt, Map<UInt, UShort>>.to2DUIntArrayAsMap(): Map<UInt, Map<UInt, UInt>> {
+	return this.mapValues { (_, inner) ->
+		inner.mapValues { (_, value) -> value.toUInt() }
+	}
 }

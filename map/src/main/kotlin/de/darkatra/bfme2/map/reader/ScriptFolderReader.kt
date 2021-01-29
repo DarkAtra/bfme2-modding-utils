@@ -3,7 +3,7 @@ package de.darkatra.bfme2.map.reader
 import de.darkatra.bfme2.map.Script
 import de.darkatra.bfme2.map.ScriptFolder
 import de.darkatra.bfme2.readBoolean
-import de.darkatra.bfme2.readShortPrefixedString
+import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
 class ScriptFolderReader(
@@ -12,7 +12,7 @@ class ScriptFolderReader(
 
 	companion object {
 		const val ASSET_NAME = "ScriptGroup"
-		const val MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS = 3
+		const val MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS = 3u
 	}
 
 	fun read(reader: CountingInputStream, context: MapFileParseContext): ScriptFolder {
@@ -21,7 +21,7 @@ class ScriptFolderReader(
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
-			val name = reader.readShortPrefixedString()
+			val name = reader.readUShortPrefixedString()
 			val active = reader.readBoolean()
 			val subroutine = reader.readBoolean()
 
@@ -30,7 +30,7 @@ class ScriptFolderReader(
 
 			MapFileReader.readAssets(reader, context) { assetName ->
 				when {
-					assetName == ASSET_NAME && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS.toUShort() -> scriptFolders.add(
+					assetName == ASSET_NAME && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS -> scriptFolders.add(
 						read(reader, context)
 					)
 					assetName == ScriptReader.ASSET_NAME -> scripts.add(

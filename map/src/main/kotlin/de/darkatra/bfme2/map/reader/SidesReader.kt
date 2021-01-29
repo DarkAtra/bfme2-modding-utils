@@ -4,7 +4,7 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.Player
 import de.darkatra.bfme2.readBoolean
-import de.darkatra.bfme2.readInt
+import de.darkatra.bfme2.readUInt
 import org.apache.commons.io.input.CountingInputStream
 
 class SidesReader(
@@ -15,8 +15,8 @@ class SidesReader(
 
 	companion object {
 		const val ASSET_NAME = "SidesList"
-		const val VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK = 5
-		const val VERSION_WITH_UNKNOWN_FLAG = 6
+		const val VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK = 5u
+		const val VERSION_WITH_UNKNOWN_FLAG = 6u
 	}
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
@@ -24,7 +24,7 @@ class SidesReader(
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
 			// TODO: what is this? is `false` a reasonable default?
-			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG.toUShort()) {
+			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG) {
 				true -> reader.readBoolean()
 				else -> false
 			}
@@ -32,10 +32,10 @@ class SidesReader(
 				unknown = unknown
 			)
 
-			val numberOfPlayers = reader.readInt()
+			val numberOfPlayers = reader.readUInt()
 
 			val players = mutableListOf<Player>()
-			for (i in 0 until numberOfPlayers step 1) {
+			for (i in 0u until numberOfPlayers step 1) {
 				players.add(
 					playerReader.read(reader, context)
 				)
@@ -45,7 +45,7 @@ class SidesReader(
 			)
 
 			// version 5 or above has data for teams and scripts in a separate top-level chunk
-			if (version >= VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK.toUShort()) {
+			if (version >= VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK) {
 				return@readAsset
 			}
 

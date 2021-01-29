@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.map
 
 data class HeightMapBorder(
-	val x1: Int = 0,
-	val y1: Int = 0,
-	val x2: Int,
-	val y2: Int,
+	val x1: UInt = 0u,
+	val y1: UInt = 0u,
+	val x2: UInt,
+	val y2: UInt,
 )

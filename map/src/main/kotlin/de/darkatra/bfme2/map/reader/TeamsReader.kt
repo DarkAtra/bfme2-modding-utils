@@ -2,7 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.Team
-import de.darkatra.bfme2.readInt
+import de.darkatra.bfme2.readUInt
 import org.apache.commons.io.input.CountingInputStream
 
 class TeamsReader(
@@ -17,10 +17,10 @@ class TeamsReader(
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) {
 
-			val numberOfTeams = reader.readInt()
+			val numberOfTeams = reader.readUInt()
 
 			val teams = mutableListOf<Team>()
-			for (i in 0 until numberOfTeams step 1) {
+			for (i in 0u until numberOfTeams step 1) {
 				teams.add(
 					Team(
 						properties = propertiesReader.read(reader, context)
