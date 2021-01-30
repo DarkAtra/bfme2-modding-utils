@@ -13,7 +13,7 @@ import kotlin.math.min
 // TODO: something is broken, compare with OpenSages implementation and fix it
 class RefPackInputStream(
 	inputStream: InputStream
-) : BufferedInputStream(inputStream) {
+) : BufferedInputStream(MemorizingInputStream(inputStream)) {
 
 	companion object {
 		private const val MAX_REFERENCED_DATA_DISTANCE = 131072
@@ -88,7 +88,6 @@ class RefPackInputStream(
 
 	private fun execute2ByteCommand(byte1: Int) {
 		val byte2 = `in`.read()
-		println("Read 2 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}]")
 		val proceedingDataLength = byte1 and 0x03
 		copyProceeding(proceedingDataLength)
 		val referencedDataLength = ((byte1 and 0x1C) shr 2) + 3
@@ -99,7 +98,6 @@ class RefPackInputStream(
 	private fun execute3ByteCommand(byte1: Int) {
 		val byte2 = `in`.read()
 		val byte3 = `in`.read()
-		println("Read 3 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}, ${byte3.toUByte()}]")
 		val proceedingDataLength: Int = byte2 and 0xC0 shr 6
 		copyProceeding(proceedingDataLength)
 		val referencedDataLength = (byte1 and 0x3F) + 4
@@ -111,7 +109,6 @@ class RefPackInputStream(
 		val byte2 = `in`.read()
 		val byte3 = `in`.read()
 		val byte4 = `in`.read()
-		println("Read 4 byte command: [${byte1.toUByte()}, ${byte2.toUByte()}, ${byte3.toUByte()}, ${byte4.toUByte()}]")
 		val proceedingDataLength = byte1 and 0x03
 		copyProceeding(proceedingDataLength)
 		val referencedDataLength: Int = ((byte1 and 0x0C) shl 6) + byte4 + 5
@@ -120,7 +117,6 @@ class RefPackInputStream(
 	}
 
 	private fun execute1ByteCommand(byte1: Int) {
-		println("Read 1 byte command: [${byte1.toUByte()}]")
 		val proceedingDataLength = ((byte1 and 0x1F) + 1) shl 2
 		copyProceeding(proceedingDataLength)
 	}
@@ -168,9 +164,7 @@ class RefPackInputStream(
 			bytesRead += `in`.read(buf, 0, count - numBytesToWriteAtEnd)
 			bytesRead
 		} else {
-			`in`.read(buf, offset % WINDOW_SIZE, count).also {
-				println("Read $it bytes: ${buf.slice(offset until offset + count).map(Byte::toUByte)}")
-			}
+			`in`.read(buf, offset % WINDOW_SIZE, count)
 		}
 	}
 

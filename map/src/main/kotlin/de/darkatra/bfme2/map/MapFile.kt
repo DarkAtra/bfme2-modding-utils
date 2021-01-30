@@ -9,7 +9,7 @@ package de.darkatra.bfme2.map
 data class MapFile(
 	// TODO: add version fields
 	val assetList: List<AssetListItem>,
-//	val blendTileData: BlendTileData,
+	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
 	val globalVersion: UShort,
 	val heightMap: HeightMap,
@@ -23,6 +23,7 @@ data class MapFile(
 
 	class Builder {
 		private var assetList: List<AssetListItem>? = null
+		private var blendTileData: BlendTileData? = null
 		private var buildLists: List<BuildList>? = null
 		private var globalVersion: UShort? = null
 		private var heightMap: HeightMap? = null
@@ -34,6 +35,7 @@ data class MapFile(
 		private var worldSettings: List<Property>? = null
 
 		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
+		fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
@@ -46,6 +48,7 @@ data class MapFile(
 
 		fun build() = MapFile(
 			assetList = assetList ?: throwIllegalStateExceptionForField("assetList"),
+			blendTileData = blendTileData ?: throwIllegalStateExceptionForField("blendTileData"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
 			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
