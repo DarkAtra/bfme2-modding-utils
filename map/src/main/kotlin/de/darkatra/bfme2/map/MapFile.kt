@@ -18,7 +18,9 @@ data class MapFile(
 	val objects: List<MapObject>,
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
+	val polygonTriggers: List<PolygonTrigger>,
 	val teams: List<Team>,
+	val triggerAreas: List<TriggerArea>,
 	val unknown: Boolean,
 	val worldSettings: List<Property>
 ) {
@@ -34,7 +36,9 @@ data class MapFile(
 		private var objects: List<MapObject>? = null
 		private var players: List<Player>? = null
 		private var playerScripts: List<PlayerScript>? = null
+		private var polygonTriggers: List<PolygonTrigger>? = null
 		private var teams: List<Team>? = null
+		private var triggerAreas: List<TriggerArea>? = null
 		private var unknown: Boolean? = null
 		private var worldSettings: List<Property>? = null
 
@@ -48,7 +52,9 @@ data class MapFile(
 		fun objects(objects: List<MapObject>) = apply { this.objects = objects }
 		fun players(players: List<Player>) = apply { this.players = players }
 		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
+		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>) = apply { this.polygonTriggers = polygonTriggers }
 		fun teams(teams: List<Team>) = apply { this.teams = teams }
+		fun triggerAreas(triggerAreas: List<TriggerArea>) = apply { this.triggerAreas = triggerAreas }
 		fun unknown(unknown: Boolean) = apply { this.unknown = unknown }
 		fun worldSettings(worldSettings: List<Property>) = apply { this.worldSettings = worldSettings }
 
@@ -63,7 +69,9 @@ data class MapFile(
 			objects = objects ?: throwIllegalStateExceptionForField("objects"),
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),
+			polygonTriggers = polygonTriggers ?: throwIllegalStateExceptionForField("polygonTriggers"),
 			teams = teams ?: throwIllegalStateExceptionForField("teams"),
+			triggerAreas = triggerAreas ?: throwIllegalStateExceptionForField("triggerAreas"),
 			unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),
 			worldSettings = worldSettings ?: throwIllegalStateExceptionForField("worldSettings")
 		)

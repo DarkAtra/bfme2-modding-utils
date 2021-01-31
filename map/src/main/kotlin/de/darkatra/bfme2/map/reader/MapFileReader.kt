@@ -35,7 +35,9 @@ class MapFileReader {
 	private val objectsReader = ObjectsReader(propertiesReader)
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
 	private val playerScriptsReader = PlayerScriptsReader()
+	private val polygonTriggersReader = PolygonTriggersReader()
 	private val teamsReader = TeamsReader(propertiesReader)
+	private val triggerAreaReader = TriggerAreasReader()
 	private val sidesReader = SidesReader(playerReader, playerScriptsReader, teamsReader)
 	private val worldSettingsReader = WorldSettingsReader(propertiesReader)
 
@@ -115,8 +117,10 @@ class MapFileReader {
 					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
 					ObjectsReader.ASSET_NAME -> objectsReader
 					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
+					PolygonTriggersReader.ASSET_NAME -> polygonTriggersReader
 					SidesReader.ASSET_NAME -> sidesReader
 					TeamsReader.ASSET_NAME -> teamsReader
+					TriggerAreasReader.ASSET_NAME -> triggerAreaReader
 					WorldSettingsReader.ASSET_NAME -> worldSettingsReader
 					// TODO: implement the remaining readers... (see OpenFeign)
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
