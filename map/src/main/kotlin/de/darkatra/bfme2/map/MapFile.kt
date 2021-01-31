@@ -12,6 +12,7 @@ data class MapFile(
 	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
 	val globalVersion: UShort,
+	val globalWaterSettings: GlobalWaterSettings,
 	val heightMap: HeightMap,
 	val libraryMaps: List<LibraryMaps>,
 	val multiplayerPositions: List<MultiplayerPosition>,
@@ -30,6 +31,7 @@ data class MapFile(
 		private var blendTileData: BlendTileData? = null
 		private var buildLists: List<BuildList>? = null
 		private var globalVersion: UShort? = null
+		private var globalWaterSettings: GlobalWaterSettings? = null
 		private var heightMap: HeightMap? = null
 		private var libraryMaps: List<LibraryMaps>? = null
 		private var multiplayerPositions: List<MultiplayerPosition>? = null
@@ -46,6 +48,7 @@ data class MapFile(
 		fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
+		fun globalWaterSettings(globalWaterSettings: GlobalWaterSettings) = apply { this.globalWaterSettings = globalWaterSettings }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
 		fun libraryMaps(libraryMaps: List<LibraryMaps>) = apply { this.libraryMaps = libraryMaps }
 		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>) = apply { this.multiplayerPositions = multiplayerPositions }
@@ -63,6 +66,7 @@ data class MapFile(
 			blendTileData = blendTileData ?: throwIllegalStateExceptionForField("blendTileData"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
+			globalWaterSettings = globalWaterSettings ?: throwIllegalStateExceptionForField("globalWaterSettings"),
 			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
 			libraryMaps = libraryMaps ?: throwIllegalStateExceptionForField("libraryMaps"),
 			multiplayerPositions = multiplayerPositions ?: throwIllegalStateExceptionForField("multiplayerPositions"),

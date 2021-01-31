@@ -29,6 +29,7 @@ class MapFileReader {
 	private val buildListReader = BuildListReader(propertyKeyReader)
 	private val buildLists = BuildListsReader(buildListReader)
 	private val globalVersionReader = GlobalVersionReader()
+	private val globalWaterSettingsReader = GlobalWaterSettingsReader()
 	private val heightMapReader = HeightMapReader()
 	private val libraryMapsListReader = LibraryMapsListReader()
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
@@ -112,6 +113,7 @@ class MapFileReader {
 					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
 					BuildListsReader.ASSET_NAME -> buildLists
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
+					GlobalWaterSettingsReader.ASSET_NAME -> globalWaterSettingsReader
 					HeightMapReader.ASSET_NAME -> heightMapReader
 					LibraryMapsListReader.ASSET_NAME -> libraryMapsListReader
 					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
