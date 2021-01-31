@@ -13,7 +13,7 @@ import kotlin.math.min
 // TODO: something is broken, compare with OpenSages implementation and fix it
 class RefPackInputStream(
 	inputStream: InputStream
-) : BufferedInputStream(MemorizingInputStream(inputStream)) {
+) : BufferedInputStream(MemorizingInputStream(inputStream, 50)) {
 
 	companion object {
 		private const val MAX_REFERENCED_DATA_DISTANCE = 131072

@@ -30,7 +30,9 @@ class MapFileReader {
 	private val buildLists = BuildListsReader(buildListReader)
 	private val globalVersionReader = GlobalVersionReader()
 	private val heightMapReader = HeightMapReader()
+	private val libraryMapsListReader = LibraryMapsListReader()
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
+	private val objectsReader = ObjectsReader(propertiesReader)
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
 	private val playerScriptsReader = PlayerScriptsReader()
 	private val teamsReader = TeamsReader(propertiesReader)
@@ -109,7 +111,9 @@ class MapFileReader {
 					BuildListsReader.ASSET_NAME -> buildLists
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
 					HeightMapReader.ASSET_NAME -> heightMapReader
+					LibraryMapsListReader.ASSET_NAME -> libraryMapsListReader
 					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
+					ObjectsReader.ASSET_NAME -> objectsReader
 					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
 					SidesReader.ASSET_NAME -> sidesReader
 					TeamsReader.ASSET_NAME -> teamsReader
@@ -154,7 +158,7 @@ class MapFileReader {
 			// unread 4 bytes to make it possible to read them again when actually parsing the map data
 			UNCOMPRESSED_FOUR_CC -> pushbackInputStream.also { it.unread(fourCCBytes) }
 			// skip 4 size bytes, we don't need that information
-			REFPACK_FOUR_CC -> MemorizingInputStream(RefPackInputStream(SkippingInputStream(pushbackInputStream, 4)))
+			REFPACK_FOUR_CC -> MemorizingInputStream(RefPackInputStream(SkippingInputStream(pushbackInputStream, 4)), 50)
 			// skip 4 size bytes, we don't need that information
 			ZLIB_FOUR_CC -> InflaterInputStream(SkippingInputStream(pushbackInputStream, 4))
 			else -> throw UnsupportedEncodingException("Encoding is not supported.")

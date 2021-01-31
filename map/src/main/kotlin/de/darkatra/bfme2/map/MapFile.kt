@@ -4,7 +4,7 @@ package de.darkatra.bfme2.map
  * Represents one .map file, but is not tightly coupled to the serialization format for a .map file.
  * This makes it easier to work with the data, as it does not depend on the [version][globalVersion] of the serialization format.
  *
- * Can be serialized and deserialized via [MapFileWriter][de.darkatra.bfme2.map.reader.MapFileWriter] and [MapFileReader][de.darkatra.bfme2.map.reader.MapFileReader]
+ * Can be serialized and deserialized via [MapFileWriter][de.darkatra.bfme2.map.writer.MapFileWriter] and [MapFileReader][de.darkatra.bfme2.map.reader.MapFileReader]
  */
 data class MapFile(
 	// TODO: add version fields
@@ -13,7 +13,9 @@ data class MapFile(
 	val buildLists: List<BuildList>,
 	val globalVersion: UShort,
 	val heightMap: HeightMap,
+	val libraryMaps: List<LibraryMaps>,
 	val multiplayerPositions: List<MultiplayerPosition>,
+	val objects: List<MapObject>,
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
 	val teams: List<Team>,
@@ -27,7 +29,9 @@ data class MapFile(
 		private var buildLists: List<BuildList>? = null
 		private var globalVersion: UShort? = null
 		private var heightMap: HeightMap? = null
+		private var libraryMaps: List<LibraryMaps>? = null
 		private var multiplayerPositions: List<MultiplayerPosition>? = null
+		private var objects: List<MapObject>? = null
 		private var players: List<Player>? = null
 		private var playerScripts: List<PlayerScript>? = null
 		private var teams: List<Team>? = null
@@ -39,7 +43,9 @@ data class MapFile(
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
+		fun libraryMaps(libraryMaps: List<LibraryMaps>) = apply { this.libraryMaps = libraryMaps }
 		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>) = apply { this.multiplayerPositions = multiplayerPositions }
+		fun objects(objects: List<MapObject>) = apply { this.objects = objects }
 		fun players(players: List<Player>) = apply { this.players = players }
 		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
 		fun teams(teams: List<Team>) = apply { this.teams = teams }
@@ -52,7 +58,9 @@ data class MapFile(
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
 			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
+			libraryMaps = libraryMaps ?: throwIllegalStateExceptionForField("libraryMaps"),
 			multiplayerPositions = multiplayerPositions ?: throwIllegalStateExceptionForField("multiplayerPositions"),
+			objects = objects ?: throwIllegalStateExceptionForField("objects"),
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),
 			teams = teams ?: throwIllegalStateExceptionForField("teams"),

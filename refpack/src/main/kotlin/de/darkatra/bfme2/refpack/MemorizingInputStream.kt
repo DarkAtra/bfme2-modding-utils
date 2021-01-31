@@ -5,10 +5,11 @@ import java.io.FilterInputStream
 import java.io.InputStream
 
 class MemorizingInputStream(
-	inputStream: InputStream
+	inputStream: InputStream,
+	amountToRemember: Int
 ) : FilterInputStream(inputStream) {
 
-	private val lastReadBytes: EvictingQueue<UByte> = EvictingQueue.create(50)
+	private val lastReadBytes: EvictingQueue<UByte> = EvictingQueue.create(amountToRemember)
 
 	override fun read(): Int {
 		return super.read().also {

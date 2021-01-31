@@ -22,7 +22,7 @@ enum class EvaluationIntervalType {
 				4u -> COMPLETE
 				5u -> ANY
 				6u -> FRAME_OR_SECONDS
-				else -> throw ConversionException("Unknown EvaluationIntervalType for int '$uInt'.")
+				else -> throw ConversionException("Unknown EvaluationIntervalType for uInt '$uInt'.")
 			}
 		}
 	}
