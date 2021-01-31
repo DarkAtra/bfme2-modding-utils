@@ -28,15 +28,19 @@ class MapFileReader {
 	private val blendTileDataReader = BlendTileDataReader()
 	private val buildListReader = BuildListReader(propertyKeyReader)
 	private val buildLists = BuildListsReader(buildListReader)
+	private val fogSettingsReader = FogSettingsReader()
 	private val globalVersionReader = GlobalVersionReader()
 	private val globalWaterSettingsReader = GlobalWaterSettingsReader()
 	private val heightMapReader = HeightMapReader()
 	private val libraryMapsListReader = LibraryMapsListReader()
+	private val missionHotSpotsReader = MissionHotSpotsReader()
+	private val missionObjectivesReader = MissionObjectivesReader()
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
 	private val objectsReader = ObjectsReader(propertiesReader)
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
 	private val playerScriptsReader = PlayerScriptsReader()
 	private val polygonTriggersReader = PolygonTriggersReader()
+	private val standingWaterAreasReader = StandingWaterAreasReader()
 	private val teamsReader = TeamsReader(propertiesReader)
 	private val triggerAreaReader = TriggerAreasReader()
 	private val sidesReader = SidesReader(playerReader, playerScriptsReader, teamsReader)
@@ -112,15 +116,19 @@ class MapFileReader {
 					AssetListReader.ASSET_NAME -> assetListReader
 					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
 					BuildListsReader.ASSET_NAME -> buildLists
+					FogSettingsReader.ASSET_NAME -> fogSettingsReader
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
 					GlobalWaterSettingsReader.ASSET_NAME -> globalWaterSettingsReader
 					HeightMapReader.ASSET_NAME -> heightMapReader
 					LibraryMapsListReader.ASSET_NAME -> libraryMapsListReader
+					MissionHotSpotsReader.ASSET_NAME -> missionHotSpotsReader
+					MissionObjectivesReader.ASSET_NAME -> missionObjectivesReader
 					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
 					ObjectsReader.ASSET_NAME -> objectsReader
 					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
 					PolygonTriggersReader.ASSET_NAME -> polygonTriggersReader
 					SidesReader.ASSET_NAME -> sidesReader
+					StandingWaterAreasReader.ASSET_NAME -> standingWaterAreasReader
 					TeamsReader.ASSET_NAME -> teamsReader
 					TriggerAreasReader.ASSET_NAME -> triggerAreaReader
 					WorldSettingsReader.ASSET_NAME -> worldSettingsReader

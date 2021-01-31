@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
-import de.darkatra.bfme2.Point3
+import de.darkatra.bfme2.Point3D
 import de.darkatra.bfme2.Vector2
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.PolygonTrigger
@@ -90,10 +90,10 @@ class PolygonTriggersReader : AssetReader {
 
 		val numberOfPoints = reader.readUInt()
 
-		val points = mutableListOf<Point3>()
+		val points = mutableListOf<Point3D>()
 		for (i in 0u until numberOfPoints step 1) {
 			points.add(
-				Point3(
+				Point3D(
 					x = reader.readInt(),
 					y = reader.readInt(),
 					z = reader.readInt()

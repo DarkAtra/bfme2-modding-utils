@@ -1,6 +1,6 @@
 package de.darkatra.bfme2.map
 
-import de.darkatra.bfme2.Point3
+import de.darkatra.bfme2.Point3D
 import de.darkatra.bfme2.Vector2
 import java.awt.Color
 
@@ -21,7 +21,7 @@ data class PolygonTrigger(
 	val unknown: Byte?,
 	val riverColor: Color?,
 	val riverAlpha: Float?,
-	val points: List<Point3>
+	val points: List<Point3D>
 ) {
 
 	class Builder {
@@ -41,7 +41,7 @@ data class PolygonTrigger(
 		private var unknown: Byte? = null
 		private var riverColor: Color? = null
 		private var riverAlpha: Float? = null
-		private var points: List<Point3>? = null
+		private var points: List<Point3D>? = null
 
 		fun name(name: String) = apply { this.name = name }
 		fun layerName(layerName: String?) = apply { this.layerName = layerName }
@@ -59,7 +59,7 @@ data class PolygonTrigger(
 		fun unknown(unknown: Byte) = apply { this.unknown = unknown }
 		fun riverColor(riverColor: Color) = apply { this.riverColor = riverColor }
 		fun riverAlpha(riverAlpha: Float) = apply { this.riverAlpha = riverAlpha }
-		fun points(points: List<Point3>) = apply { this.points = points }
+		fun points(points: List<Point3D>) = apply { this.points = points }
 
 		fun build() = PolygonTrigger(
 			name = name ?: throwIllegalStateExceptionForField("name"),
