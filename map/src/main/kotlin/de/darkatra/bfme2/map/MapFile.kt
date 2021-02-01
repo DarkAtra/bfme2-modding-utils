@@ -12,6 +12,7 @@ data class MapFile(
 	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
 	val fogSettings: FogSettings,
+	val globalLighting: GlobalLighting,
 	val globalVersion: UShort,
 	val globalWaterSettings: GlobalWaterSettings,
 	val heightMap: HeightMap,
@@ -23,7 +24,9 @@ data class MapFile(
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
 	val polygonTriggers: List<PolygonTrigger>,
+	val riverAreas: List<RiverArea>,
 	val standingWaterAreas: List<StandingWaterArea>,
+	val standingWaveAreas: List<StandingWaveArea>,
 	val teams: List<Team>,
 	val triggerAreas: List<TriggerArea>,
 	val unknown: Boolean,
@@ -35,6 +38,7 @@ data class MapFile(
 		private var blendTileData: BlendTileData? = null
 		private var buildLists: List<BuildList>? = null
 		private var fogSettings: FogSettings? = null
+		private var globalLighting: GlobalLighting? = null
 		private var globalVersion: UShort? = null
 		private var globalWaterSettings: GlobalWaterSettings? = null
 		private var heightMap: HeightMap? = null
@@ -46,7 +50,9 @@ data class MapFile(
 		private var players: List<Player>? = null
 		private var playerScripts: List<PlayerScript>? = null
 		private var polygonTriggers: List<PolygonTrigger>? = null
+		private var riverAreas: List<RiverArea>? = null
 		private var standingWaterAreas: List<StandingWaterArea>? = null
+		private var standingWaveAreas: List<StandingWaveArea>? = null
 		private var teams: List<Team>? = null
 		private var triggerAreas: List<TriggerArea>? = null
 		private var unknown: Boolean? = null
@@ -56,6 +62,7 @@ data class MapFile(
 		fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun fogSettings(fogSettings: FogSettings) = apply { this.fogSettings = fogSettings }
+		fun globalLighting(globalLighting: GlobalLighting) = apply { this.globalLighting = globalLighting }
 		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
 		fun globalWaterSettings(globalWaterSettings: GlobalWaterSettings) = apply { this.globalWaterSettings = globalWaterSettings }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
@@ -67,7 +74,9 @@ data class MapFile(
 		fun players(players: List<Player>) = apply { this.players = players }
 		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
 		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>) = apply { this.polygonTriggers = polygonTriggers }
+		fun riverAreas(riverAreas: List<RiverArea>) = apply { this.riverAreas = riverAreas }
 		fun standingWaterAreas(standingWaterAreas: List<StandingWaterArea>) = apply { this.standingWaterAreas = standingWaterAreas }
+		fun standingWaveAreas(standingWaveAreas: List<StandingWaveArea>) = apply { this.standingWaveAreas = standingWaveAreas }
 		fun teams(teams: List<Team>) = apply { this.teams = teams }
 		fun triggerAreas(triggerAreas: List<TriggerArea>) = apply { this.triggerAreas = triggerAreas }
 		fun unknown(unknown: Boolean) = apply { this.unknown = unknown }
@@ -78,6 +87,7 @@ data class MapFile(
 			blendTileData = blendTileData ?: throwIllegalStateExceptionForField("blendTileData"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			fogSettings = fogSettings ?: throwIllegalStateExceptionForField("fogSettings"),
+			globalLighting = globalLighting ?: throwIllegalStateExceptionForField("globalLighting"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
 			globalWaterSettings = globalWaterSettings ?: throwIllegalStateExceptionForField("globalWaterSettings"),
 			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
@@ -89,7 +99,9 @@ data class MapFile(
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),
 			polygonTriggers = polygonTriggers ?: throwIllegalStateExceptionForField("polygonTriggers"),
+			riverAreas = riverAreas ?: throwIllegalStateExceptionForField("riverAreas"),
 			standingWaterAreas = standingWaterAreas ?: throwIllegalStateExceptionForField("standingWaterAreas"),
+			standingWaveAreas = standingWaveAreas ?: throwIllegalStateExceptionForField("standingWaveAreas"),
 			teams = teams ?: throwIllegalStateExceptionForField("teams"),
 			triggerAreas = triggerAreas ?: throwIllegalStateExceptionForField("triggerAreas"),
 			unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),

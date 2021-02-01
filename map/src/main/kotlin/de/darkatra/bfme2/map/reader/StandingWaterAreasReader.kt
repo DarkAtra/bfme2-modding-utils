@@ -33,6 +33,7 @@ class StandingWaterAreasReader : AssetReader {
 
 	}
 
+	@Suppress("DuplicatedCode")
 	private fun readStandingWaterArea(reader: CountingInputStream): StandingWaterArea {
 
 		val id = reader.readUInt()

@@ -2,22 +2,17 @@ package de.darkatra.bfme2.map
 
 import de.darkatra.bfme2.ConversionException
 
-enum class TileFlammability {
-	FIRE_RESISTANT,
-	GRASS,
-	HIGHLY_FLAMMABLE,
-	UNDEFINED;
+enum class TileFlammability(
+	val byte: Byte
+) {
+	FIRE_RESISTANT(0),
+	GRASS(1),
+	HIGHLY_FLAMMABLE(2),
+	UNDEFINED(3);
 
 	companion object {
-
 		fun ofByte(byte: Byte): TileFlammability {
-			return when (byte) {
-				0.toByte() -> FIRE_RESISTANT
-				1.toByte() -> GRASS
-				2.toByte() -> HIGHLY_FLAMMABLE
-				3.toByte() -> UNDEFINED
-				else -> throw ConversionException("Unknown TileFlammability for byte '$byte'.")
-			}
+			return values().find { it.byte == byte } ?: throw ConversionException("Unknown TileFlammability for byte '$byte'.")
 		}
 	}
 }

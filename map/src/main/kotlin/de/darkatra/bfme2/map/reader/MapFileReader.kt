@@ -40,6 +40,7 @@ class MapFileReader {
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
 	private val playerScriptsReader = PlayerScriptsReader()
 	private val polygonTriggersReader = PolygonTriggersReader()
+	private val riverAreasReader = RiverAreasReader()
 	private val standingWaterAreasReader = StandingWaterAreasReader()
 	private val teamsReader = TeamsReader(propertiesReader)
 	private val triggerAreaReader = TriggerAreasReader()
@@ -127,6 +128,7 @@ class MapFileReader {
 					ObjectsReader.ASSET_NAME -> objectsReader
 					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
 					PolygonTriggersReader.ASSET_NAME -> polygonTriggersReader
+					RiverAreasReader.ASSET_NAME -> riverAreasReader
 					SidesReader.ASSET_NAME -> sidesReader
 					StandingWaterAreasReader.ASSET_NAME -> standingWaterAreasReader
 					TeamsReader.ASSET_NAME -> teamsReader

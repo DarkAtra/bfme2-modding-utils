@@ -32,6 +32,7 @@ class TriggerAreasReader : AssetReader {
 		}
 	}
 
+	@Suppress("DuplicatedCode")
 	private fun readTriggerArea(reader: CountingInputStream, context: MapFileParseContext): TriggerArea {
 
 		val name = reader.readUShortPrefixedString()

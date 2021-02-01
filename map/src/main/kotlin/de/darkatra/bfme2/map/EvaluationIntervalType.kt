@@ -2,28 +2,20 @@ package de.darkatra.bfme2.map
 
 import de.darkatra.bfme2.ConversionException
 
-enum class EvaluationIntervalType {
-	OPERATION,
-	MOVE_FORCES,
-	BATTLE,
-	UPKEEP,
-	COMPLETE,
-	ANY,
-	FRAME_OR_SECONDS;
+enum class EvaluationIntervalType(
+	val uInt: UInt
+) {
+	OPERATION(0u),
+	MOVE_FORCES(1u),
+	BATTLE(2u),
+	UPKEEP(3u),
+	COMPLETE(4u),
+	ANY(5u),
+	FRAME_OR_SECONDS(6u);
 
 	companion object {
-
 		fun ofUInt(uInt: UInt): EvaluationIntervalType {
-			return when (uInt) {
-				0u -> OPERATION
-				1u -> MOVE_FORCES
-				2u -> BATTLE
-				3u -> UPKEEP
-				4u -> COMPLETE
-				5u -> ANY
-				6u -> FRAME_OR_SECONDS
-				else -> throw ConversionException("Unknown EvaluationIntervalType for uInt '$uInt'.")
-			}
+			return values().find { it.uInt == uInt } ?: throw ConversionException("Unknown EvaluationIntervalType for uInt '$uInt'.")
 		}
 	}
 }

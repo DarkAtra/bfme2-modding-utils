@@ -16,7 +16,7 @@ data class RiverArea(
 	val color: Color,
 	val alpha: Float,
 	val waterHeight: UInt,
-	val riverType: String,
+	val riverType: String?,
 	val minimumWaterLod: String,
-	val lines: Line2D
+	val lines: List<Line2D>
 )
