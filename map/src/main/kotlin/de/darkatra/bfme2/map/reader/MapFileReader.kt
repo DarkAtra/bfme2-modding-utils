@@ -29,6 +29,7 @@ class MapFileReader {
 	private val buildListReader = BuildListReader(propertyKeyReader)
 	private val buildLists = BuildListsReader(buildListReader)
 	private val fogSettingsReader = FogSettingsReader()
+	private val globalLightingReader = GlobalLightingReader()
 	private val globalVersionReader = GlobalVersionReader()
 	private val globalWaterSettingsReader = GlobalWaterSettingsReader()
 	private val heightMapReader = HeightMapReader()
@@ -42,6 +43,7 @@ class MapFileReader {
 	private val polygonTriggersReader = PolygonTriggersReader()
 	private val riverAreasReader = RiverAreasReader()
 	private val standingWaterAreasReader = StandingWaterAreasReader()
+	private val standingWaveAreasReader = StandingWaveAreasReader()
 	private val teamsReader = TeamsReader(propertiesReader)
 	private val triggerAreaReader = TriggerAreasReader()
 	private val sidesReader = SidesReader(playerReader, playerScriptsReader, teamsReader)
@@ -118,6 +120,7 @@ class MapFileReader {
 					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
 					BuildListsReader.ASSET_NAME -> buildLists
 					FogSettingsReader.ASSET_NAME -> fogSettingsReader
+					GlobalLightingReader.ASSET_NAME -> globalLightingReader
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader
 					GlobalWaterSettingsReader.ASSET_NAME -> globalWaterSettingsReader
 					HeightMapReader.ASSET_NAME -> heightMapReader
@@ -131,6 +134,7 @@ class MapFileReader {
 					RiverAreasReader.ASSET_NAME -> riverAreasReader
 					SidesReader.ASSET_NAME -> sidesReader
 					StandingWaterAreasReader.ASSET_NAME -> standingWaterAreasReader
+					StandingWaveAreasReader.ASSET_NAME -> standingWaveAreasReader
 					TeamsReader.ASSET_NAME -> teamsReader
 					TriggerAreasReader.ASSET_NAME -> triggerAreaReader
 					WorldSettingsReader.ASSET_NAME -> worldSettingsReader

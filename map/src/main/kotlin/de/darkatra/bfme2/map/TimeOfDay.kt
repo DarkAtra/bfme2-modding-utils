@@ -11,8 +11,8 @@ enum class TimeOfDay(
 	NIGHT(4u);
 
 	companion object {
-		fun ofUInt(uInt: UInt) {
-			values().find { it.uInt == uInt } ?: throw ConversionException("Unknown TimeOfDay for uInt '$uInt'.")
+		fun ofUInt(uInt: UInt): TimeOfDay {
+			return values().find { it.uInt == uInt } ?: throw ConversionException("Unknown TimeOfDay for uInt '$uInt'.")
 		}
 	}
 }
