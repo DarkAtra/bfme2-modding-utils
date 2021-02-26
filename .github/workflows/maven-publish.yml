@@ -17,7 +17,7 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Update Release Version
-        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ github.event.release.tag_name }}
         
       - name: Commit Release Version
         run: |
