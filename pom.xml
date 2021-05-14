@@ -130,6 +130,7 @@
 				<configuration>
 					<jvmTarget>${java.version}</jvmTarget>
 					<args>
+						<arg>-Xjsr305=strict</arg>
 						<arg>-Xopt-in=kotlin.ExperimentalUnsignedTypes</arg>
 					</args>
 				</configuration>
