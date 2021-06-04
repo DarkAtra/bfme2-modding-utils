@@ -24,6 +24,7 @@ data class MapFile(
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
 	val polygonTriggers: List<PolygonTrigger>,
+	val postEffects: List<PostEffect>,
 	val riverAreas: List<RiverArea>,
 	val standingWaterAreas: List<StandingWaterArea>,
 	val standingWaveAreas: List<StandingWaveArea>,
@@ -50,6 +51,7 @@ data class MapFile(
 		private var players: List<Player>? = null
 		private var playerScripts: List<PlayerScript>? = null
 		private var polygonTriggers: List<PolygonTrigger>? = null
+		private var postEffects: List<PostEffect>? = null
 		private var riverAreas: List<RiverArea>? = null
 		private var standingWaterAreas: List<StandingWaterArea>? = null
 		private var standingWaveAreas: List<StandingWaveArea>? = null
@@ -74,6 +76,7 @@ data class MapFile(
 		fun players(players: List<Player>) = apply { this.players = players }
 		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
 		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>) = apply { this.polygonTriggers = polygonTriggers }
+		fun postEffects(postEffects: List<PostEffect>) = apply { this.postEffects = postEffects }
 		fun riverAreas(riverAreas: List<RiverArea>) = apply { this.riverAreas = riverAreas }
 		fun standingWaterAreas(standingWaterAreas: List<StandingWaterArea>) = apply { this.standingWaterAreas = standingWaterAreas }
 		fun standingWaveAreas(standingWaveAreas: List<StandingWaveArea>) = apply { this.standingWaveAreas = standingWaveAreas }
@@ -99,6 +102,7 @@ data class MapFile(
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),
 			polygonTriggers = polygonTriggers ?: throwIllegalStateExceptionForField("polygonTriggers"),
+			postEffects = postEffects ?: throwIllegalStateExceptionForField("postEffects"),
 			riverAreas = riverAreas ?: throwIllegalStateExceptionForField("riverAreas"),
 			standingWaterAreas = standingWaterAreas ?: throwIllegalStateExceptionForField("standingWaterAreas"),
 			standingWaveAreas = standingWaveAreas ?: throwIllegalStateExceptionForField("standingWaveAreas"),

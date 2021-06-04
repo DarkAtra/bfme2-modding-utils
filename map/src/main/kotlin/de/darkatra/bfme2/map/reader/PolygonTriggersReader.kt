@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Point3D
 import de.darkatra.bfme2.Vector2
@@ -14,7 +15,6 @@ import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
-import java.awt.Color
 
 class PolygonTriggersReader : AssetReader {
 
@@ -66,9 +66,9 @@ class PolygonTriggersReader : AssetReader {
 			polygonTriggerBuilder.useAdditiveBlending(reader.readBoolean())
 			polygonTriggerBuilder.riverColor(
 				Color(
-					reader.readByte().toInt(),
-					reader.readByte().toInt(),
-					reader.readByte().toInt()
+					r = reader.readByte().toInt(),
+					g = reader.readByte().toInt(),
+					b = reader.readByte().toInt()
 				)
 			)
 

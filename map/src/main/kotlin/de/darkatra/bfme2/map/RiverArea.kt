@@ -1,6 +1,6 @@
 package de.darkatra.bfme2.map
 
-import java.awt.Color
+import de.darkatra.bfme2.Color
 import java.awt.geom.Line2D
 
 data class RiverArea(

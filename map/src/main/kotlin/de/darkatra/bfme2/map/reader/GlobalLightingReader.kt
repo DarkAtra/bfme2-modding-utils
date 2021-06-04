@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.GlobalLighting
 import de.darkatra.bfme2.map.MapFile
@@ -7,7 +8,6 @@ import de.darkatra.bfme2.map.TimeOfDay
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readUInt
 import org.apache.commons.io.input.CountingInputStream
-import java.awt.Color
 import java.util.EnumMap
 
 class GlobalLightingReader : AssetReader {
@@ -35,10 +35,10 @@ class GlobalLightingReader : AssetReader {
 			globalLightingBuilder.shadowColor(
 				reader.readUInt().let {
 					Color(
-						((it shr 16) and 0xFFu).toInt(),
-						((it shr 8) and 0xFFu).toInt(),
-						(it and 0xFFu).toInt(),
-						((it shr 24) and 0xFFu).toInt()
+						r = ((it shr 16) and 0xFFu).toInt(),
+						g = ((it shr 8) and 0xFFu).toInt(),
+						b = (it and 0xFFu).toInt(),
+						a = ((it shr 24) and 0xFFu).toInt()
 					)
 				}
 			)
@@ -60,10 +60,10 @@ class GlobalLightingReader : AssetReader {
 				globalLightingBuilder.unknown3(
 					reader.readUInt().let {
 						Color(
-							((it shr 16) and 0xFFu).toInt(),
-							((it shr 8) and 0xFFu).toInt(),
-							(it and 0xFFu).toInt(),
-							((it shr 24) and 0xFFu).toInt()
+							r = ((it shr 16) and 0xFFu).toInt(),
+							g = ((it shr 8) and 0xFFu).toInt(),
+							b = (it and 0xFFu).toInt(),
+							a = ((it shr 24) and 0xFFu).toInt()
 						)
 					}
 				)

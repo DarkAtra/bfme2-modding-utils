@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.map
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Point3D
 import de.darkatra.bfme2.Vector2
-import java.awt.Color
 
 data class PolygonTrigger(
 	val name: String,

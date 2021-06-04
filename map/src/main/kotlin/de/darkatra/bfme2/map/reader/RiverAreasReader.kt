@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.RiverArea
@@ -9,7 +10,6 @@ import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
-import java.awt.Color
 import java.awt.geom.Line2D
 
 class RiverAreasReader : AssetReader {

@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
-import java.awt.Color
 import java.util.EnumMap
 
 data class GlobalLighting(
