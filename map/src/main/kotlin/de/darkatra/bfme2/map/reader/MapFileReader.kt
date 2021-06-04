@@ -27,7 +27,10 @@ class MapFileReader {
 	private val assetListReader = AssetListReader()
 	private val blendTileDataReader = BlendTileDataReader()
 	private val buildListReader = BuildListReader(propertyKeyReader)
-	private val buildLists = BuildListsReader(buildListReader)
+	private val buildListsReader = BuildListsReader(buildListReader)
+	private val camerasAnimationsReader = CamerasAnimationsReader()
+	private val camerasReader = CamerasReader()
+	private val environmentDataReader = EnvironmentDataReader()
 	private val fogSettingsReader = FogSettingsReader()
 	private val globalLightingReader = GlobalLightingReader()
 	private val globalVersionReader = GlobalVersionReader()
@@ -119,7 +122,10 @@ class MapFileReader {
 					// TODO: find a better name for ASSET_NAME
 					AssetListReader.ASSET_NAME -> assetListReader
 					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
-					BuildListsReader.ASSET_NAME -> buildLists
+					BuildListsReader.ASSET_NAME -> buildListsReader
+					CamerasAnimationsReader.ASSET_NAME -> camerasAnimationsReader
+					CamerasReader.ASSET_NAME -> camerasReader
+					EnvironmentDataReader.ASSET_NAME -> environmentDataReader
 					FogSettingsReader.ASSET_NAME -> fogSettingsReader
 					GlobalLightingReader.ASSET_NAME -> globalLightingReader
 					GlobalVersionReader.ASSET_NAME -> globalVersionReader

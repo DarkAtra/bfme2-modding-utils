@@ -23,7 +23,7 @@ class SidesReader(
 
 		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
 
-			// TODO: what is this? is `false` a reasonable default?
+			// TODO: what is this used for? is `false` a reasonable default?
 			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG) {
 				true -> reader.readBoolean()
 				else -> false

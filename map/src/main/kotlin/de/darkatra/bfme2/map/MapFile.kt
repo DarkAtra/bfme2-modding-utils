@@ -11,6 +11,9 @@ data class MapFile(
 	val assetList: List<AssetListItem>,
 	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
+	val cameraAnimations: List<CameraAnimation>,
+	val cameras: List<Camera>,
+	val environmentData: EnvironmentData,
 	val fogSettings: FogSettings,
 	val globalLighting: GlobalLighting,
 	val globalVersion: UShort,
@@ -38,6 +41,9 @@ data class MapFile(
 		private var assetList: List<AssetListItem>? = null
 		private var blendTileData: BlendTileData? = null
 		private var buildLists: List<BuildList>? = null
+		private var cameraAnimations: List<CameraAnimation>? = null
+		private var cameras: List<Camera>? = null
+		private var environmentData: EnvironmentData? = null
 		private var fogSettings: FogSettings? = null
 		private var globalLighting: GlobalLighting? = null
 		private var globalVersion: UShort? = null
@@ -63,6 +69,9 @@ data class MapFile(
 		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
 		fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
+		fun cameraAnimations(cameraAnimations: List<CameraAnimation>) = apply { this.cameraAnimations = cameraAnimations }
+		fun cameras(cameras: List<Camera>) = apply { this.cameras = cameras }
+		fun environmentData(environmentData: EnvironmentData) = apply { this.environmentData = environmentData }
 		fun fogSettings(fogSettings: FogSettings) = apply { this.fogSettings = fogSettings }
 		fun globalLighting(globalLighting: GlobalLighting) = apply { this.globalLighting = globalLighting }
 		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
@@ -89,6 +98,9 @@ data class MapFile(
 			assetList = assetList ?: throwIllegalStateExceptionForField("assetList"),
 			blendTileData = blendTileData ?: throwIllegalStateExceptionForField("blendTileData"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
+			cameraAnimations = cameraAnimations ?: throwIllegalStateExceptionForField("cameraAnimations"),
+			cameras = cameras ?: throwIllegalStateExceptionForField("cameras"),
+			environmentData = environmentData ?: throwIllegalStateExceptionForField("environmentData"),
 			fogSettings = fogSettings ?: throwIllegalStateExceptionForField("fogSettings"),
 			globalLighting = globalLighting ?: throwIllegalStateExceptionForField("globalLighting"),
 			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
