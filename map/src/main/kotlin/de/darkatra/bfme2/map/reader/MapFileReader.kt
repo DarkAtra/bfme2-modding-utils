@@ -9,6 +9,7 @@ import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.MemorizingInputStream
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import org.apache.commons.io.input.CountingInputStream
+import java.io.BufferedInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.PushbackInputStream
@@ -95,7 +96,8 @@ class MapFileReader {
 
 		@JvmStatic
 		fun main(args: Array<String>) {
-			MapFileReader().read(Path.of("Legendary War.txt"))
+			val map = MapFileReader().read(Path.of("Legendary War.map"))
+			println(map)
 		}
 	}
 
@@ -107,20 +109,37 @@ class MapFileReader {
 			throw FileNotFoundException("File '${inputFile.absolutePath}' does not exist.")
 		}
 
-		val inputStream = CountingInputStream(decodeIfNecessary(inputFile.inputStream().buffered()))
+		return read(inputFile.inputStream())
+	}
+
+	fun read(inputStream: InputStream): MapFile {
+		return read(inputStream.buffered())
+	}
+
+	fun read(bufferedInputStream: BufferedInputStream): MapFile {
+
+		if (!bufferedInputStream.markSupported()) {
+			throw IllegalArgumentException("Can only parse InputStreams that support marks.")
+		}
+
+		// TODO: find a better way to determine the size of the actual data
+		bufferedInputStream.mark(Int.MAX_VALUE)
+		val inputStreamSize = decodeIfNecessary(bufferedInputStream).readBytes().size.toLong()
+		bufferedInputStream.reset()
+
+		val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
 
 		val mapBuilder = MapFile.Builder()
 
-		inputStream.use {
-			readAndValidateFourCC(inputStream)
+		countingInputStream.use {
+			readAndValidateFourCC(countingInputStream)
 
-			val assetNames = readAssetNames(inputStream)
+			val assetNames = readAssetNames(countingInputStream)
 
 			val context = MapFileParseContext(assetNames)
-			// TODO: find a better way to determine the size of the actual data
-			context.push(ASSET_NAME, decodeIfNecessary(inputFile.inputStream().buffered()).readBytes().size.toLong())
+			context.push(ASSET_NAME, inputStreamSize)
 
-			readAssets(inputStream, context) { assetName ->
+			readAssets(countingInputStream, context) { assetName ->
 				when (assetName) {
 					// TODO: find a better name for ASSET_NAME
 					AssetListReader.ASSET_NAME -> assetListReader
@@ -156,7 +175,7 @@ class MapFileReader {
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
 				}.also {
 					val timeElapsedToRead = measureTimeMillis {
-						it.read(inputStream, context, mapBuilder)
+						it.read(countingInputStream, context, mapBuilder)
 					}
 					println("Reading $assetName took $timeElapsedToRead millis.")
 				}

@@ -1,6 +1,6 @@
 package de.darkatra.bfme2.map
 
-class MultiplayerPosition(
+data class MultiplayerPosition(
 	val isHuman: Boolean,
 	val isComputer: Boolean,
 	val loadAIScript: Boolean?,
