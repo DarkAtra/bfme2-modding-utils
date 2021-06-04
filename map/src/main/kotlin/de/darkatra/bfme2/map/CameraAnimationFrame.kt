@@ -16,7 +16,6 @@ data class FreeCameraAnimationCameraFrame(
 	override val interpolationType: CameraAnimationFrameInterpolationType
 ) : CameraAnimationFrame(frameIndex, interpolationType)
 
-
 data class LookAtCameraAnimationCameraFrame(
 	val position: Vector3,
 	val roll: Float,

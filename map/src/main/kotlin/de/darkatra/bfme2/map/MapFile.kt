@@ -8,32 +8,35 @@ package de.darkatra.bfme2.map
  */
 data class MapFile(
 	// TODO: add version fields
-	val assetList: List<AssetListItem>,
+	val assetList: List<AssetListItem>?,
 	val blendTileData: BlendTileData,
 	val buildLists: List<BuildList>,
 	val cameraAnimations: List<CameraAnimation>,
 	val cameras: List<Camera>,
+	val castleData: CastleData?,
 	val environmentData: EnvironmentData,
-	val fogSettings: FogSettings,
+	val fogSettings: FogSettings?,
 	val globalLighting: GlobalLighting,
-	val globalVersion: UShort,
-	val globalWaterSettings: GlobalWaterSettings,
+	val globalVersion: UShort?,
+	val globalWaterSettings: GlobalWaterSettings?,
 	val heightMap: HeightMap,
 	val libraryMaps: List<LibraryMaps>,
-	val missionHotSpots: List<MissionHotSpot>,
-	val missionObjectives: List<MissionObjective>,
+	val missionHotSpots: List<MissionHotSpot>?,
+	val missionObjectives: List<MissionObjective>?,
 	val multiplayerPositions: List<MultiplayerPosition>,
 	val objects: List<MapObject>,
 	val players: List<Player>,
 	val playerScripts: List<PlayerScript>,
-	val polygonTriggers: List<PolygonTrigger>,
+	val polygonTriggers: List<PolygonTrigger>?,
 	val postEffects: List<PostEffect>,
 	val riverAreas: List<RiverArea>,
+	val skybox: Skybox?,
 	val standingWaterAreas: List<StandingWaterArea>,
 	val standingWaveAreas: List<StandingWaveArea>,
 	val teams: List<Team>,
 	val triggerAreas: List<TriggerArea>,
 	val unknown: Boolean,
+	val waypointPaths: List<WaypointPath>,
 	val worldSettings: List<Property>
 ) {
 
@@ -43,6 +46,7 @@ data class MapFile(
 		private var buildLists: List<BuildList>? = null
 		private var cameraAnimations: List<CameraAnimation>? = null
 		private var cameras: List<Camera>? = null
+		private var castleData: CastleData? = null
 		private var environmentData: EnvironmentData? = null
 		private var fogSettings: FogSettings? = null
 		private var globalLighting: GlobalLighting? = null
@@ -59,11 +63,13 @@ data class MapFile(
 		private var polygonTriggers: List<PolygonTrigger>? = null
 		private var postEffects: List<PostEffect>? = null
 		private var riverAreas: List<RiverArea>? = null
+		private var skybox: Skybox? = null
 		private var standingWaterAreas: List<StandingWaterArea>? = null
 		private var standingWaveAreas: List<StandingWaveArea>? = null
 		private var teams: List<Team>? = null
 		private var triggerAreas: List<TriggerArea>? = null
 		private var unknown: Boolean? = null
+		private var waypointPaths: List<WaypointPath>? = null
 		private var worldSettings: List<Property>? = null
 
 		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
@@ -71,6 +77,7 @@ data class MapFile(
 		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
 		fun cameraAnimations(cameraAnimations: List<CameraAnimation>) = apply { this.cameraAnimations = cameraAnimations }
 		fun cameras(cameras: List<Camera>) = apply { this.cameras = cameras }
+		fun castleData(castleData: CastleData) = apply { this.castleData = castleData }
 		fun environmentData(environmentData: EnvironmentData) = apply { this.environmentData = environmentData }
 		fun fogSettings(fogSettings: FogSettings) = apply { this.fogSettings = fogSettings }
 		fun globalLighting(globalLighting: GlobalLighting) = apply { this.globalLighting = globalLighting }
@@ -87,40 +94,45 @@ data class MapFile(
 		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>) = apply { this.polygonTriggers = polygonTriggers }
 		fun postEffects(postEffects: List<PostEffect>) = apply { this.postEffects = postEffects }
 		fun riverAreas(riverAreas: List<RiverArea>) = apply { this.riverAreas = riverAreas }
+		fun skybox(skybox: Skybox) = apply { this.skybox = skybox }
 		fun standingWaterAreas(standingWaterAreas: List<StandingWaterArea>) = apply { this.standingWaterAreas = standingWaterAreas }
 		fun standingWaveAreas(standingWaveAreas: List<StandingWaveArea>) = apply { this.standingWaveAreas = standingWaveAreas }
 		fun teams(teams: List<Team>) = apply { this.teams = teams }
 		fun triggerAreas(triggerAreas: List<TriggerArea>) = apply { this.triggerAreas = triggerAreas }
 		fun unknown(unknown: Boolean) = apply { this.unknown = unknown }
+		fun waypointPaths(waypointPaths: List<WaypointPath>) = apply { this.waypointPaths = waypointPaths }
 		fun worldSettings(worldSettings: List<Property>) = apply { this.worldSettings = worldSettings }
 
 		fun build() = MapFile(
-			assetList = assetList ?: throwIllegalStateExceptionForField("assetList"),
+			assetList = assetList,
 			blendTileData = blendTileData ?: throwIllegalStateExceptionForField("blendTileData"),
 			buildLists = buildLists ?: throwIllegalStateExceptionForField("buildLists"),
 			cameraAnimations = cameraAnimations ?: throwIllegalStateExceptionForField("cameraAnimations"),
 			cameras = cameras ?: throwIllegalStateExceptionForField("cameras"),
+			castleData = castleData,
 			environmentData = environmentData ?: throwIllegalStateExceptionForField("environmentData"),
-			fogSettings = fogSettings ?: throwIllegalStateExceptionForField("fogSettings"),
+			fogSettings = fogSettings,
 			globalLighting = globalLighting ?: throwIllegalStateExceptionForField("globalLighting"),
-			globalVersion = globalVersion ?: throwIllegalStateExceptionForField("globalVersion"),
-			globalWaterSettings = globalWaterSettings ?: throwIllegalStateExceptionForField("globalWaterSettings"),
+			globalVersion = globalVersion,
+			globalWaterSettings = globalWaterSettings,
 			heightMap = heightMap ?: throwIllegalStateExceptionForField("heightMap"),
 			libraryMaps = libraryMaps ?: throwIllegalStateExceptionForField("libraryMaps"),
-			missionHotSpots = missionHotSpots ?: throwIllegalStateExceptionForField("missionHotSpots"),
-			missionObjectives = missionObjectives ?: throwIllegalStateExceptionForField("missionObjectives"),
+			missionHotSpots = missionHotSpots,
+			missionObjectives = missionObjectives,
 			multiplayerPositions = multiplayerPositions ?: throwIllegalStateExceptionForField("multiplayerPositions"),
 			objects = objects ?: throwIllegalStateExceptionForField("objects"),
 			players = players ?: throwIllegalStateExceptionForField("players"),
 			playerScripts = playerScripts ?: throwIllegalStateExceptionForField("playerScripts"),
-			polygonTriggers = polygonTriggers ?: throwIllegalStateExceptionForField("polygonTriggers"),
+			polygonTriggers = polygonTriggers,
 			postEffects = postEffects ?: throwIllegalStateExceptionForField("postEffects"),
 			riverAreas = riverAreas ?: throwIllegalStateExceptionForField("riverAreas"),
+			skybox = skybox,
 			standingWaterAreas = standingWaterAreas ?: throwIllegalStateExceptionForField("standingWaterAreas"),
 			standingWaveAreas = standingWaveAreas ?: throwIllegalStateExceptionForField("standingWaveAreas"),
 			teams = teams ?: throwIllegalStateExceptionForField("teams"),
 			triggerAreas = triggerAreas ?: throwIllegalStateExceptionForField("triggerAreas"),
 			unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),
+			waypointPaths = waypointPaths ?: throwIllegalStateExceptionForField("waypointPaths"),
 			worldSettings = worldSettings ?: throwIllegalStateExceptionForField("worldSettings")
 		)
 

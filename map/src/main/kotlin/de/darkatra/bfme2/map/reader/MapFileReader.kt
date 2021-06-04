@@ -30,6 +30,7 @@ class MapFileReader {
 	private val buildListsReader = BuildListsReader(buildListReader)
 	private val camerasAnimationsReader = CamerasAnimationsReader()
 	private val camerasReader = CamerasReader()
+	private val castleDataReader = CastleDataReader(propertyKeyReader)
 	private val environmentDataReader = EnvironmentDataReader()
 	private val fogSettingsReader = FogSettingsReader()
 	private val globalLightingReader = GlobalLightingReader()
@@ -46,11 +47,13 @@ class MapFileReader {
 	private val polygonTriggersReader = PolygonTriggersReader()
 	private val postEffectReader = PostEffectReader()
 	private val riverAreasReader = RiverAreasReader()
+	private val skyboxReader = SkyboxReader()
 	private val standingWaterAreasReader = StandingWaterAreasReader()
 	private val standingWaveAreasReader = StandingWaveAreasReader()
 	private val teamsReader = TeamsReader(propertiesReader)
 	private val triggerAreaReader = TriggerAreasReader()
 	private val sidesReader = SidesReader(playerReader, playerScriptsReader, teamsReader)
+	private val waypointPathsReader = WaypointPathsReader()
 	private val worldSettingsReader = WorldSettingsReader(propertiesReader)
 
 	companion object {
@@ -125,6 +128,7 @@ class MapFileReader {
 					BuildListsReader.ASSET_NAME -> buildListsReader
 					CamerasAnimationsReader.ASSET_NAME -> camerasAnimationsReader
 					CamerasReader.ASSET_NAME -> camerasReader
+					CastleDataReader.ASSET_NAME -> castleDataReader
 					EnvironmentDataReader.ASSET_NAME -> environmentDataReader
 					FogSettingsReader.ASSET_NAME -> fogSettingsReader
 					GlobalLightingReader.ASSET_NAME -> globalLightingReader
@@ -140,11 +144,13 @@ class MapFileReader {
 					PolygonTriggersReader.ASSET_NAME -> polygonTriggersReader
 					PostEffectReader.ASSET_NAME -> postEffectReader
 					RiverAreasReader.ASSET_NAME -> riverAreasReader
+					SkyboxReader.ASSET_NAME -> skyboxReader
 					SidesReader.ASSET_NAME -> sidesReader
 					StandingWaterAreasReader.ASSET_NAME -> standingWaterAreasReader
 					StandingWaveAreasReader.ASSET_NAME -> standingWaveAreasReader
 					TeamsReader.ASSET_NAME -> teamsReader
 					TriggerAreasReader.ASSET_NAME -> triggerAreaReader
+					WaypointPathsReader.ASSET_NAME -> waypointPathsReader
 					WorldSettingsReader.ASSET_NAME -> worldSettingsReader
 					// TODO: implement the remaining readers... (see OpenFeign)
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
