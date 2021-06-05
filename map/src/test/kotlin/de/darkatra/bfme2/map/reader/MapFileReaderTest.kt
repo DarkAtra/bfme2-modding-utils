@@ -2,13 +2,15 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
+import de.darkatra.bfme2.map.ScriptConditionType
 import de.darkatra.bfme2.map.TimeOfDay
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class MapFileReaderTest {
 
-	private val bmfe1SkyboxMap = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme1/skybox.map")!!
+	private val bmfe1MapWithSkyboxSettings = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme1/skybox.map")!!
+	private val bmfe2rotwkMapWithScripts = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/script.map")!!
 
 	private val uncompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.txt")!!
 	private val refpackCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.refpack")!!
@@ -17,7 +19,7 @@ internal class MapFileReaderTest {
 	@Test
 	internal fun shouldReadBfme1MapWithSkyboxSettings() {
 
-		val map = MapFileReader().read(bmfe1SkyboxMap)
+		val map = MapFileReader().read(bmfe1MapWithSkyboxSettings)
 
 		assertThat(map.skybox).isNotNull
 		assertThat(map.skybox!!.position.x).isEqualTo(500.5f)
@@ -28,6 +30,39 @@ internal class MapFileReaderTest {
 		// WorldBuilder value 10.5f is represented as [102, -88, 59, 62]
 		// assertThat(map.skybox!!.rotation).isEqualTo(10.5f)
 		assertThat(map.skybox!!.textureScheme).isEqualTo("MountainSnow")
+	}
+
+	@Test
+	internal fun shouldReadBfme2MapWithScripts() {
+
+		val map = MapFileReader().read(bmfe2rotwkMapWithScripts)
+
+		assertThat(map.playerScripts).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].name).isEqualTo("TestFolder")
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].name).isEqualTo("TestScript1")
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].activeInEasy).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].activeInMedium).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].activeInHard).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].orConditions).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].orConditions[0].conditions).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.TRUE)
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].orConditions[0].conditions[0].inverted).isFalse
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].actionsIfFalse).isEmpty()
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].actionsIfTrue).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[0].actionsIfTrue[0].enabled).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].name).isEqualTo("TestScript2")
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].activeInEasy).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].activeInMedium).isFalse
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].activeInHard).isFalse
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].orConditions).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].orConditions[0].conditions).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.TRUE)
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].orConditions[0].conditions[0].inverted).isTrue
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfTrue).isEmpty()
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfFalse).isNotEmpty
+		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfFalse[0].enabled).isTrue
 	}
 
 	@Test

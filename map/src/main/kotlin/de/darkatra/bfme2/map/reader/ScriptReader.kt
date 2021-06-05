@@ -129,7 +129,9 @@ class ScriptReader(
 			MapFileReader.readAssets(reader, context) { assetName ->
 				when (assetName) {
 					AssetName.CONDITION.assetName -> MapFileReader.readAsset(reader, context, AssetName.CONDITION.assetName) { version ->
-						readScriptCondition(reader, context, version)
+						conditions.add(
+							readScriptCondition(reader, context, version)
+						)
 					}
 					else -> throw InvalidDataException("Unexpected asset with name '$assetName' in ScriptOrCondition.")
 				}

@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map
 import de.darkatra.bfme2.ConversionException
 import kotlin.experimental.or
 
+@Suppress("unused")
 enum class BlendFlags(
 	val byte: Byte
 ) {

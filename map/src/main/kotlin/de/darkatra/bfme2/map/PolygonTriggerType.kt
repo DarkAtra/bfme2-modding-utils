@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map
 
 import de.darkatra.bfme2.ConversionException
 
+@Suppress("unused")
 enum class PolygonTriggerType(
 	val uShort: UShort
 ) {
