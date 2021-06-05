@@ -4,6 +4,7 @@ import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import kotlin.experimental.and
+import kotlin.experimental.or
 
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
@@ -12,6 +13,14 @@ fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
 fun InputStream.readUInt(): UInt = this.readNBytes(4).toLittleEndianUInt()
 fun InputStream.readFloat(): Float = this.readNBytes(4).toLittleEndianFloat()
 fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
+fun InputStream.readUIntAsBoolean(): Boolean {
+	val result = this.readByte().toBoolean()
+	val unused = readNBytes(3).reduce { acc, byte -> acc or byte }
+	if (unused != 0.toByte()) {
+		throw InvalidDataException("Unexpected non empty bytes after boolean found.")
+	}
+	return result
+}
 
 fun InputStream.readUShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
 	val amountOfBytesPerCharacter = when (charsets) {

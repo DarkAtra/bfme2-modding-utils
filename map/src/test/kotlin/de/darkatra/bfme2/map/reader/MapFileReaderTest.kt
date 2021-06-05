@@ -8,9 +8,27 @@ import org.junit.jupiter.api.Test
 
 internal class MapFileReaderTest {
 
-	private val uncompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/Legendary War.txt")
-	private val refpackCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/Legendary War.refpack")
-	private val zlibCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/Legendary War.zlib")
+	private val bmfe1SkyboxMap = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme1/skybox.map")!!
+
+	private val uncompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.txt")!!
+	private val refpackCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.refpack")!!
+	private val zlibCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.zlib")!!
+
+	@Test
+	internal fun shouldReadBfme1MapWithSkyboxSettings() {
+
+		val map = MapFileReader().read(bmfe1SkyboxMap)
+
+		assertThat(map.skybox).isNotNull
+		assertThat(map.skybox!!.position.x).isEqualTo(500.5f)
+		assertThat(map.skybox!!.position.y).isEqualTo(393.5f)
+		assertThat(map.skybox!!.position.z).isEqualTo(97.5f)
+		assertThat(map.skybox!!.scale).isEqualTo(2.5f)
+		// FIXME: apparently not a little endian float
+		// WorldBuilder value 10.5f is represented as [102, -88, 59, 62]
+		// assertThat(map.skybox!!.rotation).isEqualTo(10.5f)
+		assertThat(map.skybox!!.textureScheme).isEqualTo("MountainSnow")
+	}
 
 	@Test
 	internal fun shouldReadMap() {

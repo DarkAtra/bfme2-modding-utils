@@ -5,9 +5,9 @@ import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.CastleData
 import de.darkatra.bfme2.map.CastleTemplate
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUIntAsBoolean
 import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
@@ -32,7 +32,7 @@ class CastleDataReader(
 
 			val castlePerimeterPoints = mutableListOf<Vector3>()
 
-			val hasCastlePerimeter = reader.readBoolean()
+			val hasCastlePerimeter = reader.readUIntAsBoolean()
 			if (hasCastlePerimeter) {
 				val numberOfCastlePerimeterPoints = reader.readUInt()
 				for (i in 0u until numberOfCastlePerimeterPoints step 1) {

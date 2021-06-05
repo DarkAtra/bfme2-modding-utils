@@ -8,9 +8,11 @@ import de.darkatra.bfme2.map.Script
 import de.darkatra.bfme2.map.ScriptFolder
 import org.apache.commons.io.input.CountingInputStream
 
-class PlayerScriptsReader : AssetReader {
+class PlayerScriptsReader(
+	propertyKeyReader: PropertyKeyReader
+) : AssetReader {
 
-	private val scriptReader = ScriptReader()
+	private val scriptReader = ScriptReader(propertyKeyReader)
 	private val scriptFolderReader = ScriptFolderReader(scriptReader)
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {

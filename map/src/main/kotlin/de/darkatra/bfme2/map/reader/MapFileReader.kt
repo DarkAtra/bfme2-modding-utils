@@ -45,7 +45,7 @@ class MapFileReader {
 	private val multiplayerPositionsReader = MultiplayerPositionsReader()
 	private val objectsReader = ObjectsReader(propertiesReader)
 	private val playerReader = PlayerReader(buildListReader, propertiesReader)
-	private val playerScriptsReader = PlayerScriptsReader()
+	private val playerScriptsReader = PlayerScriptsReader(propertyKeyReader)
 	private val polygonTriggersReader = PolygonTriggersReader()
 	private val postEffectReader = PostEffectReader()
 	private val riverAreasReader = RiverAreasReader()

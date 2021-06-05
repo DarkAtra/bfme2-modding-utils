@@ -15,7 +15,7 @@ data class Script(
 	val subroutine: Boolean, // TODO: is this a setting in the worldbuilder?
 
 	val evaluationInterval: UInt?,
-	val usesEvaluationIntervalType: Boolean,
+	val usesEvaluationIntervalType: Boolean?,
 	val evaluationIntervalType: EvaluationIntervalType,
 
 	val actionsFireSequentially: Boolean?,
@@ -29,7 +29,11 @@ data class Script(
 	// allowed values: ALL, Planning, X
 	val unknown1: String?,
 	val unknown2: Int?,
-	val unknown3: UShort?
+	val unknown3: UShort?,
+
+	val orConditions: List<ScriptOrCondition>,
+	val actionsIfTrue: List<ScriptAction>,
+	val actionsIfFalse: List<ScriptAction>
 ) {
 
 	class Builder {
@@ -54,6 +58,9 @@ data class Script(
 		private var unknown1: String? = null
 		private var unknown2: Int? = null
 		private var unknown3: UShort? = null
+		private var orConditions: List<ScriptOrCondition>? = null
+		private var actionsIfTrue: List<ScriptAction>? = null
+		private var actionsIfFalse: List<ScriptAction>? = null
 
 		fun name(name: String) = apply { this.name = name }
 		fun comment(comment: String) = apply { this.comment = comment }
@@ -76,6 +83,9 @@ data class Script(
 		fun unknown1(unknown1: String) = apply { this.unknown1 = unknown1 }
 		fun unknown2(unknown2: Int) = apply { this.unknown2 = unknown2 }
 		fun unknown3(unknown3: UShort) = apply { this.unknown3 = unknown3 }
+		fun orConditions(orConditions: List<ScriptOrCondition>) = apply { this.orConditions = orConditions }
+		fun actionsIfTrue(actionsIfTrue: List<ScriptAction>) = apply { this.actionsIfTrue = actionsIfTrue }
+		fun actionsIfFalse(actionsIfFalse: List<ScriptAction>) = apply { this.actionsIfFalse = actionsIfFalse }
 
 		fun build() = Script(
 			name = name ?: throwIllegalStateExceptionForField("name"),
@@ -89,16 +99,19 @@ data class Script(
 			activeInHard = activeInHard ?: throwIllegalStateExceptionForField("activeInHard"),
 			subroutine = subroutine ?: throwIllegalStateExceptionForField("subroutine"),
 			evaluationInterval = evaluationInterval ?: throwIllegalStateExceptionForField("evaluationInterval"),
-			usesEvaluationIntervalType = usesEvaluationIntervalType ?: throwIllegalStateExceptionForField("usesEvaluationIntervalType"),
+			usesEvaluationIntervalType = usesEvaluationIntervalType,
 			evaluationIntervalType = evaluationIntervalType ?: throwIllegalStateExceptionForField("evaluationIntervalType"),
-			actionsFireSequentially = actionsFireSequentially ?: throwIllegalStateExceptionForField("actionsFireSequentially"),
-			loopActions = loopActions ?: throwIllegalStateExceptionForField("loopActions"),
-			loopCount = loopCount ?: throwIllegalStateExceptionForField("loopCount"),
-			sequentialTargetType = sequentialTargetType ?: throwIllegalStateExceptionForField("sequentialTargetType"),
-			sequentialTargetName = sequentialTargetName ?: throwIllegalStateExceptionForField("sequentialTargetName"),
-			unknown1 = unknown1 ?: throwIllegalStateExceptionForField("unknown1"),
-			unknown2 = unknown2 ?: throwIllegalStateExceptionForField("unknown2"),
-			unknown3 = unknown3 ?: throwIllegalStateExceptionForField("unknown3")
+			actionsFireSequentially = actionsFireSequentially,
+			loopActions = loopActions,
+			loopCount = loopCount,
+			sequentialTargetType = sequentialTargetType,
+			sequentialTargetName = sequentialTargetName,
+			unknown1 = unknown1,
+			unknown2 = unknown2,
+			unknown3 = unknown3,
+			orConditions = orConditions ?: throwIllegalStateExceptionForField("orConditions"),
+			actionsIfTrue = actionsIfTrue ?: throwIllegalStateExceptionForField("actionsIfTrue"),
+			actionsIfFalse = actionsIfFalse ?: throwIllegalStateExceptionForField("actionsIfFalse")
 		)
 
 		private fun throwIllegalStateExceptionForField(fieldName: String): Nothing {

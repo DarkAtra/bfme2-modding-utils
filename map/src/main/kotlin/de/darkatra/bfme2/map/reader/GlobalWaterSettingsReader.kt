@@ -1,30 +1,20 @@
 package de.darkatra.bfme2.map.reader
 
-import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.GlobalWaterSettings
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readFloat
+import de.darkatra.bfme2.readUIntAsBoolean
 import org.apache.commons.io.input.CountingInputStream
-import kotlin.experimental.or
 
 class GlobalWaterSettingsReader : AssetReader {
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
 		MapFileReader.readAsset(reader, context, AssetName.GLOBAL_WATER_SETTINGS.assetName) {
-
-			val reflectionEnabled = reader.readBoolean()
-
-			val unused = reader.readNBytes(3).reduce { acc, byte -> acc or byte }
-			if (unused != 0.toByte()) {
-				throw InvalidDataException("Unexpected non empty bytes after boolean found.")
-			}
-
 			builder.globalWaterSettings(
 				GlobalWaterSettings(
-					reflectionEnabled = reflectionEnabled,
+					reflectionEnabled = reader.readUIntAsBoolean(),
 					reflectionPlaneZ = reader.readFloat()
 				)
 			)

@@ -5,8 +5,8 @@ import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.Skybox
 import de.darkatra.bfme2.readFloat
+import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
-import java.nio.charset.StandardCharsets
 
 class SkyboxReader : AssetReader {
 
@@ -21,7 +21,7 @@ class SkyboxReader : AssetReader {
 			)
 			val scale = reader.readFloat()
 			val rotation = reader.readFloat()
-			val textureScheme = reader.readNBytes(12).toString(StandardCharsets.UTF_8)
+			val textureScheme = reader.readUShortPrefixedString()
 
 			builder.skybox(Skybox(
 				position = position,
