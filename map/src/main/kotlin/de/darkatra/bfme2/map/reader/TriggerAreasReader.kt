@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.TriggerArea
 import de.darkatra.bfme2.readFloat
@@ -11,13 +12,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class TriggerAreasReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "TriggerAreas"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.TRIGGER_AREAS.assetName) {
 
 			val numberOfTriggerAreas = reader.readUInt()
 

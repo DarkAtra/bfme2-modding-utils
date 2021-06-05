@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector3
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapObject
 import de.darkatra.bfme2.map.RoadType
@@ -15,23 +16,18 @@ class ObjectsReader(
 	private val propertiesReader: PropertiesReader
 ) : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "ObjectsList"
-		const val MAP_OBJECT_ASSET_NAME = "Object"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.OBJECTS_LIST.assetName) {
 
 			val objects = mutableListOf<MapObject>()
 
 			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName != MAP_OBJECT_ASSET_NAME) {
-					throw InvalidDataException("Unexpected asset name '$assetName' reading ${ASSET_NAME}.")
+				if (assetName != AssetName.OBJECT.assetName) {
+					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.OBJECTS_LIST.assetName}.")
 				}
 
-				MapFileReader.readAsset(reader, context, MAP_OBJECT_ASSET_NAME) {
+				MapFileReader.readAsset(reader, context, AssetName.OBJECT.assetName) {
 					objects.add(
 						MapObject(
 							position = Vector3(

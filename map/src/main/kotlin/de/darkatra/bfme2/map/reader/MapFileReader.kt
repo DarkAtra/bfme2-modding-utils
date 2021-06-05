@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readUInt
@@ -58,7 +59,7 @@ class MapFileReader {
 	private val worldSettingsReader = WorldSettingsReader(propertiesReader)
 
 	companion object {
-		const val ASSET_NAME = "Map"
+		val ASSET_NAME = "Map"
 		const val UNCOMPRESSED_FOUR_CC = "CkMp"
 		const val REFPACK_FOUR_CC = "EAR\u0000"
 		const val ZLIB_FOUR_CC = "ZL5\u0000"
@@ -92,12 +93,6 @@ class MapFileReader {
 			if (reader.byteCount != endPosition) {
 				throw InvalidDataException("Error reading '$assetName'. Expected reader to be at position $endPosition, but was at ${reader.byteCount}.")
 			}
-		}
-
-		@JvmStatic
-		fun main(args: Array<String>) {
-			val map = MapFileReader().read(Path.of("Legendary War.map"))
-			println(map)
 		}
 	}
 
@@ -142,35 +137,35 @@ class MapFileReader {
 			readAssets(countingInputStream, context) { assetName ->
 				when (assetName) {
 					// TODO: find a better name for ASSET_NAME
-					AssetListReader.ASSET_NAME -> assetListReader
-					BlendTileDataReader.ASSET_NAME -> blendTileDataReader
-					BuildListsReader.ASSET_NAME -> buildListsReader
-					CamerasAnimationsReader.ASSET_NAME -> camerasAnimationsReader
-					CamerasReader.ASSET_NAME -> camerasReader
-					CastleDataReader.ASSET_NAME -> castleDataReader
-					EnvironmentDataReader.ASSET_NAME -> environmentDataReader
-					FogSettingsReader.ASSET_NAME -> fogSettingsReader
-					GlobalLightingReader.ASSET_NAME -> globalLightingReader
-					GlobalVersionReader.ASSET_NAME -> globalVersionReader
-					GlobalWaterSettingsReader.ASSET_NAME -> globalWaterSettingsReader
-					HeightMapReader.ASSET_NAME -> heightMapReader
-					LibraryMapsListReader.ASSET_NAME -> libraryMapsListReader
-					MissionHotSpotsReader.ASSET_NAME -> missionHotSpotsReader
-					MissionObjectivesReader.ASSET_NAME -> missionObjectivesReader
-					MultiplayerPositionsReader.ASSET_NAME -> multiplayerPositionsReader
-					ObjectsReader.ASSET_NAME -> objectsReader
-					PlayerScriptsReader.ASSET_NAME -> playerScriptsReader
-					PolygonTriggersReader.ASSET_NAME -> polygonTriggersReader
-					PostEffectReader.ASSET_NAME -> postEffectReader
-					RiverAreasReader.ASSET_NAME -> riverAreasReader
-					SkyboxReader.ASSET_NAME -> skyboxReader
-					SidesReader.ASSET_NAME -> sidesReader
-					StandingWaterAreasReader.ASSET_NAME -> standingWaterAreasReader
-					StandingWaveAreasReader.ASSET_NAME -> standingWaveAreasReader
-					TeamsReader.ASSET_NAME -> teamsReader
-					TriggerAreasReader.ASSET_NAME -> triggerAreaReader
-					WaypointPathsReader.ASSET_NAME -> waypointPathsReader
-					WorldSettingsReader.ASSET_NAME -> worldSettingsReader
+					AssetName.ASSET_LIST.assetName -> assetListReader
+					AssetName.BLEND_TILE_DATA.assetName -> blendTileDataReader
+					AssetName.BUILD_LISTS.assetName -> buildListsReader
+					AssetName.CAMERA_ANIMATION_LIST.assetName -> camerasAnimationsReader
+					AssetName.NAMED_CAMERAS.assetName -> camerasReader
+					AssetName.CASTLE_TEMPLATES.assetName -> castleDataReader
+					AssetName.ENVIRONMENT_DATA.assetName -> environmentDataReader
+					AssetName.FOG_SETTINGS.assetName -> fogSettingsReader
+					AssetName.GLOBAL_LIGHTING.assetName -> globalLightingReader
+					AssetName.GLOBAL_VERSION.assetName -> globalVersionReader
+					AssetName.GLOBAL_WATER_SETTINGS.assetName -> globalWaterSettingsReader
+					AssetName.HEIGHT_MAP_DATA.assetName -> heightMapReader
+					AssetName.LIBRARY_MAP_LISTS.assetName -> libraryMapsListReader
+					AssetName.MISSION_HOT_SPOTS.assetName -> missionHotSpotsReader
+					AssetName.MISSION_OBJECTIVES.assetName -> missionObjectivesReader
+					AssetName.MP_POSITION_LIST.assetName -> multiplayerPositionsReader
+					AssetName.OBJECTS_LIST.assetName -> objectsReader
+					AssetName.PLAYER_SCRIPTS_LIST.assetName -> playerScriptsReader
+					AssetName.POLYGON_TRIGGERS.assetName -> polygonTriggersReader
+					AssetName.POST_EFFECTS_CHUNK.assetName -> postEffectReader
+					AssetName.RIVER_AREAS.assetName -> riverAreasReader
+					AssetName.SKYBOX_SETTINGS.assetName -> skyboxReader
+					AssetName.SIDES_LIST.assetName -> sidesReader
+					AssetName.STANDING_WATER_AREAS.assetName -> standingWaterAreasReader
+					AssetName.STANDING_WAVE_AREAS.assetName -> standingWaveAreasReader
+					AssetName.TEAMS.assetName -> teamsReader
+					AssetName.TRIGGER_AREAS.assetName -> triggerAreaReader
+					AssetName.WAYPOINTS_LIST.assetName -> waypointPathsReader
+					AssetName.WORLD_INFO.assetName -> worldSettingsReader
 					// TODO: implement the remaining readers... (see OpenFeign)
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
 				}.also {

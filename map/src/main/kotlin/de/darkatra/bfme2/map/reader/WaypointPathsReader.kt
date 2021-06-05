@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.WaypointPath
 import de.darkatra.bfme2.readUInt
@@ -7,13 +8,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class WaypointPathsReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "WaypointsList"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, PolygonTriggersReader.ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
 
 			val numberOfWaypointPaths = reader.readUInt()
 

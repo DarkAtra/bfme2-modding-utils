@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Vector3
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.Camera
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.readFloat
@@ -10,13 +11,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class CamerasReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "NamedCameras"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, PolygonTriggersReader.ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
 
 			val numberOfNamedCameras = reader.readUInt()
 

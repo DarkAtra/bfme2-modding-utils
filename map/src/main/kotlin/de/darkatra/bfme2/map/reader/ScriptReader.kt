@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.EvaluationIntervalType
 import de.darkatra.bfme2.map.Script
 import de.darkatra.bfme2.map.SequentialScriptTarget
@@ -14,15 +15,11 @@ import org.apache.commons.io.input.CountingInputStream
 
 class ScriptReader {
 
-	companion object {
-		const val ASSET_NAME = "Script"
-	}
-
 	fun read(reader: CountingInputStream, context: MapFileParseContext): Script {
 
 		val scriptBuilder = Script.Builder()
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.SCRIPT.assetName) { version ->
 
 			scriptBuilder.name(reader.readUShortPrefixedString())
 			scriptBuilder.comment(reader.readUShortPrefixedString())

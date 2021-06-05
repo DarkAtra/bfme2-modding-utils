@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.HeightMap
 import de.darkatra.bfme2.map.HeightMapBorder
 import de.darkatra.bfme2.map.MapFile
@@ -12,14 +13,13 @@ import org.apache.commons.io.input.CountingInputStream
 class HeightMapReader : AssetReader {
 
 	companion object {
-		const val ASSET_NAME = "HeightMapData"
 		const val MIN_VERSION_WITH_ELEVATIONS_AS_SHORT = 5u
 		const val MIN_VERSION_WITH_HEIGHT_MAP_BORDER_OFFSET = 6u
 	}
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.HEIGHT_MAP_DATA.assetName) { version ->
 
 			val width = reader.readUInt()
 			val height = reader.readUInt()

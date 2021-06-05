@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MissionHotSpot
 import de.darkatra.bfme2.readUInt
@@ -8,13 +9,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class MissionHotSpotsReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "MissionHotSpots"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.MISSION_HOT_SPOTS.assetName) {
 
 			val numberOfMissionHotSpots = reader.readUInt()
 

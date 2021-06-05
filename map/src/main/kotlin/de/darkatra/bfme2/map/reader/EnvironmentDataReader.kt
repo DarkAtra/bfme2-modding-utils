@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.EnvironmentData
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.readBoolean
@@ -9,13 +10,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class EnvironmentDataReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "EnvironmentData"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, PolygonTriggersReader.ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
 
 			val waterMaxAlphaDepth = when {
 				version >= 3u -> reader.readFloat()

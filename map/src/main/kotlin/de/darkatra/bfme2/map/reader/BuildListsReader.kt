@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.BuildList
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.readUInt
@@ -9,13 +10,9 @@ class BuildListsReader(
 	private val buildListReader: BuildListReader
 ) : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "BuildLists"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.BUILD_LISTS.assetName) {
 
 			val numberOfBuildLists = reader.readUInt()
 

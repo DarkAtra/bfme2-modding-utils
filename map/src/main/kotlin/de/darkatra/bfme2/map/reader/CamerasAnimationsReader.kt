@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.Vector4
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.CameraAnimation
 import de.darkatra.bfme2.map.CameraAnimationFrame
 import de.darkatra.bfme2.map.CameraAnimationFrameInterpolationType
@@ -18,13 +19,9 @@ import java.nio.charset.StandardCharsets
 
 class CamerasAnimationsReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "CameraAnimationList"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, PolygonTriggersReader.ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
 
 			val numberOfAnimations = reader.readUInt()
 

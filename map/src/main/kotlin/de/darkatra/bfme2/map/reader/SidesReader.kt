@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.Player
 import de.darkatra.bfme2.readBoolean
@@ -14,14 +15,13 @@ class SidesReader(
 ) : AssetReader {
 
 	companion object {
-		const val ASSET_NAME = "SidesList"
 		const val VERSION_WITH_TEAM_AND_SCRIPTS_IN_SEPARATE_CHUNK = 5u
 		const val VERSION_WITH_UNKNOWN_FLAG = 6u
 	}
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.SIDES_LIST.assetName) { version ->
 
 			// TODO: what is this used for? is `false` a reasonable default?
 			val unknown = when (version >= VERSION_WITH_UNKNOWN_FLAG) {
@@ -56,8 +56,8 @@ class SidesReader(
 
 			// even though only one script list is allowed per map it is stored inside of an array
 			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName != PlayerScriptsReader.ASSET_NAME) {
-					throw InvalidDataException("Unexpected asset name '$assetName' reading $ASSET_NAME.")
+				if (assetName != AssetName.PLAYER_SCRIPTS_LIST.assetName) {
+					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.SIDES_LIST.assetName}.")
 				}
 
 				// abort if there are more than one script lists

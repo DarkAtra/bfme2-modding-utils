@@ -4,6 +4,7 @@ import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Point3D
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.PolygonTrigger
 import de.darkatra.bfme2.map.PolygonTriggerType
@@ -19,14 +20,13 @@ import org.apache.commons.io.input.CountingInputStream
 class PolygonTriggersReader : AssetReader {
 
 	companion object {
-		const val ASSET_NAME = "PolygonTriggers"
 		const val MIN_VERSION_WITH_LAYER_NAME = 4u
 		const val MIN_VERSION_WITH_RIVER_SPECIFIC_TEXTURES = 5u
 	}
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
 
 			val numberOfPolygonTriggers = reader.readUInt()
 

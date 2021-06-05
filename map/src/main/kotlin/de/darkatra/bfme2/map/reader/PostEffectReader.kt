@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector4
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.PostEffect
 import de.darkatra.bfme2.map.PostEffectParameter
@@ -13,13 +14,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class PostEffectReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "PostEffectsChunk"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, PolygonTriggersReader.ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
 
 			val numberOfPostEffects = when {
 				version >= 2u -> reader.readUInt()

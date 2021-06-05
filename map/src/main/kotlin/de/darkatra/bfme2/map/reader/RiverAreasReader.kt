@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.RiverArea
 import de.darkatra.bfme2.readBoolean
@@ -15,13 +16,12 @@ import java.awt.geom.Line2D
 class RiverAreasReader : AssetReader {
 
 	companion object {
-		const val ASSET_NAME = "RiverAreas"
 		const val MIN_VERSION_WITH_RIVER_TYPE = 3u
 	}
 
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.RIVER_AREAS.assetName) { version ->
 
 			val numberOfRiverAreas = reader.readUInt()
 

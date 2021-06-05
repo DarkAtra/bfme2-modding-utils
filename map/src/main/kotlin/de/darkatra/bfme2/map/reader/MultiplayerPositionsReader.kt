@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MultiplayerPosition
 import de.darkatra.bfme2.readBoolean
@@ -10,23 +11,18 @@ import org.apache.commons.io.input.CountingInputStream
 
 class MultiplayerPositionsReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "MPPositionList"
-		const val MULTIPLAYER_POSITION_ASSET_NAME = "MPPositionInfo"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_LIST.assetName) {
 
 			val multiplayerPositions = mutableListOf<MultiplayerPosition>()
 
 			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName != MULTIPLAYER_POSITION_ASSET_NAME) {
-					throw InvalidDataException("Unexpected asset name '$assetName' reading $ASSET_NAME.")
+				if (assetName != AssetName.MP_POSITION_INFO.assetName) {
+					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.MP_POSITION_LIST.assetName}.")
 				}
 
-				MapFileReader.readAsset(reader, context, MULTIPLAYER_POSITION_ASSET_NAME) { version ->
+				MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_INFO.assetName) { version ->
 
 					val isHuman = reader.readBoolean()
 					val isComputer = reader.readBoolean()

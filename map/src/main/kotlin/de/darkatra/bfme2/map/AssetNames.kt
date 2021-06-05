@@ -1,0 +1,41 @@
+package de.darkatra.bfme2.map
+
+internal enum class AssetName(
+	val assetName: String
+) {
+	ASSET_LIST("AssetList"),
+	BLEND_TILE_DATA("BlendTileData"),
+	BUILD_LISTS("BuildLists"),
+	CAMERA_ANIMATION_LIST("CameraAnimationList"),
+	NAMED_CAMERAS("NamedCameras"),
+	CASTLE_TEMPLATES("CastleTemplates"),
+	ENVIRONMENT_DATA("EnvironmentData"),
+	FOG_SETTINGS("FogSettings"),
+	GLOBAL_LIGHTING("GlobalLighting"),
+	GLOBAL_VERSION("GlobalVersion"),
+	GLOBAL_WATER_SETTINGS("GlobalWaterSettings"),
+	HEIGHT_MAP_DATA("HeightMapData"),
+	LIBRARY_MAP_LISTS("LibraryMapLists"),
+	LIBRARY_MAPS("LibraryMaps"),
+	MISSION_HOT_SPOTS("MissionHotSpots"),
+	MISSION_OBJECTIVES("MissionObjectives"),
+	MP_POSITION_LIST("MPPositionList"),
+	MP_POSITION_INFO("MPPositionInfo"),
+	OBJECTS_LIST("ObjectsList"),
+	OBJECT("Object"),
+	PLAYER_SCRIPTS_LIST("PlayerScriptsList"),
+	SCRIPT_LIST("ScriptList"),
+	POLYGON_TRIGGERS("PolygonTriggers"),
+	POST_EFFECTS_CHUNK("PostEffectsChunk"),
+	RIVER_AREAS("RiverAreas"),
+	SCRIPT_GROUP("ScriptGroup"),
+	SCRIPT("Script"),
+	SIDES_LIST("SidesList"),
+	SKYBOX_SETTINGS("SkyboxSettings"),
+	STANDING_WATER_AREAS("StandingWaterAreas"),
+	STANDING_WAVE_AREAS("StandingWaveAreas"),
+	TEAMS("Teams"),
+	TRIGGER_AREAS("TriggerAreas"),
+	WAYPOINTS_LIST("WaypointsList"),
+	WORLD_INFO("WorldInfo")
+}

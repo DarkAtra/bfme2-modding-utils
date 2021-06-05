@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.StandingWaveArea
 import de.darkatra.bfme2.readBoolean
@@ -13,13 +14,9 @@ import kotlin.experimental.or
 
 class StandingWaveAreasReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "StandingWaveAreas"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.STANDING_WAVE_AREAS.assetName) { version ->
 
 			val numberOfStandingWaveAreasReader = reader.readUInt()
 

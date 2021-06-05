@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.reader
 
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.Script
 import de.darkatra.bfme2.map.ScriptFolder
 import de.darkatra.bfme2.readBoolean
@@ -11,7 +12,6 @@ class ScriptFolderReader(
 ) {
 
 	companion object {
-		const val ASSET_NAME = "ScriptGroup"
 		const val MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS = 3u
 	}
 
@@ -19,7 +19,7 @@ class ScriptFolderReader(
 
 		val scriptFolderBuilder = ScriptFolder.Builder()
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.SCRIPT_GROUP.assetName) { version ->
 
 			val name = reader.readUShortPrefixedString()
 			val active = reader.readBoolean()
@@ -30,10 +30,10 @@ class ScriptFolderReader(
 
 			MapFileReader.readAssets(reader, context) { assetName ->
 				when {
-					assetName == ASSET_NAME && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS -> scriptFolders.add(
+					assetName == AssetName.SCRIPT_GROUP.assetName && version >= MIN_VERSION_WITH_NESTED_SCRIPT_GROUPS -> scriptFolders.add(
 						read(reader, context)
 					)
-					assetName == ScriptReader.ASSET_NAME -> scripts.add(
+					assetName == AssetName.SCRIPT.assetName -> scripts.add(
 						scriptReader.read(reader, context)
 					)
 				}

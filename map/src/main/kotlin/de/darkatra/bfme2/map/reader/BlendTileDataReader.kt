@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.BlendDescription
 import de.darkatra.bfme2.map.BlendTileData
 import de.darkatra.bfme2.map.BlendTileTexture
@@ -21,16 +22,12 @@ class BlendTileDataReader(
 	private val cliffTextureMappingReader: CliffTextureMappingReader = CliffTextureMappingReader()
 ) : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "BlendTileData"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) { version ->
+		MapFileReader.readAsset(reader, context, AssetName.BLEND_TILE_DATA.assetName) { version ->
 
 			if (version < 6u) {
-				throw InvalidDataException("Unexpected version '$version' for $ASSET_NAME.")
+				throw InvalidDataException("Unexpected version '$version' for ${AssetName.BLEND_TILE_DATA.assetName}.")
 			}
 
 			if (context.heightMap == null) {

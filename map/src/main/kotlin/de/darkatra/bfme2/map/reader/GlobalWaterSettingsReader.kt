@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.GlobalWaterSettings
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.readBoolean
@@ -10,13 +11,9 @@ import kotlin.experimental.or
 
 class GlobalWaterSettingsReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "GlobalWaterSettings"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.GLOBAL_WATER_SETTINGS.assetName) {
 
 			val reflectionEnabled = reader.readBoolean()
 

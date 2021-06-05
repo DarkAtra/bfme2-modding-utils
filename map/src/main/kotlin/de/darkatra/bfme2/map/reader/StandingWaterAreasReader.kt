@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.StandingWaterArea
 import de.darkatra.bfme2.readBoolean
@@ -11,13 +12,9 @@ import org.apache.commons.io.input.CountingInputStream
 
 class StandingWaterAreasReader : AssetReader {
 
-	companion object {
-		const val ASSET_NAME = "StandingWaterAreas"
-	}
-
 	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, ASSET_NAME) {
+		MapFileReader.readAsset(reader, context, AssetName.STANDING_WATER_AREAS.assetName) {
 
 			val numberOfStandingWaterAreas = reader.readUInt()
 
