@@ -22,7 +22,7 @@ class PropertyReader(
 			PropertyType.INTEGER -> reader.readUInt()
 			PropertyType.FLOAT -> reader.readFloat()
 			PropertyType.ASCII_STRING -> reader.readUShortPrefixedString()
-			PropertyType.UNICODE_STRING -> reader.readUShortPrefixedString(StandardCharsets.UTF_8)
+			PropertyType.UNICODE_STRING -> reader.readUShortPrefixedString(StandardCharsets.UTF_16LE)
 			PropertyType.UNKNOWN -> reader.readUShortPrefixedString()
 		}
 

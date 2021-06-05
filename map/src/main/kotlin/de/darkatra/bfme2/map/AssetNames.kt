@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map
 internal enum class AssetName(
 	val assetName: String
 ) {
+	MAP("Map"),
 	ASSET_LIST("AssetList"),
 	BLEND_TILE_DATA("BlendTileData"),
 	BUILD_LISTS("BuildLists"),

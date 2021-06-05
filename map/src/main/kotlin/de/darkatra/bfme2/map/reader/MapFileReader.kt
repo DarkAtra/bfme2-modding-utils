@@ -59,7 +59,6 @@ class MapFileReader {
 	private val worldSettingsReader = WorldSettingsReader(propertiesReader)
 
 	companion object {
-		val ASSET_NAME = "Map"
 		const val UNCOMPRESSED_FOUR_CC = "CkMp"
 		const val REFPACK_FOUR_CC = "EAR\u0000"
 		const val ZLIB_FOUR_CC = "ZL5\u0000"
@@ -132,7 +131,7 @@ class MapFileReader {
 			val assetNames = readAssetNames(countingInputStream)
 
 			val context = MapFileParseContext(assetNames)
-			context.push(ASSET_NAME, inputStreamSize)
+			context.push(AssetName.MAP.assetName, inputStreamSize)
 
 			readAssets(countingInputStream, context) { assetName ->
 				when (assetName) {

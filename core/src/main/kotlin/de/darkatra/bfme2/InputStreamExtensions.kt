@@ -1,52 +1,21 @@
 package de.darkatra.bfme2
 
 import java.io.InputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import kotlin.experimental.and
 
-// Data to Bytes
-fun Int.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(this).array()
-fun Int.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(this).array()
-fun UInt.toBigEndianBytes(): ByteArray = toInt().toBigEndianBytes()
-fun UInt.toLittleEndianBytes(): ByteArray = toInt().toLittleEndianBytes()
-
-fun Long.toBigEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putLong(this).array()
-fun Long.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(this).array()
-fun ULong.toBigEndianBytes(): ByteArray = toLong().toBigEndianBytes()
-fun ULong.toLittleEndianBytes(): ByteArray = toLong().toLittleEndianBytes()
-
-// Bytes to Data
-fun ByteArray.toBigEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).short
-fun ByteArray.toLittleEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).short
-fun ByteArray.toBigEndianUShort(): UShort = toBigEndianUInt().toUShort()
-fun ByteArray.toLittleEndianUShort(): UShort = toLittleEndianUInt().toUShort()
-
-fun ByteArray.toBigEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int
-fun ByteArray.toLittleEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int
-fun ByteArray.toBigEndianUInt(): UInt = this.map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
-fun ByteArray.toLittleEndianUInt(): UInt = this.reversedArray().map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
-
-fun Byte.toBoolean(): Boolean = when (this) {
-	0.toByte() -> false
-	1.toByte() -> true
-	else -> throw ConversionException("Can't convert Byte '$this' to Boolean.")
-}
-
-// InputStream
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
 fun InputStream.readUShort(): UShort = this.readNBytes(2).toLittleEndianUShort()
 fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
 fun InputStream.readUInt(): UInt = this.readNBytes(4).toLittleEndianUInt()
-fun InputStream.readFloat(): Float = java.lang.Float.intBitsToFloat(readInt())
+fun InputStream.readFloat(): Float = this.readNBytes(4).toLittleEndianFloat()
 fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
 
 fun InputStream.readUShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
 	val amountOfBytesPerCharacter = when (charsets) {
-		StandardCharsets.UTF_8 -> 2
+		StandardCharsets.UTF_16LE -> 2
 		else -> 1
 	}
 	val stringLength = this.readUShort()
@@ -131,10 +100,4 @@ fun InputStream.read2DSageBooleanArray(width: UInt, height: UInt): Map<UInt, Map
 		}
 	}
 	return result
-}
-
-fun Map<UInt, Map<UInt, UShort>>.to2DUIntArrayAsMap(): Map<UInt, Map<UInt, UInt>> {
-	return this.mapValues { (_, inner) ->
-		inner.mapValues { (_, value) -> value.toUInt() }
-	}
 }
