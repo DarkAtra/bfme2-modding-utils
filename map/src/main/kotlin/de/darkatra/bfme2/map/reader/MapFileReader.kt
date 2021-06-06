@@ -63,7 +63,6 @@ class MapFileReader {
 		const val REFPACK_FOUR_CC = "EAR\u0000"
 		const val ZLIB_FOUR_CC = "ZL5\u0000"
 
-		// TODO: find a better name for this (maybe readList)
 		fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
 
 			while (reader.byteCount < context.currentEndPosition) {
@@ -74,7 +73,6 @@ class MapFileReader {
 			}
 		}
 
-		// TODO: find a better name for this (maybe readObject)
 		fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: UShort) -> Unit) {
 
 			val assetVersion = reader.readUShort()
@@ -113,7 +111,7 @@ class MapFileReader {
 	fun read(bufferedInputStream: BufferedInputStream): MapFile {
 
 		if (!bufferedInputStream.markSupported()) {
-			throw IllegalArgumentException("Can only parse InputStreams that support marks.")
+			throw IllegalArgumentException("Can only parse InputStreams with mark support.")
 		}
 
 		// TODO: find a better way to determine the size of the actual data
@@ -135,7 +133,6 @@ class MapFileReader {
 
 			readAssets(countingInputStream, context) { assetName ->
 				when (assetName) {
-					// TODO: find a better name for ASSET_NAME
 					AssetName.ASSET_LIST.assetName -> assetListReader
 					AssetName.BLEND_TILE_DATA.assetName -> blendTileDataReader
 					AssetName.BUILD_LISTS.assetName -> buildListsReader
@@ -165,7 +162,6 @@ class MapFileReader {
 					AssetName.TRIGGER_AREAS.assetName -> triggerAreaReader
 					AssetName.WAYPOINTS_LIST.assetName -> waypointPathsReader
 					AssetName.WORLD_INFO.assetName -> worldSettingsReader
-					// TODO: implement the remaining readers... (see OpenFeign)
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
 				}.also {
 					val timeElapsedToRead = measureTimeMillis {
@@ -179,7 +175,6 @@ class MapFileReader {
 		return mapBuilder.build()
 	}
 
-	// TODO: find a better name for this (maybe readObjectNames)
 	private fun readAssetNames(reader: CountingInputStream): Map<UInt, String> {
 
 		val numberOfAssetStrings = reader.readUInt()

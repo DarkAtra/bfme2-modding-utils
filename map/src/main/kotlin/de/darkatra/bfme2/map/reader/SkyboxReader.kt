@@ -20,7 +20,8 @@ class SkyboxReader : AssetReader {
 				z = reader.readFloat()
 			)
 			val scale = reader.readFloat()
-			val rotation = reader.readFloat()
+			// radians to degrees
+			val rotation = reader.readFloat() * (180 / Math.PI).toFloat()
 			val textureScheme = reader.readUShortPrefixedString()
 
 			builder.skybox(Skybox(

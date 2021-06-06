@@ -26,9 +26,7 @@ internal class MapFileReaderTest {
 		assertThat(map.skybox!!.position.y).isEqualTo(393.5f)
 		assertThat(map.skybox!!.position.z).isEqualTo(97.5f)
 		assertThat(map.skybox!!.scale).isEqualTo(2.5f)
-		// FIXME: apparently not a little endian float
-		// WorldBuilder value 10.5f is represented as [102, -88, 59, 62]
-		// assertThat(map.skybox!!.rotation).isEqualTo(10.5f)
+		assertThat(map.skybox!!.rotation).isEqualTo(10.5f)
 		assertThat(map.skybox!!.textureScheme).isEqualTo("MountainSnow")
 	}
 
