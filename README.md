@@ -2,7 +2,7 @@
 
 # About
 
-This project provides functions to read and write some of the EA file formats, such as:
+This project provides functions to read and write some of EA's file formats, such as:
 
 - [BIG](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
 - [RefPack](http://wiki.niotso.org/RefPack#Bitstream_specification)
@@ -13,7 +13,7 @@ This project provides functions to read and write some of the EA file formats, s
 Clone the project:
 
 ```
-git clone https://git.darkatra.de/DarkAtra/Patcher.git
+git clone git@github.com:DarkAtra/bfme2-modding-utils.git
 ```
 
 Build the project using the following command:
@@ -21,7 +21,5 @@ Build the project using the following command:
 ```
 mvn clean install
 ```
-
-The jar files are located in the target folders of the respective applications. E.g.: `updater/target/updater.jar`
 
 **Thanks to the [OpenSage Team](https://github.com/OpenSAGE/OpenSAGE) for providing a reference implementation for most of these formats.**

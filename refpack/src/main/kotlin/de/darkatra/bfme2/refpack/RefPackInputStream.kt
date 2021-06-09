@@ -10,10 +10,9 @@ import kotlin.math.min
  *
  * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.RefPack/RefPackStream.cs
  */
-// TODO: something is broken, compare with OpenSages implementation and fix it
 class RefPackInputStream(
 	inputStream: InputStream
-) : BufferedInputStream(MemorizingInputStream(inputStream, 50)) {
+) : BufferedInputStream(inputStream) {
 
 	companion object {
 		private const val MAX_REFERENCED_DATA_DISTANCE = 131072

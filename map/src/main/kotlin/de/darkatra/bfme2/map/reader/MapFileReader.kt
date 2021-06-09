@@ -7,7 +7,6 @@ import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.refpack.MemorizingInputStream
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import org.apache.commons.io.input.CountingInputStream
 import java.io.BufferedInputStream
@@ -200,7 +199,7 @@ class MapFileReader {
 			// unread 4 bytes to make it possible to read them again when actually parsing the map data
 			UNCOMPRESSED_FOUR_CC -> pushbackInputStream.also { it.unread(fourCCBytes) }
 			// skip 4 size bytes, we don't need that information
-			REFPACK_FOUR_CC -> MemorizingInputStream(RefPackInputStream(SkippingInputStream(pushbackInputStream, 4)), 50)
+			REFPACK_FOUR_CC -> RefPackInputStream(SkippingInputStream(pushbackInputStream, 4))
 			// skip 4 size bytes, we don't need that information
 			ZLIB_FOUR_CC -> InflaterInputStream(SkippingInputStream(pushbackInputStream, 4))
 			else -> throw UnsupportedEncodingException("Encoding is not supported.")
