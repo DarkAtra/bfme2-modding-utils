@@ -8,6 +8,7 @@ import de.darkatra.bfme2.read7BitString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
+import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.CountingInputStream
 import java.io.BufferedInputStream
 import java.io.FileNotFoundException
@@ -17,7 +18,6 @@ import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.zip.InflaterInputStream
-import kotlin.system.measureTimeMillis
 
 class MapFileReader {
 
@@ -113,9 +113,8 @@ class MapFileReader {
 			throw IllegalArgumentException("Can only parse InputStreams with mark support.")
 		}
 
-		// TODO: find a better way to determine the size of the actual data
 		bufferedInputStream.mark(Int.MAX_VALUE)
-		val inputStreamSize = decodeIfNecessary(bufferedInputStream).readBytes().size.toLong()
+		val inputStreamSize = IOUtils.consume(decodeIfNecessary(bufferedInputStream))
 		bufferedInputStream.reset()
 
 		val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
@@ -131,7 +130,7 @@ class MapFileReader {
 			context.push(AssetName.MAP.assetName, inputStreamSize)
 
 			readAssets(countingInputStream, context) { assetName ->
-				when (assetName) {
+				val reader = when (assetName) {
 					AssetName.ASSET_LIST.assetName -> assetListReader
 					AssetName.BLEND_TILE_DATA.assetName -> blendTileDataReader
 					AssetName.BUILD_LISTS.assetName -> buildListsReader
@@ -162,12 +161,9 @@ class MapFileReader {
 					AssetName.WAYPOINTS_LIST.assetName -> waypointPathsReader
 					AssetName.WORLD_INFO.assetName -> worldSettingsReader
 					else -> throw InvalidDataException("Unknown asset name '$assetName'.")
-				}.also {
-					val timeElapsedToRead = measureTimeMillis {
-						it.read(countingInputStream, context, mapBuilder)
-					}
-					println("Reading $assetName took $timeElapsedToRead millis.")
 				}
+
+				reader.read(countingInputStream, context, mapBuilder)
 			}
 		}
 
