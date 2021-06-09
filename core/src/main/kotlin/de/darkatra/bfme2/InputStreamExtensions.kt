@@ -45,22 +45,22 @@ fun InputStream.read7BitString(): String {
 		val maxBytesWithoutOverflow = 4
 
 		for (shift in 0 until maxBytesWithoutOverflow * 7 step 7) {
-			val byte = this.readByte()
-			result = result or (byte and 0b01111111.toByte()).toInt() shl shift
+			val byte = this.readByte().toUByte()
+			result = result or (byte and 0b01111111.toUByte()).toInt() shl shift
 
 			// exit early if the byte's int value is not bigger than 127 (meaning the msb is not 1)
-			if (byte <= 0b01111111.toByte()) {
+			if (byte <= 0b01111111.toUByte()) {
 				return result
 			}
 		}
 
 		// read the 5th byte. Since we already read 28 bits, the value of this byte must fit within 4 bits (32 - 28)
 		// msb should not be set to 1
-		val byte = this.readByte()
-		if (byte > 0b1111.toByte()) {
+		val byte = this.readByte().toUByte()
+		if (byte > 0b1111.toUByte()) {
 			throw NumberFormatException("Could not read 7bit encoded Int. 5th byte had more than 4 set bits.")
 		}
-		return result or (byte and 0b01111111.toByte()).toInt() shl (maxBytesWithoutOverflow * 7)
+		return result or (byte and 0b01111111.toUByte()).toInt() shl (maxBytesWithoutOverflow * 7)
 	}
 
 	// read the 7 bit encoded int to determine the length of the string

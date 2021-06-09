@@ -140,5 +140,45 @@ internal class OutputStreamExtensionsTest {
 				outputStream.writeUShortPrefixedString(extremelyLongString)
 			}
 		}
+
+		@Test
+		internal fun shouldWrite7BitString() {
+
+			val outputStream = ByteArrayOutputStream()
+
+			val testString = (0 until 100).joinToString("") { "a" }
+
+			outputStream.write7BitString(testString)
+
+			assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(
+				100, *(0 until 100).map { 97.toByte() }.toByteArray()
+			))
+		}
+
+		@Test
+		internal fun shouldWrite7BitStringWithLengthOf200Characters() {
+
+			val outputStream = ByteArrayOutputStream()
+
+			val testString = (0 until 200).joinToString("") { "a" }
+
+			outputStream.write7BitString(testString)
+
+			assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(
+				200.toUByte().toByte(), 1, *(0 until 200).map { 97.toByte() }.toByteArray()
+			))
+		}
+
+		@Test
+		internal fun shouldRoundtrip7BitString() {
+
+			val outputStream = ByteArrayOutputStream()
+
+			val testString = (0 until 200).joinToString("") { "a" }
+
+			outputStream.write7BitString(testString)
+
+			assertThat(outputStream.toByteArray().inputStream().read7BitString()).isEqualTo(testString)
+		}
 	}
 }
