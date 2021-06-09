@@ -611,5 +611,49 @@ internal class ConversionExtensionsTest {
 					.isEqualTo(expected[i])
 			}
 		}
+
+		@Test
+		internal fun shouldConvertFloatToBigEndianByteArray() {
+
+			val expected = listOf(
+				byteArrayOf(0x00, 0x00, 0x00, 0x00),
+				byteArrayOf(0x3F, 0x80.toByte(), 0x00, 0x00),
+				byteArrayOf(0x7F.toByte(), 0x7F.toByte(), 0xFF.toByte(), 0xFF.toByte()),
+				byteArrayOf(0xBF.toByte(), 0x80.toByte(), 0x00, 0x00),
+			)
+
+			listOf(
+				0f,
+				1f,
+				Float.MAX_VALUE,
+				-1f
+			).forEachIndexed { i, actual ->
+				assertThat(actual.toBigEndianBytes())
+					.withFailMessage("Expected %s <%s> to convert to <%s>", actual.javaClass.name, actual, expected[i].contentToString())
+					.isEqualTo(expected[i])
+			}
+		}
+
+		@Test
+		internal fun shouldConvertFloatToLittleEndianByteArray() {
+
+			val expected = listOf(
+				byteArrayOf(0x00, 0x00, 0x00, 0x00),
+				byteArrayOf(0x00, 0x00, 0x80.toByte(), 0x3F),
+				byteArrayOf(0xFF.toByte(), 0xFF.toByte(), 0x7F.toByte(), 0x7F.toByte()),
+				byteArrayOf(0x00, 0x00, 0x80.toByte(), 0xBF.toByte()),
+			)
+
+			listOf(
+				0f,
+				1f,
+				Float.MAX_VALUE,
+				-1f
+			).forEachIndexed { i, actual ->
+				assertThat(actual.toLittleEndianBytes())
+					.withFailMessage("Expected %s <%s> to convert to <%s>", actual.javaClass.name, actual, expected[i].contentToString())
+					.isEqualTo(expected[i])
+			}
+		}
 	}
 }

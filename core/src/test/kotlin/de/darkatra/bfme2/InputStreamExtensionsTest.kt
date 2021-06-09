@@ -18,20 +18,20 @@ internal class InputStreamExtensionsTest {
 		assertThat(inputStream.readBoolean()).isEqualTo(true)
 	}
 
+	@Test
+	internal fun shouldReadByte() {
+
+		val bytes = byteArrayOf(
+			0xF1.toByte()
+		)
+
+		val inputStream = ByteArrayInputStream(bytes)
+
+		assertThat(inputStream.readByte()).isEqualTo(0xF1.toByte())
+	}
+
 	@Nested
 	inner class ReadLittleEndian {
-
-		@Test
-		internal fun shouldReadByte() {
-
-			val bytes = byteArrayOf(
-				0xF1.toByte()
-			)
-
-			val inputStream = ByteArrayInputStream(bytes)
-
-			assertThat(inputStream.readByte()).isEqualTo(0xF1.toByte())
-		}
 
 		@Test
 		internal fun shouldReadShort() {

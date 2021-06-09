@@ -19,6 +19,9 @@ fun Long.toLittleEndianBytes(): ByteArray = ByteBuffer.allocate(8).order(ByteOrd
 fun ULong.toBigEndianBytes(): ByteArray = toLong().toBigEndianBytes()
 fun ULong.toLittleEndianBytes(): ByteArray = toLong().toLittleEndianBytes()
 
+fun Float.toBigEndianBytes(): ByteArray = java.lang.Float.floatToIntBits(this).toBigEndianBytes()
+fun Float.toLittleEndianBytes(): ByteArray = java.lang.Float.floatToIntBits(this).toLittleEndianBytes()
+
 fun Boolean.toByte(): Byte = when (this) {
 	false -> 0
 	true -> 1

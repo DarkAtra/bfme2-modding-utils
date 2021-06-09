@@ -22,13 +22,13 @@ fun InputStream.readUIntAsBoolean(): Boolean {
 	return result
 }
 
-fun InputStream.readUShortPrefixedString(charsets: Charset = StandardCharsets.US_ASCII): String {
-	val amountOfBytesPerCharacter = when (charsets) {
+fun InputStream.readUShortPrefixedString(charset: Charset = StandardCharsets.US_ASCII): String {
+	val amountOfBytesPerCharacter = when (charset) {
 		StandardCharsets.UTF_16LE -> 2
 		else -> 1
 	}
 	val stringLength = this.readUShort()
-	return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charsets)
+	return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charset)
 }
 
 fun InputStream.read7BitString(): String {
