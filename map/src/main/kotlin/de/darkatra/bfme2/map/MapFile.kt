@@ -41,64 +41,101 @@ data class MapFile(
 ) {
 
 	class Builder {
-		private var assetList: List<AssetListItem>? = null
-		private var blendTileData: BlendTileData? = null
-		private var buildLists: List<BuildList>? = null
-		private var cameraAnimations: List<CameraAnimation>? = null
-		private var cameras: List<Camera>? = null
-		private var castleData: CastleData? = null
-		private var environmentData: EnvironmentData? = null
-		private var fogSettings: FogSettings? = null
-		private var globalLighting: GlobalLighting? = null
-		private var globalVersion: UShort? = null
-		private var globalWaterSettings: GlobalWaterSettings? = null
-		private var heightMap: HeightMap? = null
-		private var libraryMaps: List<LibraryMaps>? = null
-		private var missionHotSpots: List<MissionHotSpot>? = null
-		private var missionObjectives: List<MissionObjective>? = null
-		private var multiplayerPositions: List<MultiplayerPosition>? = null
-		private var objects: List<MapObject>? = null
-		private var players: List<Player>? = null
-		private var playerScripts: List<PlayerScript>? = null
-		private var polygonTriggers: List<PolygonTrigger>? = null
-		private var postEffects: List<PostEffect>? = null
-		private var riverAreas: List<RiverArea>? = null
-		private var skybox: Skybox? = null
-		private var standingWaterAreas: List<StandingWaterArea>? = null
-		private var standingWaveAreas: List<StandingWaveArea>? = null
-		private var teams: List<Team>? = null
-		private var triggerAreas: List<TriggerArea>? = null
-		private var unknown: Boolean? = null
-		private var waypointPaths: List<WaypointPath>? = null
-		private var worldSettings: List<Property>? = null
+		// TODO: change back to private once the writer is implemented, only internal for testing purposes
+		internal var assetList: List<AssetListItem>? = null
+		internal var blendTileData: BlendTileData? = null
+		internal var buildLists: List<BuildList>? = null
+		internal var cameraAnimations: List<CameraAnimation>? = null
+		internal var cameras: List<Camera>? = null
+		internal var castleData: CastleData? = null
+		internal var environmentData: EnvironmentData? = null
+		internal var fogSettings: FogSettings? = null
+		internal var globalLighting: GlobalLighting? = null
+		internal var globalVersion: UShort? = null
+		internal var globalWaterSettings: GlobalWaterSettings? = null
+		internal var heightMap: HeightMap? = null
+		internal var libraryMaps: List<LibraryMaps>? = null
+		internal var missionHotSpots: List<MissionHotSpot>? = null
+		internal var missionObjectives: List<MissionObjective>? = null
+		internal var multiplayerPositions: List<MultiplayerPosition>? = null
+		internal var objects: List<MapObject>? = null
+		internal var players: List<Player>? = null
+		internal var playerScripts: List<PlayerScript>? = null
+		internal var polygonTriggers: List<PolygonTrigger>? = null
+		internal var postEffects: List<PostEffect>? = null
+		internal var riverAreas: List<RiverArea>? = null
+		internal var skybox: Skybox? = null
+		internal var standingWaterAreas: List<StandingWaterArea>? = null
+		internal var standingWaveAreas: List<StandingWaveArea>? = null
+		internal var teams: List<Team>? = null
+		internal var triggerAreas: List<TriggerArea>? = null
+		internal var unknown: Boolean? = null
+		internal var waypointPaths: List<WaypointPath>? = null
+		internal var worldSettings: List<Property>? = null
 
-		fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
+		constructor()
+
+		constructor(mapFile: MapFile) {
+			assetList(mapFile.assetList)
+			assetList(mapFile.assetList)
+			blendTileData(mapFile.blendTileData)
+			buildLists(mapFile.buildLists)
+			cameraAnimations(mapFile.cameraAnimations)
+			cameras(mapFile.cameras)
+			castleData(mapFile.castleData)
+			environmentData(mapFile.environmentData)
+			fogSettings(mapFile.fogSettings)
+			globalLighting(mapFile.globalLighting)
+			globalVersion(mapFile.globalVersion)
+			globalWaterSettings(mapFile.globalWaterSettings)
+			heightMap(mapFile.heightMap)
+			libraryMaps(mapFile.libraryMaps)
+			missionHotSpots(mapFile.missionHotSpots)
+			missionObjectives(mapFile.missionObjectives)
+			multiplayerPositions(mapFile.multiplayerPositions)
+			objects(mapFile.objects)
+			players(mapFile.players)
+			playerScripts(mapFile.playerScripts)
+			polygonTriggers(mapFile.polygonTriggers)
+			postEffects(mapFile.postEffects)
+			riverAreas(mapFile.riverAreas)
+			skybox(mapFile.skybox)
+			standingWaterAreas(mapFile.standingWaterAreas)
+			standingWaveAreas(mapFile.standingWaveAreas)
+			teams(mapFile.teams)
+			triggerAreas(mapFile.triggerAreas)
+			unknown(mapFile.unknown)
+			waypointPaths(mapFile.waypointPaths)
+			worldSettings(mapFile.worldSettings)
+		}
+
+		fun assetList(assetList: List<AssetListItem>?) = apply { this.assetList = assetList }
 		fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
-		fun buildLists(buildLists: List<BuildList>) = apply { this.buildLists = buildLists }
-		fun cameraAnimations(cameraAnimations: List<CameraAnimation>) = apply { this.cameraAnimations = cameraAnimations }
-		fun cameras(cameras: List<Camera>) = apply { this.cameras = cameras }
-		fun castleData(castleData: CastleData) = apply { this.castleData = castleData }
-		fun environmentData(environmentData: EnvironmentData) = apply { this.environmentData = environmentData }
-		fun fogSettings(fogSettings: FogSettings) = apply { this.fogSettings = fogSettings }
+		fun buildLists(buildLists: List<BuildList>?) = apply { this.buildLists = buildLists }
+		fun cameraAnimations(cameraAnimations: List<CameraAnimation>?) = apply { this.cameraAnimations = cameraAnimations }
+		fun cameras(cameras: List<Camera>?) = apply { this.cameras = cameras }
+		fun castleData(castleData: CastleData?) = apply { this.castleData = castleData }
+		fun environmentData(environmentData: EnvironmentData?) = apply { this.environmentData = environmentData }
+		fun fogSettings(fogSettings: FogSettings?) = apply { this.fogSettings = fogSettings }
 		fun globalLighting(globalLighting: GlobalLighting) = apply { this.globalLighting = globalLighting }
-		fun globalVersion(globalVersion: UShort) = apply { this.globalVersion = globalVersion }
-		fun globalWaterSettings(globalWaterSettings: GlobalWaterSettings) = apply { this.globalWaterSettings = globalWaterSettings }
+		fun globalVersion(globalVersion: UShort?) = apply { this.globalVersion = globalVersion }
+		fun globalWaterSettings(globalWaterSettings: GlobalWaterSettings?) = apply { this.globalWaterSettings = globalWaterSettings }
 		fun heightMap(heightMap: HeightMap) = apply { this.heightMap = heightMap }
-		fun libraryMaps(libraryMaps: List<LibraryMaps>) = apply { this.libraryMaps = libraryMaps }
-		fun missionHotSpots(missionHotSpots: List<MissionHotSpot>) = apply { this.missionHotSpots = missionHotSpots }
-		fun missionObjectives(missionObjectives: List<MissionObjective>) = apply { this.missionObjectives = missionObjectives }
-		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>) = apply { this.multiplayerPositions = multiplayerPositions }
+		fun libraryMaps(libraryMaps: List<LibraryMaps>?) = apply { this.libraryMaps = libraryMaps }
+		fun missionHotSpots(missionHotSpots: List<MissionHotSpot>?) = apply { this.missionHotSpots = missionHotSpots }
+		fun missionObjectives(missionObjectives: List<MissionObjective>?) = apply { this.missionObjectives = missionObjectives }
+		fun multiplayerPositions(multiplayerPositions: List<MultiplayerPosition>?) = apply { this.multiplayerPositions = multiplayerPositions }
 		fun objects(objects: List<MapObject>) = apply { this.objects = objects }
 		fun players(players: List<Player>) = apply { this.players = players }
-		fun playerScripts(playerScripts: List<PlayerScript>) = apply { this.playerScripts = playerScripts }
-		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>) = apply { this.polygonTriggers = polygonTriggers }
-		fun postEffects(postEffects: List<PostEffect>) = apply { this.postEffects = postEffects }
-		fun riverAreas(riverAreas: List<RiverArea>) = apply { this.riverAreas = riverAreas }
-		fun skybox(skybox: Skybox) = apply { this.skybox = skybox }
-		fun standingWaterAreas(standingWaterAreas: List<StandingWaterArea>) = apply { this.standingWaterAreas = standingWaterAreas }
-		fun standingWaveAreas(standingWaveAreas: List<StandingWaveArea>) = apply { this.standingWaveAreas = standingWaveAreas }
-		fun teams(teams: List<Team>) = apply { this.teams = teams }
-		fun triggerAreas(triggerAreas: List<TriggerArea>) = apply { this.triggerAreas = triggerAreas }
+		fun playerScripts(playerScripts: List<PlayerScript>?) = apply { this.playerScripts = playerScripts }
+		fun polygonTriggers(polygonTriggers: List<PolygonTrigger>?) = apply { this.polygonTriggers = polygonTriggers }
+		fun postEffects(postEffects: List<PostEffect>?) = apply { this.postEffects = postEffects }
+		fun riverAreas(riverAreas: List<RiverArea>?) = apply { this.riverAreas = riverAreas }
+		fun skybox(skybox: Skybox?) = apply { this.skybox = skybox }
+		fun standingWaterAreas(standingWaterAreas: List<StandingWaterArea>?) = apply { this.standingWaterAreas = standingWaterAreas }
+		fun standingWaveAreas(standingWaveAreas: List<StandingWaveArea>?) = apply { this.standingWaveAreas = standingWaveAreas }
+		fun teams(teams: List<Team>?) = apply { this.teams = teams }
+		fun triggerAreas(triggerAreas: List<TriggerArea>?) = apply { this.triggerAreas = triggerAreas }
 		fun unknown(unknown: Boolean) = apply { this.unknown = unknown }
 		fun waypointPaths(waypointPaths: List<WaypointPath>) = apply { this.waypointPaths = waypointPaths }
 		fun worldSettings(worldSettings: List<Property>) = apply { this.worldSettings = worldSettings }

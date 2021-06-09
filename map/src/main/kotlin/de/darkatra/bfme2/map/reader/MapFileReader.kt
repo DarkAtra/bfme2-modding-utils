@@ -170,6 +170,71 @@ class MapFileReader {
 		return mapBuilder.build()
 	}
 
+	// TODO: remove this later, only here for testing purposes
+	@Suppress("DuplicatedCode")
+	internal fun readPartial(bufferedInputStream: BufferedInputStream): MapFile.Builder {
+
+		if (!bufferedInputStream.markSupported()) {
+			throw IllegalArgumentException("Can only parse InputStreams with mark support.")
+		}
+
+		bufferedInputStream.mark(Int.MAX_VALUE)
+		val inputStreamSize = IOUtils.consume(decodeIfNecessary(bufferedInputStream))
+		bufferedInputStream.reset()
+
+		val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
+
+		val mapBuilder = MapFile.Builder()
+
+		countingInputStream.use {
+			readAndValidateFourCC(countingInputStream)
+
+			val assetNames = readAssetNames(countingInputStream)
+
+			val context = MapFileParseContext(assetNames)
+			context.push(AssetName.MAP.assetName, inputStreamSize)
+
+			readAssets(countingInputStream, context) { assetName ->
+				val reader = when (assetName) {
+					AssetName.ASSET_LIST.assetName -> assetListReader
+					AssetName.BLEND_TILE_DATA.assetName -> blendTileDataReader
+					AssetName.BUILD_LISTS.assetName -> buildListsReader
+					AssetName.CAMERA_ANIMATION_LIST.assetName -> camerasAnimationsReader
+					AssetName.NAMED_CAMERAS.assetName -> camerasReader
+					AssetName.CASTLE_TEMPLATES.assetName -> castleDataReader
+					AssetName.ENVIRONMENT_DATA.assetName -> environmentDataReader
+					AssetName.FOG_SETTINGS.assetName -> fogSettingsReader
+					AssetName.GLOBAL_LIGHTING.assetName -> globalLightingReader
+					AssetName.GLOBAL_VERSION.assetName -> globalVersionReader
+					AssetName.GLOBAL_WATER_SETTINGS.assetName -> globalWaterSettingsReader
+					AssetName.HEIGHT_MAP_DATA.assetName -> heightMapReader
+					AssetName.LIBRARY_MAP_LISTS.assetName -> libraryMapsListReader
+					AssetName.MISSION_HOT_SPOTS.assetName -> missionHotSpotsReader
+					AssetName.MISSION_OBJECTIVES.assetName -> missionObjectivesReader
+					AssetName.MP_POSITION_LIST.assetName -> multiplayerPositionsReader
+					AssetName.OBJECTS_LIST.assetName -> objectsReader
+					AssetName.PLAYER_SCRIPTS_LIST.assetName -> playerScriptsReader
+					AssetName.POLYGON_TRIGGERS.assetName -> polygonTriggersReader
+					AssetName.POST_EFFECTS_CHUNK.assetName -> postEffectReader
+					AssetName.RIVER_AREAS.assetName -> riverAreasReader
+					AssetName.SKYBOX_SETTINGS.assetName -> skyboxReader
+					AssetName.SIDES_LIST.assetName -> sidesReader
+					AssetName.STANDING_WATER_AREAS.assetName -> standingWaterAreasReader
+					AssetName.STANDING_WAVE_AREAS.assetName -> standingWaveAreasReader
+					AssetName.TEAMS.assetName -> teamsReader
+					AssetName.TRIGGER_AREAS.assetName -> triggerAreaReader
+					AssetName.WAYPOINTS_LIST.assetName -> waypointPathsReader
+					AssetName.WORLD_INFO.assetName -> worldSettingsReader
+					else -> null
+				}
+
+				reader?.read(countingInputStream, context, mapBuilder)
+			}
+		}
+
+		return mapBuilder
+	}
+
 	private fun readAssetNames(reader: CountingInputStream): Map<UInt, String> {
 
 		val numberOfAssetStrings = reader.readUInt()
