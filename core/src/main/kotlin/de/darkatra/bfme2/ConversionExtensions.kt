@@ -30,21 +30,21 @@ fun Boolean.toByte(): Byte = when (this) {
 // Bytes to Data
 fun ByteArray.toBigEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).short
 fun ByteArray.toLittleEndianShort(): Short = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).short
-fun ByteArray.toBigEndianUShort(): UShort = toBigEndianUInt().toUShort()
-fun ByteArray.toLittleEndianUShort(): UShort = toLittleEndianUInt().toUShort()
+fun ByteArray.toBigEndianUShort(): UShort = toBigEndianShort().toUShort()
+fun ByteArray.toLittleEndianUShort(): UShort = toLittleEndianShort().toUShort()
 
 fun ByteArray.toBigEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int
 fun ByteArray.toLittleEndianInt(): Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int
-fun ByteArray.toBigEndianUInt(): UInt = this.map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
-fun ByteArray.toLittleEndianUInt(): UInt = this.reversedArray().map { it.toUInt() and 0xFFu }.reduce { acc, uInt -> acc shl 8 or uInt }
+fun ByteArray.toBigEndianUInt(): UInt = toBigEndianInt().toUInt()
+fun ByteArray.toLittleEndianUInt(): UInt = toLittleEndianInt().toUInt()
 
 fun ByteArray.toBigEndianLong(): Long = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).long
 fun ByteArray.toLittleEndianLong(): Long = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).long
-fun ByteArray.toBigEndianULong(): ULong = this.map { it.toULong() and 0xFFu }.reduce { acc, uLong -> acc shl 8 or uLong }
-fun ByteArray.toLittleEndianULong(): ULong = this.reversedArray().map { it.toULong() and 0xFFu }.reduce { acc, uLong -> acc shl 8 or uLong }
+fun ByteArray.toBigEndianULong(): ULong = toBigEndianLong().toULong()
+fun ByteArray.toLittleEndianULong(): ULong = toLittleEndianLong().toULong()
 
-fun ByteArray.toBigEndianFloat(): Float = java.lang.Float.intBitsToFloat(ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).int)
-fun ByteArray.toLittleEndianFloat(): Float = java.lang.Float.intBitsToFloat(ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).int)
+fun ByteArray.toBigEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.toBigEndianInt())
+fun ByteArray.toLittleEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.toLittleEndianInt())
 
 fun Byte.toBoolean(): Boolean = when (this) {
 	0.toByte() -> false

@@ -86,7 +86,7 @@ internal class InputStreamExtensionsTest {
 		@Test
 		internal fun shouldReadUShortPrefixedStringWithUS_ASCIIEncoding() {
 
-			// byte representation of "LothlorienGrass05" with the length (17) prefixed as UShort
+			// byte representation of "LothlorienGrass05" in US_ASCII with the length (17) prefixed as UShort
 			// 17, 0 is the UShort 17
 			// 76, 111, 116, 104, 108, 111, 114, 105, 101, 110, 71, 114, 97, 115, 115, 48, 53 is the String "LothlorienGrass05" encoded in US_ASCII
 			val bytes = byteArrayOf(17, 0, 76, 111, 116, 104, 108, 111, 114, 105, 101, 110, 71, 114, 97, 115, 115, 48, 53)
@@ -99,7 +99,7 @@ internal class InputStreamExtensionsTest {
 		@Test
 		internal fun shouldReadUShortPrefixedStringWithUTF_16Encoding() {
 
-			// byte representation of "Neutral" with the length (7) prefixed as UShort
+			// byte representation of "Neutral" in UTF_16LE with the length (7) prefixed as UShort
 			// 7, 0 is the UShort 7
 			// 78, 0, 101, 0, 117, 0, 116, 0, 114, 0, 97, 0, 108, 0 is the String "Neutral" encoded in UTF_16LE
 			val bytes = byteArrayOf(7, 0, 78, 0, 101, 0, 117, 0, 116, 0, 114, 0, 97, 0, 108, 0)

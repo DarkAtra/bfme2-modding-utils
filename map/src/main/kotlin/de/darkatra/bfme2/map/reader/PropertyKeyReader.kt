@@ -12,7 +12,7 @@ class PropertyKeyReader {
 
 		val propertyType = PropertyType.ofByte(reader.readByte())
 
-		val nameIndex = reader.readNBytes(3).toLittleEndianUInt()
+		val nameIndex = byteArrayOf(*reader.readNBytes(3), 0).toLittleEndianUInt()
 		val name = context.getAssetName(nameIndex)
 
 		return PropertyKey(
