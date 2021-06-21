@@ -51,7 +51,7 @@
 		<java.version>11</java.version>
 
 		<version.commons-io>2.10.0</version.commons-io>
-		<version.assertj>3.20.1</version.assertj>
+		<version.assertj>3.20.2</version.assertj>
 		<version.jmh>1.28</version.jmh>
 		<version.surefire>3.0.0-M5</version.surefire>
 	</properties>
