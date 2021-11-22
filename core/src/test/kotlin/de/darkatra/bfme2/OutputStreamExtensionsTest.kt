@@ -122,7 +122,7 @@ internal class OutputStreamExtensionsTest {
 			outputStream.writeUShortPrefixedString(extremelyLongString)
 
 			// expect a byte array starting with 2 bits representing the max value of a UShort
-			// followed by 65535 times 97 which represents the letter a in ASCII
+			// followed by 65535 times 97 which represents the letter 'a' in ASCII
 			assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(
 				-1, -1, *(0u.toUShort() until UShort.MAX_VALUE step 1).map { 97.toByte() }.toByteArray()
 			))

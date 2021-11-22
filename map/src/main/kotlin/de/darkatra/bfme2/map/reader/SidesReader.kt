@@ -54,7 +54,7 @@ class SidesReader(
 
 			var alreadyParsedPlayerScripts = false
 
-			// even though only one script list is allowed per map it is stored inside of an array
+			// even though only one script list is allowed per map it is stored inside an array
 			MapFileReader.readAssets(reader, context) { assetName ->
 				if (assetName != AssetName.PLAYER_SCRIPTS_LIST.assetName) {
 					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.SIDES_LIST.assetName}.")
