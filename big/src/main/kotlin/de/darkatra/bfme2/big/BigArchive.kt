@@ -4,6 +4,8 @@ import de.darkatra.bfme2.toBigEndianBytes
 import de.darkatra.bfme2.toLittleEndianBytes
 import java.io.OutputStream
 import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 
 /**
  * Allows writing data as BIG archive.
@@ -21,6 +23,10 @@ class BigArchive(
 	private val entries = arrayListOf<BigArchiveEntry>()
 
 	fun addFile(file: Path, name: String) {
+		if (!file.exists()) {
+			throw IllegalArgumentException("File does not exist: $file")
+		}
+
 		entries.add(BigArchiveEntry(file, name))
 	}
 
@@ -69,7 +75,7 @@ class BigArchive(
 
 	private fun writeFileContent(output: OutputStream) {
 		entries.forEach { entry ->
-			entry.file.toFile().inputStream().transferTo(output)
+			entry.file.inputStream().transferTo(output)
 		}
 	}
 
