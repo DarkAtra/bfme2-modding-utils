@@ -3,6 +3,7 @@ package de.darkatra.bfme2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
@@ -81,6 +82,28 @@ internal class InputStreamExtensionsTest {
 			val inputStream = ByteArrayInputStream(bytes)
 
 			assertThat(inputStream.readFloat()).isEqualTo(1f)
+		}
+
+		@Test
+		internal fun shouldReadNullTerminatedString() {
+
+			val bytes = "Hello".toByteArray() + 0.toByte()
+
+			val inputStream = ByteArrayInputStream(bytes)
+
+			assertThat(inputStream.readNullTerminatedString()).isEqualTo("Hello")
+		}
+
+		@Test
+		internal fun shouldFailToReadStringWithoutNullTerminator() {
+
+			val bytes = "Hello".toByteArray()
+
+			val inputStream = ByteArrayInputStream(bytes)
+
+			assertThrows<InvalidDataException> {
+				inputStream.readNullTerminatedString()
+			}
 		}
 
 		@Test

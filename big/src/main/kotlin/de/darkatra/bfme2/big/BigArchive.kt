@@ -1,42 +1,139 @@
 package de.darkatra.bfme2.big
 
+import de.darkatra.bfme2.readNullTerminatedString
 import de.darkatra.bfme2.toBigEndianBytes
+import de.darkatra.bfme2.toBigEndianUInt
 import de.darkatra.bfme2.toLittleEndianBytes
 import java.io.OutputStream
+import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
 
 /**
- * Allows writing data as BIG archive.
+ * Allows reading and writing data from and to big archives.
+ *
+ * @param version The version of the big archive.
+ * @param path The path to the big archive.
  *
  * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.Big/BigArchive.cs
  */
 class BigArchive(
-	private val version: BigArchiveVersion
+	@Suppress("MemberVisibilityCanBePrivate")
+	val version: BigArchiveVersion,
+	val path: Path
 ) {
 
 	companion object {
-		const val HEADER_SIZE = 16
+		const val HEADER_SIZE = 16u
+
+		fun from(path: Path): BigArchive {
+			if (!path.exists()) {
+				throw IllegalArgumentException("The specified path does not exist.")
+			}
+
+			val fourCCBytes = path.inputStream().use { it.readNBytes(4) }
+			if (fourCCBytes.size < 4) {
+				throw IllegalStateException("Big archive is too small")
+			}
+
+			val version = when (val fourCC = fourCCBytes.toString(StandardCharsets.UTF_8)) {
+				"BIGF" -> BigArchiveVersion.BIG_F
+				"BIG4" -> BigArchiveVersion.BIG_4
+				else -> throw IllegalStateException("Unknown big archive version: '$fourCC'")
+			}
+
+			return BigArchive(version, path)
+		}
 	}
 
-	private val entries = arrayListOf<BigArchiveEntry>()
+	private val _entries: MutableList<BigArchiveEntry> = arrayListOf()
 
-	fun addFile(file: Path, name: String) {
-		if (!file.exists()) {
-			throw IllegalArgumentException("File does not exist: $file")
+	@Suppress("MemberVisibilityCanBePrivate")
+	val entries
+		get() = _entries.sortedWith(Comparator.comparing(BigArchiveEntry::name))
+
+	init {
+		readFromDisk()
+	}
+
+	/**
+	 * Adds a new entry to the archive.
+	 *
+	 * @param name The name of the entry to add.
+	 */
+	fun createEntry(name: String): BigArchiveEntry {
+		if (name.isBlank()) {
+			throw IllegalArgumentException("Name must not be blank")
 		}
 
-		entries.add(BigArchiveEntry(file, name))
+		val entry = BigArchiveEntry(
+			name = name,
+			archive = this,
+			hasPendingChanges = true
+		)
+		_entries.add(entry)
+		return entry
 	}
 
-	fun write(output: OutputStream) {
-		entries.sortWith(Comparator.comparing(BigArchiveEntry::name))
+	/**
+	 * Deletes an entry from the archive and writes changes to disk.
+	 *
+	 * @param name The name of the entry to delete.
+	 */
+	@Suppress("unused")
+	fun deleteEntry(name: String) {
+		if (name.isBlank()) {
+			throw IllegalArgumentException("Name must not be blank")
+		}
 
+		_entries.removeIf { it.name == name }
+		writeToDisk()
+	}
+
+	/**
+	 * Reads the archive from disk.
+	 */
+	@Suppress("MemberVisibilityCanBePrivate")
+	fun readFromDisk() {
+		if (!path.exists()) {
+			return
+		}
+
+		path.inputStream().use {
+			it.skip(4) // skip fourCC
+			it.readNBytes(4).toBigEndianUInt() // archive size
+			val numberOfEntries = it.readNBytes(4).toBigEndianUInt()
+			it.readNBytes(4).toBigEndianUInt() // data start
+
+			for (i in 0u until numberOfEntries) {
+				val entryOffset = it.readNBytes(4).toBigEndianUInt()
+				val entrySize = it.readNBytes(4).toBigEndianUInt()
+				val entryName = it.readNullTerminatedString()
+
+				val bigArchiveEntry = BigArchiveEntry(
+					name = entryName,
+					archive = this,
+					offset = entryOffset,
+					size = entrySize,
+					hasPendingChanges = false
+				)
+
+				_entries.add(bigArchiveEntry)
+			}
+		}
+	}
+
+	/**
+	 * Writes changes to disk.
+	 */
+	fun writeToDisk() {
+		val output = path.outputStream()
 		val tableSize = calculateTableSize()
 		val contentSize = calculateContentSize()
-		val archiveSize: Long = HEADER_SIZE + tableSize + contentSize
-		val dataStart: Int = HEADER_SIZE + tableSize
+		val archiveSize: UInt = HEADER_SIZE + tableSize + contentSize
+		val dataStart: UInt = HEADER_SIZE + tableSize
 
 		output.use {
 			writeHeader(output, archiveSize, dataStart)
@@ -47,7 +144,7 @@ class BigArchive(
 		}
 	}
 
-	private fun writeHeader(output: OutputStream, archiveSize: Long, dataStart: Int) {
+	private fun writeHeader(output: OutputStream, archiveSize: UInt, dataStart: UInt) {
 		output.write(
 			when (version) {
 				BigArchiveVersion.BIG_F -> "BIGF".toByteArray()
@@ -55,36 +152,38 @@ class BigArchive(
 			}
 		)
 
-		output.write(archiveSize.toInt().toLittleEndianBytes())
+		output.write(archiveSize.toLittleEndianBytes())
 		output.write(entries.size.toBigEndianBytes())
 		output.write(dataStart.toBigEndianBytes())
 	}
 
-	private fun writeFileTable(output: OutputStream, dataStart: Int) {
-		var entryOffset: Long = dataStart.toLong()
+	private fun writeFileTable(output: OutputStream, dataStart: UInt) {
+		var entryOffset: UInt = dataStart
 
 		entries.forEach { entry ->
-			output.write(entryOffset.toInt().toBigEndianBytes())
-			output.write(entry.size.toInt().toBigEndianBytes())
-			output.write(entry.name.toByteArray())
-			output.write(byteArrayOf(0.toByte()))
+			output.write(entryOffset.toBigEndianBytes())
+			output.write(entry.size.toBigEndianBytes())
+			// write the entry name as null terminated string
+			output.write(entry.name.toByteArray() + byteArrayOf(0))
 
+			entry.offset = entryOffset
 			entryOffset += entry.size
 		}
 	}
 
 	private fun writeFileContent(output: OutputStream) {
 		entries.forEach { entry ->
-			entry.file.inputStream().transferTo(output)
+			output.write(entry.inputStream().use { it.readAllBytes() })
+			entry.hasPendingChanges = false
 		}
 	}
 
-	private fun calculateTableSize(): Int {
+	private fun calculateTableSize(): UInt {
 		// Each entry has 4 bytes for the offset + 4 for size and a null-terminated string
-		return entries.fold(0) { acc, entry -> acc + 8 + entry.name.length + 1 }
+		return entries.fold(0u) { acc, entry -> acc + 8u + entry.name.length.toUInt() + 1u }
 	}
 
-	private fun calculateContentSize(): Long {
-		return entries.fold(0) { acc, entry -> acc + entry.size }
+	private fun calculateContentSize(): UInt {
+		return entries.fold(0u) { acc, entry -> acc + entry.size }
 	}
 }

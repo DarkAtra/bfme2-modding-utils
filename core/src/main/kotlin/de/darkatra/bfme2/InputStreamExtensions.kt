@@ -31,6 +31,19 @@ fun InputStream.readUShortPrefixedString(charset: Charset = StandardCharsets.US_
 	return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charset)
 }
 
+fun InputStream.readNullTerminatedString(): String {
+	val stringBuilder = StringBuilder()
+	var nextByte = this.read()
+	while (nextByte != 0) {
+		if (nextByte == -1) {
+			throw InvalidDataException("Unexpected end of stream while reading null terminated string.")
+		}
+		stringBuilder.append(nextByte.toChar())
+		nextByte = this.read()
+	}
+	return stringBuilder.toString()
+}
+
 fun InputStream.read7BitString(): String {
 
 	fun determineStringLength(): Int {
