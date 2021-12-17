@@ -11,6 +11,5 @@ internal class BigArchiveEntryOutputStream(
 	override fun flush() {
 		bigArchiveEntry.hasPendingChanges = true
 		bigArchiveEntry.size = outputStream.size().toUInt()
-		outputStream.reset()
 	}
 }

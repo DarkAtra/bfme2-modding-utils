@@ -174,6 +174,7 @@ class BigArchive(
 	private fun writeFileContent(output: OutputStream) {
 		entries.forEach { entry ->
 			output.write(entry.inputStream().use { it.readAllBytes() })
+			entry.pendingOutputStream.reset()
 			entry.hasPendingChanges = false
 		}
 	}
