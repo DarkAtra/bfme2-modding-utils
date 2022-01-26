@@ -70,7 +70,9 @@ enum class ScriptArgumentType(
 	REVERB_ROOM_TYPE(60u),
 	OBJECT_TYPE(61u),
 	HERO(62u),
-	EMOTION(63u);
+	EMOTION(63u),
+	UNKNOWN_1(64u),
+	UNKNOWN_2(77u);
 
 	companion object {
 		fun ofId(id: UInt): ScriptArgumentType {

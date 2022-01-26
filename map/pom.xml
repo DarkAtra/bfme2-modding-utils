@@ -7,11 +7,11 @@
 	<parent>
 		<groupId>de.darkatra.bfme2</groupId>
 		<artifactId>bfme2-modding-utils</artifactId>
-		<version>0.2.2</version>
+		<version>0.2.3</version>
 	</parent>
 
 	<artifactId>map</artifactId>
-	<version>0.2.2</version>
+	<version>0.2.3</version>
 
 	<dependencies>
 		<dependency>

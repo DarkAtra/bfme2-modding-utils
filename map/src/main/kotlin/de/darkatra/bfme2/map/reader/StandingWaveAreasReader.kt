@@ -8,9 +8,9 @@ import de.darkatra.bfme2.map.StandingWaveArea
 import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUIntAsBoolean
 import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
-import kotlin.experimental.or
 
 class StandingWaveAreasReader : AssetReader {
 
@@ -61,7 +61,7 @@ class StandingWaveAreasReader : AssetReader {
 		}
 		standingWaveArea.unknown(unknown)
 
-		if (version >= 3u) {
+		if (version < 3u) {
 			standingWaveArea.finalWidth(reader.readUInt())
 			standingWaveArea.finalHeight(reader.readUInt())
 			standingWaveArea.initialWidthFraction(reader.readUInt())
@@ -74,13 +74,7 @@ class StandingWaveAreasReader : AssetReader {
 			standingWaveArea.texture(reader.readUShortPrefixedString())
 
 			if (version == 2.toUShort()) {
-				val enablePcaWave = reader.readBoolean()
-
-				val unused = reader.readNBytes(3).reduce { acc, byte -> acc or byte }
-				if (unused != 0.toByte()) {
-					throw InvalidDataException("Unexpected non empty bytes after boolean found.")
-				}
-				standingWaveArea.enablePcaWave(enablePcaWave)
+				standingWaveArea.enablePcaWave(reader.readUIntAsBoolean())
 			}
 		}
 

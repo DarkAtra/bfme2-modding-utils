@@ -2,25 +2,23 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
+import de.darkatra.bfme2.map.RoadType
 import de.darkatra.bfme2.map.ScriptConditionType
 import de.darkatra.bfme2.map.TimeOfDay
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.io.InputStream
 
 internal class MapFileReaderTest {
 
-	private val bmfe1MapWithSkyboxSettings = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme1/skybox.map")!!
-	private val bmfe2rotwkMapWithScripts = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/script.map")!!
-	private val bmfe2rotwkMapWithScriptsThatChecksForActiveGameModes = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/map mp westmarch.zlib")!!
-
-	private val uncompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.txt")!!
-	private val refpackCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.refpack")!!
-	private val zlibCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.zlib")!!
+	private val uncompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.txt")
+	private val refpackCompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.refpack")
+	private val zlibCompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.zlib")
 
 	@Test
 	internal fun shouldReadBfme1MapWithSkyboxSettings() {
 
-		val map = MapFileReader().read(bmfe1MapWithSkyboxSettings)
+		val map = MapFileReader().read(getMapInputStream("/maps/bfme1/skybox.map"))
 
 		assertThat(map.skybox).isNotNull
 		assertThat(map.skybox!!.position.x).isEqualTo(500.5f)
@@ -32,9 +30,27 @@ internal class MapFileReaderTest {
 	}
 
 	@Test
+	internal fun shouldReadBfme2MapWithStrangeRoadType() {
+
+		val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp harlond.zlib"))
+
+		assertThat(map).isNotNull
+		assertThat(map.objects.any { it.roadType == RoadType.UNKNOWN_1 }).isTrue
+	}
+
+	@Test
+	internal fun shouldReadBfme2MapWithStandingWaveAreas() {
+
+		val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp midgewater.zlib"))
+
+		assertThat(map).isNotNull
+		assertThat(map.standingWaveAreas).hasSize(2)
+	}
+
+	@Test
 	internal fun shouldReadBfme2MapWithScripts() {
 
-		val map = MapFileReader().read(bmfe2rotwkMapWithScripts)
+		val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/script.map"))
 
 		assertThat(map.playerScripts).isNotEmpty
 		assertThat(map.playerScripts!![0].scriptFolders).isNotEmpty
@@ -67,7 +83,7 @@ internal class MapFileReaderTest {
 	@Test
 	internal fun shouldReadBfme2MapWithScriptThatChecksForActiveGameModes() {
 
-		val map = MapFileReader().read(bmfe2rotwkMapWithScriptsThatChecksForActiveGameModes)
+		val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp westmarch.zlib"))
 
 		assertThat(map.playerScripts).isNotEmpty
 		assertThat(map.playerScripts!![2].scriptFolders).isNotEmpty
@@ -142,5 +158,9 @@ internal class MapFileReaderTest {
 
 		assertThat(plain).isEqualTo(refpack)
 		assertThat(plain).isEqualTo(zlib)
+	}
+
+	private fun getMapInputStream(name: String): InputStream {
+		return MapFileReaderTest::class.java.getResourceAsStream(name)!!
 	}
 }

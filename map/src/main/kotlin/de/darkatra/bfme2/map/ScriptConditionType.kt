@@ -162,7 +162,11 @@ enum class ScriptConditionType(
 	ANY_UNITS_USING_BLOODTHIRSTY(181u),
 	UNIT_USING_AUTO_PICKUP(182u),
 	UNIT_IN_ALT_FORMATION(183u),
-	IS_GAME_MODE_ACTIVE(201u);
+	IS_GAME_MODE_ACTIVE(201u),
+	UNKNOWN_0(118u),
+	UNKNOWN_1(188u),
+	UNKNOWN_2(195u),
+	UNKNOWN_3(200u);
 
 	companion object {
 		fun ofId(id: UInt): ScriptConditionType {
