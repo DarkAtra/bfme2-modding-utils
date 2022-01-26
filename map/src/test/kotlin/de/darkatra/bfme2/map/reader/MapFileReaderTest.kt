@@ -11,6 +11,7 @@ internal class MapFileReaderTest {
 
 	private val bmfe1MapWithSkyboxSettings = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme1/skybox.map")!!
 	private val bmfe2rotwkMapWithScripts = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/script.map")!!
+	private val bmfe2rotwkMapWithScriptsThatChecksForActiveGameModes = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/map mp westmarch.zlib")!!
 
 	private val uncompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.txt")!!
 	private val refpackCompressedMapPath = MapFileReaderTest::class.java.getResourceAsStream("/maps/bfme2-rotwk/Legendary War.refpack")!!
@@ -61,6 +62,21 @@ internal class MapFileReaderTest {
 		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfTrue).isEmpty()
 		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfFalse).isNotEmpty
 		assertThat(map.playerScripts!![0].scriptFolders[0].scripts[1].actionsIfFalse[0].enabled).isTrue
+	}
+
+	@Test
+	internal fun shouldReadBfme2MapWithScriptThatChecksForActiveGameModes() {
+
+		val map = MapFileReader().read(bmfe2rotwkMapWithScriptsThatChecksForActiveGameModes)
+
+		assertThat(map.playerScripts).isNotEmpty
+		assertThat(map.playerScripts!![2].scriptFolders).isNotEmpty
+		assertThat(map.playerScripts!![2].scriptFolders[0].name).isEqualTo("SkirmishGollum_Spawn")
+		assertThat(map.playerScripts!![2].scriptFolders[0].scripts).isNotEmpty
+		assertThat(map.playerScripts!![2].scriptFolders[0].scripts[0].name).isEqualTo("SkirmishGollum_PickSpawnPoint")
+		assertThat(map.playerScripts!![2].scriptFolders[0].scripts[0].orConditions).isNotEmpty
+		assertThat(map.playerScripts!![2].scriptFolders[0].scripts[0].orConditions[0].conditions).isNotEmpty
+		assertThat(map.playerScripts!![2].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.IS_GAME_MODE_ACTIVE)
 	}
 
 	@Test
