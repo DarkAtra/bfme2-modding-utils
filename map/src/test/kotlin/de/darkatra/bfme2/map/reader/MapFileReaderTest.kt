@@ -35,7 +35,7 @@ internal class MapFileReaderTest {
 		val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp harlond.zlib"))
 
 		assertThat(map).isNotNull
-		assertThat(map.objects.any { it.roadType == RoadType.UNKNOWN_1 }).isTrue
+		assertThat(map.objects.any { it.roadType == RoadType.UNKNOWN_5 }).isTrue
 	}
 
 	@Test
