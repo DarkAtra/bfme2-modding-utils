@@ -53,7 +53,7 @@
 		<version.commons-io>2.11.0</version.commons-io>
 		<version.assertj>3.22.0</version.assertj>
 		<version.jmh>1.28</version.jmh>
-		<version.surefire>3.0.0-M5</version.surefire>
+		<version.surefire>3.0.0-M6</version.surefire>
 	</properties>
 
 	<dependencyManagement>
