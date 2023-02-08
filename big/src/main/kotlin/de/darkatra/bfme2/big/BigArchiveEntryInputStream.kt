@@ -5,12 +5,15 @@ import java.io.InputStream
 import kotlin.io.path.inputStream
 
 internal class BigArchiveEntryInputStream(
-	bigArchiveEntry: BigArchiveEntry
+    bigArchiveEntry: BigArchiveEntry
 ) : InputStream() {
 
-	private val inputStream = SkippingInputStream(bigArchiveEntry.archive.path.inputStream(), bigArchiveEntry.offset.toLong())
+    private val inputStream = SkippingInputStream(
+        bigArchiveEntry.archive.path.inputStream().buffered(),
+        bigArchiveEntry.offset.toLong()
+    )
 
-	override fun read(): Int {
-		return inputStream.read()
-	}
+    override fun read(): Int {
+        return inputStream.read()
+    }
 }
