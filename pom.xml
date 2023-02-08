@@ -54,6 +54,7 @@
         <version.assertj>3.23.1</version.assertj>
         <version.jmh>1.28</version.jmh>
         <version.surefire>3.0.0-M7</version.surefire>
+        <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
     </properties>
 
     <dependencyManagement>
@@ -152,6 +153,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>${version.maven-source-plugin}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
