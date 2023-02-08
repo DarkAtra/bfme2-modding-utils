@@ -1,0 +1,31 @@
+{
+    "branches": [
+        {
+            "name": "main",
+            "prerelease": true
+        }
+    ],
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}",
+                "publishCmd": "mvn -B -ntp clean deploy -DskipTests"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    [
+                        "**/pom.xml",
+                        "!**/target/**/*"
+                    ]
+                ]
+            }
+        ],
+        "@semantic-release/github"
+    ]
+}
