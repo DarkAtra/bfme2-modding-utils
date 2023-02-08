@@ -24,214 +24,217 @@ import de.darkatra.bfme2.readUShortPrefixedString
 import org.apache.commons.io.input.CountingInputStream
 
 class ScriptReader(
-	private val propertyKeyReader: PropertyKeyReader
+    private val propertyKeyReader: PropertyKeyReader
 ) {
 
-	companion object {
-		const val MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_ACTION = 2u
-		const val MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_ACTION = 3u
-		const val MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_CONDITION = 4u
-		const val MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION = 5u
-	}
+    companion object {
+        const val MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_ACTION = 2u
+        const val MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_ACTION = 3u
+        const val MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_CONDITION = 4u
+        const val MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION = 5u
+    }
 
-	fun read(reader: CountingInputStream, context: MapFileParseContext): Script {
+    fun read(reader: CountingInputStream, context: MapFileParseContext): Script {
 
-		val scriptBuilder = Script.Builder()
+        val scriptBuilder = Script.Builder()
 
-		MapFileReader.readAsset(reader, context, AssetName.SCRIPT.assetName) { version ->
+        MapFileReader.readAsset(reader, context, AssetName.SCRIPT.assetName) { version ->
 
-			scriptBuilder.name(reader.readUShortPrefixedString())
-			scriptBuilder.comment(reader.readUShortPrefixedString())
-			scriptBuilder.conditionsComment(reader.readUShortPrefixedString())
-			scriptBuilder.actionsComment(reader.readUShortPrefixedString())
+            scriptBuilder.name(reader.readUShortPrefixedString())
+            scriptBuilder.comment(reader.readUShortPrefixedString())
+            scriptBuilder.conditionsComment(reader.readUShortPrefixedString())
+            scriptBuilder.actionsComment(reader.readUShortPrefixedString())
 
-			scriptBuilder.active(reader.readBoolean())
-			scriptBuilder.deactivateUponSuccess(reader.readBoolean())
+            scriptBuilder.active(reader.readBoolean())
+            scriptBuilder.deactivateUponSuccess(reader.readBoolean())
 
-			scriptBuilder.activeInEasy(reader.readBoolean())
-			scriptBuilder.activeInMedium(reader.readBoolean())
-			scriptBuilder.activeInHard(reader.readBoolean())
+            scriptBuilder.activeInEasy(reader.readBoolean())
+            scriptBuilder.activeInMedium(reader.readBoolean())
+            scriptBuilder.activeInHard(reader.readBoolean())
 
-			scriptBuilder.subroutine(reader.readBoolean())
+            scriptBuilder.subroutine(reader.readBoolean())
 
-			if (version >= 2u) {
-				scriptBuilder.evaluationInterval(reader.readUInt())
+            if (version >= 2u) {
+                scriptBuilder.evaluationInterval(reader.readUInt())
 
-				if (version == 5.toUShort()) {
-					// default to false?
-					scriptBuilder.usesEvaluationIntervalType(reader.readBoolean())
-					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.ofUInt(reader.readUInt()))
-				} else {
-					scriptBuilder.evaluationIntervalType(EvaluationIntervalType.FRAME_OR_SECONDS)
-				}
-			}
+                if (version == 5.toUShort()) {
+                    // default to false?
+                    scriptBuilder.usesEvaluationIntervalType(reader.readBoolean())
+                    scriptBuilder.evaluationIntervalType(EvaluationIntervalType.ofUInt(reader.readUInt()))
+                } else {
+                    scriptBuilder.evaluationIntervalType(EvaluationIntervalType.FRAME_OR_SECONDS)
+                }
+            }
 
-			if (version >= 3u) {
-				scriptBuilder.actionsFireSequentially(reader.readBoolean())
-				scriptBuilder.loopActions(reader.readBoolean())
-				scriptBuilder.loopCount(reader.readUInt())
-				scriptBuilder.sequentialTargetType(SequentialScriptTarget.ofByte(reader.readByte()))
-				scriptBuilder.sequentialTargetName(reader.readUShortPrefixedString())
-			}
+            if (version >= 3u) {
+                scriptBuilder.actionsFireSequentially(reader.readBoolean())
+                scriptBuilder.loopActions(reader.readBoolean())
+                scriptBuilder.loopCount(reader.readUInt())
+                scriptBuilder.sequentialTargetType(SequentialScriptTarget.ofByte(reader.readByte()))
+                scriptBuilder.sequentialTargetName(reader.readUShortPrefixedString())
+            }
 
-			if (version >= 4u) {
-				val unknown = reader.readUShortPrefixedString()
-				if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
-					throw InvalidDataException("Unexpected value '$unknown'.")
-				}
-				scriptBuilder.unknown1(unknown)
-			}
+            if (version >= 4u) {
+                val unknown = reader.readUShortPrefixedString()
+                if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
+                    throw InvalidDataException("Unexpected value '$unknown'.")
+                }
+                scriptBuilder.unknown1(unknown)
+            }
 
-			if (version >= 6u) {
-				scriptBuilder.unknown2(reader.readInt())
-				val unknown3 = reader.readUShort()
-				if (unknown3 != 0.toUShort()) {
-					throw InvalidDataException("Unexpected value '$unknown3'.")
-				}
-				scriptBuilder.unknown3(unknown3)
-			}
+            if (version >= 6u) {
+                scriptBuilder.unknown2(reader.readInt())
+                val unknown3 = reader.readUShort()
+                if (unknown3 != 0.toUShort()) {
+                    throw InvalidDataException("Unexpected value '$unknown3'.")
+                }
+                scriptBuilder.unknown3(unknown3)
+            }
 
-			val orConditions = mutableListOf<ScriptOrCondition>()
-			val actionsIfTrue = mutableListOf<ScriptAction>()
-			val actionsIfFalse = mutableListOf<ScriptAction>()
+            val orConditions = mutableListOf<ScriptOrCondition>()
+            val actionsIfTrue = mutableListOf<ScriptAction>()
+            val actionsIfFalse = mutableListOf<ScriptAction>()
 
-			MapFileReader.readAssets(reader, context) { assetName ->
-				when (assetName) {
-					AssetName.OR_CONDITION.assetName -> orConditions.add(
-						readScriptOrCondition(reader, context)
-					)
-					AssetName.SCRIPT_ACTION.assetName -> MapFileReader.readAsset(reader, context, assetName) { version ->
-						actionsIfTrue.add(
-							readScriptAction(reader, context, version)
-						)
-					}
-					AssetName.SCRIPT_ACTION_FALSE.assetName -> MapFileReader.readAsset(reader, context, assetName) { version ->
-						actionsIfFalse.add(
-							readScriptAction(reader, context, version)
-						)
-					}
-				}
-			}
+            MapFileReader.readAssets(reader, context) { assetName ->
+                when (assetName) {
+                    AssetName.OR_CONDITION.assetName -> orConditions.add(
+                        readScriptOrCondition(reader, context)
+                    )
 
-			scriptBuilder.orConditions(orConditions)
-			scriptBuilder.actionsIfTrue(actionsIfTrue)
-			scriptBuilder.actionsIfFalse(actionsIfFalse)
-		}
+                    AssetName.SCRIPT_ACTION.assetName -> MapFileReader.readAsset(reader, context, assetName) { version ->
+                        actionsIfTrue.add(
+                            readScriptAction(reader, context, version)
+                        )
+                    }
 
-		return scriptBuilder.build()
-	}
+                    AssetName.SCRIPT_ACTION_FALSE.assetName -> MapFileReader.readAsset(reader, context, assetName) { version ->
+                        actionsIfFalse.add(
+                            readScriptAction(reader, context, version)
+                        )
+                    }
+                }
+            }
 
-	private fun readScriptOrCondition(reader: CountingInputStream, context: MapFileParseContext): ScriptOrCondition {
+            scriptBuilder.orConditions(orConditions)
+            scriptBuilder.actionsIfTrue(actionsIfTrue)
+            scriptBuilder.actionsIfFalse(actionsIfFalse)
+        }
 
-		val conditions = mutableListOf<ScriptCondition>()
+        return scriptBuilder.build()
+    }
 
-		MapFileReader.readAsset(reader, context, AssetName.OR_CONDITION.assetName) {
-			MapFileReader.readAssets(reader, context) { assetName ->
-				when (assetName) {
-					AssetName.CONDITION.assetName -> MapFileReader.readAsset(reader, context, AssetName.CONDITION.assetName) { version ->
-						conditions.add(
-							readScriptCondition(reader, context, version)
-						)
-					}
-					else -> throw InvalidDataException("Unexpected asset with name '$assetName' in ScriptOrCondition.")
-				}
-			}
-		}
+    private fun readScriptOrCondition(reader: CountingInputStream, context: MapFileParseContext): ScriptOrCondition {
 
-		return ScriptOrCondition(
-			conditions = conditions
-		)
-	}
+        val conditions = mutableListOf<ScriptCondition>()
 
-	private fun readScriptAction(reader: CountingInputStream, context: MapFileParseContext, version: UShort): ScriptAction {
+        MapFileReader.readAsset(reader, context, AssetName.OR_CONDITION.assetName) {
+            MapFileReader.readAssets(reader, context) { assetName ->
+                when (assetName) {
+                    AssetName.CONDITION.assetName -> MapFileReader.readAsset(reader, context, AssetName.CONDITION.assetName) { version ->
+                        conditions.add(
+                            readScriptCondition(reader, context, version)
+                        )
+                    }
 
-		val type = ScriptActionType.ofId(reader.readUInt())
+                    else -> throw InvalidDataException("Unexpected asset with name '$assetName' in ScriptOrCondition.")
+                }
+            }
+        }
 
-		val internalName = when {
-			version >= MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_ACTION -> propertyKeyReader.read(reader, context)
-			else -> null
-		}
+        return ScriptOrCondition(
+            conditions = conditions
+        )
+    }
 
-		val numberOfScriptArguments = reader.readUInt()
+    private fun readScriptAction(reader: CountingInputStream, context: MapFileParseContext, version: UShort): ScriptAction {
 
-		val scriptArguments = mutableListOf<ScriptArgument>()
-		for (i in 0u until numberOfScriptArguments step 1) {
-			scriptArguments.add(
-				readScriptArgument(reader)
-			)
-		}
+        val type = ScriptActionType.ofId(reader.readUInt())
 
-		val enabled = when {
-			version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_ACTION -> reader.readUIntAsBoolean()
-			else -> true
-		}
+        val internalName = when {
+            version >= MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_ACTION -> propertyKeyReader.read(reader, context)
+            else -> null
+        }
 
-		return ScriptAction(
-			type = type,
-			internalName = internalName,
-			arguments = scriptArguments,
-			enabled = enabled
-		)
-	}
+        val numberOfScriptArguments = reader.readUInt()
 
-	private fun readScriptCondition(reader: CountingInputStream, context: MapFileParseContext, version: UShort): ScriptCondition {
+        val scriptArguments = mutableListOf<ScriptArgument>()
+        for (i in 0u until numberOfScriptArguments step 1) {
+            scriptArguments.add(
+                readScriptArgument(reader)
+            )
+        }
 
-		val type = ScriptConditionType.ofId(reader.readUInt())
+        val enabled = when {
+            version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_ACTION -> reader.readUIntAsBoolean()
+            else -> true
+        }
 
-		val internalName = when {
-			version >= MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_CONDITION -> propertyKeyReader.read(reader, context)
-			else -> null
-		}
+        return ScriptAction(
+            type = type,
+            internalName = internalName,
+            arguments = scriptArguments,
+            enabled = enabled
+        )
+    }
 
-		val numberOfScriptArguments = reader.readUInt()
+    private fun readScriptCondition(reader: CountingInputStream, context: MapFileParseContext, version: UShort): ScriptCondition {
 
-		val scriptArguments = mutableListOf<ScriptArgument>()
-		for (i in 0u until numberOfScriptArguments step 1) {
-			scriptArguments.add(
-				readScriptArgument(reader)
-			)
-		}
+        val type = ScriptConditionType.ofId(reader.readUInt())
 
-		val enabled = when {
-			version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION -> reader.readUIntAsBoolean()
-			else -> true
-		}
+        val internalName = when {
+            version >= MINIMUM_VERSION_WITH_INTERNAL_NAME_IN_SCRIPT_CONDITION -> propertyKeyReader.read(reader, context)
+            else -> null
+        }
 
-		val inverted = when {
-			version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION -> reader.readUIntAsBoolean()
-			else -> true
-		}
+        val numberOfScriptArguments = reader.readUInt()
 
-		return ScriptCondition(
-			type = type,
-			internalName = internalName,
-			arguments = scriptArguments,
-			enabled = enabled,
-			inverted = inverted
-		)
-	}
+        val scriptArguments = mutableListOf<ScriptArgument>()
+        for (i in 0u until numberOfScriptArguments step 1) {
+            scriptArguments.add(
+                readScriptArgument(reader)
+            )
+        }
 
-	private fun readScriptArgument(reader: CountingInputStream): ScriptArgument {
+        val enabled = when {
+            version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION -> reader.readUIntAsBoolean()
+            else -> true
+        }
 
-		val argumentType = ScriptArgumentType.ofId(reader.readUInt())
+        val inverted = when {
+            version >= MINIMUM_VERSION_WITH_ENABLED_FLAG_IN_SCRIPT_CONDITION -> reader.readUIntAsBoolean()
+            else -> true
+        }
 
-		return if (argumentType == ScriptArgumentType.POSITION_COORDINATE) {
-			ScriptArgument(
-				argumentType = argumentType,
-				position = Vector3(
-					x = reader.readFloat(),
-					y = reader.readFloat(),
-					z = reader.readFloat()
-				)
-			)
-		} else {
-			ScriptArgument(
-				argumentType = argumentType,
-				intValue = reader.readInt(),
-				floatValue = reader.readFloat(),
-				stringValue = reader.readUShortPrefixedString()
-			)
-		}
-	}
+        return ScriptCondition(
+            type = type,
+            internalName = internalName,
+            arguments = scriptArguments,
+            enabled = enabled,
+            inverted = inverted
+        )
+    }
+
+    private fun readScriptArgument(reader: CountingInputStream): ScriptArgument {
+
+        val argumentType = ScriptArgumentType.ofId(reader.readUInt())
+
+        return if (argumentType == ScriptArgumentType.POSITION_COORDINATE) {
+            ScriptArgument(
+                argumentType = argumentType,
+                position = Vector3(
+                    x = reader.readFloat(),
+                    y = reader.readFloat(),
+                    z = reader.readFloat()
+                )
+            )
+        } else {
+            ScriptArgument(
+                argumentType = argumentType,
+                intValue = reader.readInt(),
+                floatValue = reader.readFloat(),
+                stringValue = reader.readUShortPrefixedString()
+            )
+        }
+    }
 }
 

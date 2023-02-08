@@ -8,16 +8,16 @@ import org.apache.commons.io.input.CountingInputStream
 
 class PropertyKeyReader {
 
-	fun read(reader: CountingInputStream, context: MapFileParseContext): PropertyKey {
+    fun read(reader: CountingInputStream, context: MapFileParseContext): PropertyKey {
 
-		val propertyType = PropertyType.ofByte(reader.readByte())
+        val propertyType = PropertyType.ofByte(reader.readByte())
 
-		val nameIndex = byteArrayOf(*reader.readNBytes(3), 0).toLittleEndianUInt()
-		val name = context.getAssetName(nameIndex)
+        val nameIndex = byteArrayOf(*reader.readNBytes(3), 0).toLittleEndianUInt()
+        val name = context.getAssetName(nameIndex)
 
-		return PropertyKey(
-			propertyType = propertyType,
-			name = name
-		)
-	}
+        return PropertyKey(
+            propertyType = propertyType,
+            name = name
+        )
+    }
 }

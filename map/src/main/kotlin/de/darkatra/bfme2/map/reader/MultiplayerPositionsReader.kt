@@ -11,54 +11,54 @@ import org.apache.commons.io.input.CountingInputStream
 
 class MultiplayerPositionsReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_LIST.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_LIST.assetName) {
 
-			val multiplayerPositions = mutableListOf<MultiplayerPosition>()
+            val multiplayerPositions = mutableListOf<MultiplayerPosition>()
 
-			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName != AssetName.MP_POSITION_INFO.assetName) {
-					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.MP_POSITION_LIST.assetName}.")
-				}
+            MapFileReader.readAssets(reader, context) { assetName ->
+                if (assetName != AssetName.MP_POSITION_INFO.assetName) {
+                    throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.MP_POSITION_LIST.assetName}.")
+                }
 
-				MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_INFO.assetName) { version ->
+                MapFileReader.readAsset(reader, context, AssetName.MP_POSITION_INFO.assetName) { version ->
 
-					val isHuman = reader.readBoolean()
-					val isComputer = reader.readBoolean()
+                    val isHuman = reader.readBoolean()
+                    val isComputer = reader.readBoolean()
 
-					val loadAIScript = when (version > 0u) {
-						true -> reader.readBoolean()
-						else -> null
-					}
+                    val loadAIScript = when (version > 0u) {
+                        true -> reader.readBoolean()
+                        else -> null
+                    }
 
-					val team = reader.readUInt()
+                    val team = reader.readUInt()
 
-					val sideRestrictions = mutableListOf<String>()
-					if (version > 0u) {
-						val sideRestrictionsLength = reader.readUInt()
-						for (i in 0u until sideRestrictionsLength step 1) {
-							sideRestrictions.add(
-								reader.readUShortPrefixedString()
-							)
-						}
-					}
+                    val sideRestrictions = mutableListOf<String>()
+                    if (version > 0u) {
+                        val sideRestrictionsLength = reader.readUInt()
+                        for (i in 0u until sideRestrictionsLength step 1) {
+                            sideRestrictions.add(
+                                reader.readUShortPrefixedString()
+                            )
+                        }
+                    }
 
-					multiplayerPositions.add(
-						MultiplayerPosition(
-							isHuman = isHuman,
-							isComputer = isComputer,
-							loadAIScript = loadAIScript,
-							team = team,
-							sideRestrictions = sideRestrictions
-						)
-					)
-				}
-			}
+                    multiplayerPositions.add(
+                        MultiplayerPosition(
+                            isHuman = isHuman,
+                            isComputer = isComputer,
+                            loadAIScript = loadAIScript,
+                            team = team,
+                            sideRestrictions = sideRestrictions
+                        )
+                    )
+                }
+            }
 
-			builder.multiplayerPositions(
-				multiplayerPositions = multiplayerPositions
-			)
-		}
-	}
+            builder.multiplayerPositions(
+                multiplayerPositions = multiplayerPositions
+            )
+        }
+    }
 }

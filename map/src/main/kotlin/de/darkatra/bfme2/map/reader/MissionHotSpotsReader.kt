@@ -9,25 +9,25 @@ import org.apache.commons.io.input.CountingInputStream
 
 class MissionHotSpotsReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.MISSION_HOT_SPOTS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.MISSION_HOT_SPOTS.assetName) {
 
-			val numberOfMissionHotSpots = reader.readUInt()
+            val numberOfMissionHotSpots = reader.readUInt()
 
-			val missionHotSpots = mutableListOf<MissionHotSpot>()
-			for (i in 0u until numberOfMissionHotSpots step 1) {
-				missionHotSpots.add(
-					MissionHotSpot(
-						id = reader.readUShortPrefixedString(),
-						title = reader.readUShortPrefixedString(),
-						description = reader.readUShortPrefixedString()
-					)
-				)
-			}
+            val missionHotSpots = mutableListOf<MissionHotSpot>()
+            for (i in 0u until numberOfMissionHotSpots step 1) {
+                missionHotSpots.add(
+                    MissionHotSpot(
+                        id = reader.readUShortPrefixedString(),
+                        title = reader.readUShortPrefixedString(),
+                        description = reader.readUShortPrefixedString()
+                    )
+                )
+            }
 
-			builder.missionHotSpots(missionHotSpots)
-		}
+            builder.missionHotSpots(missionHotSpots)
+        }
 
-	}
+    }
 }

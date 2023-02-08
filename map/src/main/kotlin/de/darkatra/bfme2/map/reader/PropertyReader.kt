@@ -10,25 +10,25 @@ import org.apache.commons.io.input.CountingInputStream
 import java.nio.charset.StandardCharsets
 
 class PropertyReader(
-	private val propertyKeyReader: PropertyKeyReader
+    private val propertyKeyReader: PropertyKeyReader
 ) {
 
-	fun read(reader: CountingInputStream, context: MapFileParseContext): Property {
+    fun read(reader: CountingInputStream, context: MapFileParseContext): Property {
 
-		val propertyKey = propertyKeyReader.read(reader, context)
+        val propertyKey = propertyKeyReader.read(reader, context)
 
-		val value = when (propertyKey.propertyType) {
-			PropertyType.BOOLEAN -> reader.readBoolean()
-			PropertyType.INTEGER -> reader.readUInt()
-			PropertyType.FLOAT -> reader.readFloat()
-			PropertyType.ASCII_STRING -> reader.readUShortPrefixedString()
-			PropertyType.UNICODE_STRING -> reader.readUShortPrefixedString(StandardCharsets.UTF_16LE)
-			PropertyType.UNKNOWN -> reader.readUShortPrefixedString()
-		}
+        val value = when (propertyKey.propertyType) {
+            PropertyType.BOOLEAN -> reader.readBoolean()
+            PropertyType.INTEGER -> reader.readUInt()
+            PropertyType.FLOAT -> reader.readFloat()
+            PropertyType.ASCII_STRING -> reader.readUShortPrefixedString()
+            PropertyType.UNICODE_STRING -> reader.readUShortPrefixedString(StandardCharsets.UTF_16LE)
+            PropertyType.UNKNOWN -> reader.readUShortPrefixedString()
+        }
 
-		return Property(
-			key = propertyKey,
-			value = value
-		)
-	}
+        return Property(
+            key = propertyKey,
+            value = value
+        )
+    }
 }

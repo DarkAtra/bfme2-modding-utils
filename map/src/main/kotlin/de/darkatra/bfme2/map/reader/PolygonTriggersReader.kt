@@ -19,89 +19,89 @@ import org.apache.commons.io.input.CountingInputStream
 
 class PolygonTriggersReader : AssetReader {
 
-	companion object {
-		const val MIN_VERSION_WITH_LAYER_NAME = 4u
-		const val MIN_VERSION_WITH_RIVER_SPECIFIC_TEXTURES = 5u
-	}
+    companion object {
+        const val MIN_VERSION_WITH_LAYER_NAME = 4u
+        const val MIN_VERSION_WITH_RIVER_SPECIFIC_TEXTURES = 5u
+    }
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
+        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
 
-			val numberOfPolygonTriggers = reader.readUInt()
+            val numberOfPolygonTriggers = reader.readUInt()
 
-			val polygonTriggers = mutableListOf<PolygonTrigger>()
-			for (i in 0u until numberOfPolygonTriggers step 1) {
-				polygonTriggers.add(
-					readPolygonTrigger(reader, context, version)
-				)
-			}
+            val polygonTriggers = mutableListOf<PolygonTrigger>()
+            for (i in 0u until numberOfPolygonTriggers step 1) {
+                polygonTriggers.add(
+                    readPolygonTrigger(reader, context, version)
+                )
+            }
 
-			builder.polygonTriggers(polygonTriggers)
-		}
-	}
+            builder.polygonTriggers(polygonTriggers)
+        }
+    }
 
-	private fun readPolygonTrigger(reader: CountingInputStream, context: MapFileParseContext, version: UShort): PolygonTrigger {
+    private fun readPolygonTrigger(reader: CountingInputStream, context: MapFileParseContext, version: UShort): PolygonTrigger {
 
-		val polygonTriggerBuilder = PolygonTrigger.Builder()
+        val polygonTriggerBuilder = PolygonTrigger.Builder()
 
-		polygonTriggerBuilder.name(reader.readUShortPrefixedString())
+        polygonTriggerBuilder.name(reader.readUShortPrefixedString())
 
-		if (version >= MIN_VERSION_WITH_LAYER_NAME) {
-			polygonTriggerBuilder.layerName(reader.readUShortPrefixedString())
-		}
+        if (version >= MIN_VERSION_WITH_LAYER_NAME) {
+            polygonTriggerBuilder.layerName(reader.readUShortPrefixedString())
+        }
 
-		polygonTriggerBuilder.id(reader.readUInt())
-		polygonTriggerBuilder.triggerType(PolygonTriggerType.ofUShort(reader.readUShort()))
+        polygonTriggerBuilder.id(reader.readUInt())
+        polygonTriggerBuilder.triggerType(PolygonTriggerType.ofUShort(reader.readUShort()))
 
-		polygonTriggerBuilder.riverStartControlPoint(reader.readUInt())
+        polygonTriggerBuilder.riverStartControlPoint(reader.readUInt())
 
-		if (version >= MIN_VERSION_WITH_RIVER_SPECIFIC_TEXTURES) {
-			polygonTriggerBuilder.riverTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.noiseTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.alphaEdgeTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.sparkleTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.bumpMapTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.skyTexture(reader.readUShortPrefixedString())
-			polygonTriggerBuilder.useAdditiveBlending(reader.readBoolean())
-			polygonTriggerBuilder.riverColor(
-				Color(
-					r = reader.readByte().toInt(),
-					g = reader.readByte().toInt(),
-					b = reader.readByte().toInt()
-				)
-			)
+        if (version >= MIN_VERSION_WITH_RIVER_SPECIFIC_TEXTURES) {
+            polygonTriggerBuilder.riverTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.noiseTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.alphaEdgeTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.sparkleTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.bumpMapTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.skyTexture(reader.readUShortPrefixedString())
+            polygonTriggerBuilder.useAdditiveBlending(reader.readBoolean())
+            polygonTriggerBuilder.riverColor(
+                Color(
+                    r = reader.readByte().toInt(),
+                    g = reader.readByte().toInt(),
+                    b = reader.readByte().toInt()
+                )
+            )
 
-			val unknown = reader.readByte()
-			if (unknown != 0.toByte()) {
-				throw InvalidDataException("Expected unknown to equal '0' but was '$unknown'.")
-			}
-			polygonTriggerBuilder.unknown(unknown)
+            val unknown = reader.readByte()
+            if (unknown != 0.toByte()) {
+                throw InvalidDataException("Expected unknown to equal '0' but was '$unknown'.")
+            }
+            polygonTriggerBuilder.unknown(unknown)
 
-			polygonTriggerBuilder.uvScrollSpeed(
-				Vector2(
-					x = reader.readFloat(),
-					y = reader.readFloat()
-				)
-			)
+            polygonTriggerBuilder.uvScrollSpeed(
+                Vector2(
+                    x = reader.readFloat(),
+                    y = reader.readFloat()
+                )
+            )
 
-			polygonTriggerBuilder.riverAlpha(reader.readFloat())
-		}
+            polygonTriggerBuilder.riverAlpha(reader.readFloat())
+        }
 
-		val numberOfPoints = reader.readUInt()
+        val numberOfPoints = reader.readUInt()
 
-		val points = mutableListOf<Point3D>()
-		for (i in 0u until numberOfPoints step 1) {
-			points.add(
-				Point3D(
-					x = reader.readInt(),
-					y = reader.readInt(),
-					z = reader.readInt()
-				)
-			)
-		}
-		polygonTriggerBuilder.points(points)
+        val points = mutableListOf<Point3D>()
+        for (i in 0u until numberOfPoints step 1) {
+            points.add(
+                Point3D(
+                    x = reader.readInt(),
+                    y = reader.readInt(),
+                    z = reader.readInt()
+                )
+            )
+        }
+        polygonTriggerBuilder.points(points)
 
-		return polygonTriggerBuilder.build()
-	}
+        return polygonTriggerBuilder.build()
+    }
 }

@@ -19,131 +19,131 @@ import java.nio.charset.StandardCharsets
 
 class CamerasAnimationsReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
 
-			val numberOfAnimations = reader.readUInt()
+            val numberOfAnimations = reader.readUInt()
 
-			val cameraAnimations = mutableListOf<CameraAnimation>()
-			for (i in 0u until numberOfAnimations step 1) {
-				cameraAnimations.add(
-					readCameraAnimations(reader)
-				)
-			}
+            val cameraAnimations = mutableListOf<CameraAnimation>()
+            for (i in 0u until numberOfAnimations step 1) {
+                cameraAnimations.add(
+                    readCameraAnimations(reader)
+                )
+            }
 
-			builder.cameraAnimations(cameraAnimations)
-		}
-	}
+            builder.cameraAnimations(cameraAnimations)
+        }
+    }
 
-	private fun readCameraAnimations(reader: CountingInputStream): CameraAnimation {
+    private fun readCameraAnimations(reader: CountingInputStream): CameraAnimation {
 
-		// chars are in reversed order
-		val animationType = CameraAnimationType.ofName(reader.readNBytes(4).toString(StandardCharsets.UTF_8).reversed())
+        // chars are in reversed order
+        val animationType = CameraAnimationType.ofName(reader.readNBytes(4).toString(StandardCharsets.UTF_8).reversed())
 
-		val name = reader.readUShortPrefixedString()
-		val numberOfFrames = reader.readUInt()
-		val startOffset = reader.readUInt()
+        val name = reader.readUShortPrefixedString()
+        val numberOfFrames = reader.readUInt()
+        val startOffset = reader.readUInt()
 
-		val cameraFrames = when (animationType) {
-			CameraAnimationType.FREE -> readCameraAnimationCameraFrames(reader, this::readFreeCameraAnimationCameraFrame)
-			CameraAnimationType.LOOK -> readCameraAnimationCameraFrames(reader, this::readLookAtCameraAnimationCameraFrame)
-		}
+        val cameraFrames = when (animationType) {
+            CameraAnimationType.FREE -> readCameraAnimationCameraFrames(reader, this::readFreeCameraAnimationCameraFrame)
+            CameraAnimationType.LOOK -> readCameraAnimationCameraFrames(reader, this::readLookAtCameraAnimationCameraFrame)
+        }
 
-		val lookAtFrames = when (animationType) {
-			CameraAnimationType.FREE -> null
-			CameraAnimationType.LOOK -> readCameraAnimationCameraFrames(reader, this::readLookAtCameraAnimationLookAtFrame)
-		}
+        val lookAtFrames = when (animationType) {
+            CameraAnimationType.FREE -> null
+            CameraAnimationType.LOOK -> readCameraAnimationCameraFrames(reader, this::readLookAtCameraAnimationLookAtFrame)
+        }
 
-		return CameraAnimation(
-			animationType = animationType,
-			name = name,
-			numberOfFrames = numberOfFrames,
-			startOffset = startOffset,
-			cameraFrames = cameraFrames,
-			lookAtFrames = lookAtFrames
-		)
-	}
+        return CameraAnimation(
+            animationType = animationType,
+            name = name,
+            numberOfFrames = numberOfFrames,
+            startOffset = startOffset,
+            cameraFrames = cameraFrames,
+            lookAtFrames = lookAtFrames
+        )
+    }
 
-	private fun readCameraAnimationCameraFrames(
-		reader: CountingInputStream,
-		frameParser: (CountingInputStream, UInt, CameraAnimationFrameInterpolationType) -> CameraAnimationFrame
-	): List<CameraAnimationFrame> {
+    private fun readCameraAnimationCameraFrames(
+        reader: CountingInputStream,
+        frameParser: (CountingInputStream, UInt, CameraAnimationFrameInterpolationType) -> CameraAnimationFrame
+    ): List<CameraAnimationFrame> {
 
-		val numberOfFrames = reader.readUInt()
-		val animationFrames = mutableListOf<CameraAnimationFrame>()
-		for (i in 0u until numberOfFrames step 1) {
+        val numberOfFrames = reader.readUInt()
+        val animationFrames = mutableListOf<CameraAnimationFrame>()
+        for (i in 0u until numberOfFrames step 1) {
 
-			val frameIndex = reader.readUInt()
-			val interpolationType = CameraAnimationFrameInterpolationType.ofName(
-				reader.readNBytes(4).toString(StandardCharsets.UTF_8).reversed()
-			)
+            val frameIndex = reader.readUInt()
+            val interpolationType = CameraAnimationFrameInterpolationType.ofName(
+                reader.readNBytes(4).toString(StandardCharsets.UTF_8).reversed()
+            )
 
-			animationFrames.add(
-				frameParser(reader, frameIndex, interpolationType)
-			)
-		}
+            animationFrames.add(
+                frameParser(reader, frameIndex, interpolationType)
+            )
+        }
 
-		return animationFrames
-	}
+        return animationFrames
+    }
 
-	private fun readFreeCameraAnimationCameraFrame(
-		reader: CountingInputStream,
-		frameIndex: UInt,
-		interpolationType: CameraAnimationFrameInterpolationType
-	): FreeCameraAnimationCameraFrame {
+    private fun readFreeCameraAnimationCameraFrame(
+        reader: CountingInputStream,
+        frameIndex: UInt,
+        interpolationType: CameraAnimationFrameInterpolationType
+    ): FreeCameraAnimationCameraFrame {
 
-		return FreeCameraAnimationCameraFrame(
-			frameIndex = frameIndex,
-			interpolationType = interpolationType,
-			position = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			),
-			rotation = Vector4(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat(),
-				w = reader.readFloat()
-			),
-			fieldOfView = reader.readFloat()
-		)
-	}
+        return FreeCameraAnimationCameraFrame(
+            frameIndex = frameIndex,
+            interpolationType = interpolationType,
+            position = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            ),
+            rotation = Vector4(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat(),
+                w = reader.readFloat()
+            ),
+            fieldOfView = reader.readFloat()
+        )
+    }
 
-	private fun readLookAtCameraAnimationCameraFrame(
-		reader: CountingInputStream,
-		frameIndex: UInt,
-		interpolationType: CameraAnimationFrameInterpolationType
-	): LookAtCameraAnimationCameraFrame {
+    private fun readLookAtCameraAnimationCameraFrame(
+        reader: CountingInputStream,
+        frameIndex: UInt,
+        interpolationType: CameraAnimationFrameInterpolationType
+    ): LookAtCameraAnimationCameraFrame {
 
-		return LookAtCameraAnimationCameraFrame(
-			frameIndex = frameIndex,
-			interpolationType = interpolationType,
-			position = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			),
-			roll = reader.readFloat(),
-			fieldOfView = reader.readFloat()
-		)
-	}
+        return LookAtCameraAnimationCameraFrame(
+            frameIndex = frameIndex,
+            interpolationType = interpolationType,
+            position = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            ),
+            roll = reader.readFloat(),
+            fieldOfView = reader.readFloat()
+        )
+    }
 
-	private fun readLookAtCameraAnimationLookAtFrame(
-		reader: CountingInputStream,
-		frameIndex: UInt,
-		interpolationType: CameraAnimationFrameInterpolationType
-	): LookAtCameraAnimationLookAtFrame {
+    private fun readLookAtCameraAnimationLookAtFrame(
+        reader: CountingInputStream,
+        frameIndex: UInt,
+        interpolationType: CameraAnimationFrameInterpolationType
+    ): LookAtCameraAnimationLookAtFrame {
 
-		return LookAtCameraAnimationLookAtFrame(
-			frameIndex = frameIndex,
-			interpolationType = interpolationType,
-			lookAt = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			)
-		)
-	}
+        return LookAtCameraAnimationLookAtFrame(
+            frameIndex = frameIndex,
+            interpolationType = interpolationType,
+            lookAt = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            )
+        )
+    }
 }

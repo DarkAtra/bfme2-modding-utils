@@ -10,29 +10,29 @@ import java.io.OutputStream
  * @param name The name of the entry.
  */
 class BigArchiveEntry(
-	val name: String,
-	internal val archive: BigArchive,
-	internal var offset: UInt = 0u,
-	internal var size: UInt = 0u,
-	internal var hasPendingChanges: Boolean,
-	internal val pendingOutputStream: ByteArrayOutputStream = ByteArrayOutputStream()
+    val name: String,
+    internal val archive: BigArchive,
+    internal var offset: UInt = 0u,
+    internal var size: UInt = 0u,
+    internal var hasPendingChanges: Boolean,
+    internal val pendingOutputStream: ByteArrayOutputStream = ByteArrayOutputStream()
 ) {
 
-	/**
-	 * Obtains an input stream for this entry.
-	 */
-	fun inputStream(): InputStream {
-		if (hasPendingChanges) {
-			return pendingOutputStream.toByteArray().inputStream()
-		}
+    /**
+     * Obtains an input stream for this entry.
+     */
+    fun inputStream(): InputStream {
+        if (hasPendingChanges) {
+            return pendingOutputStream.toByteArray().inputStream()
+        }
 
-		return BigArchiveEntryInputStream(this)
-	}
+        return BigArchiveEntryInputStream(this)
+    }
 
-	/**
-	 * Obtains an output stream for this entry.
-	 */
-	fun outputStream(): OutputStream {
-		return BigArchiveEntryOutputStream(this, pendingOutputStream)
-	}
+    /**
+     * Obtains an output stream for this entry.
+     */
+    fun outputStream(): OutputStream {
+        return BigArchiveEntryOutputStream(this, pendingOutputStream)
+    }
 }

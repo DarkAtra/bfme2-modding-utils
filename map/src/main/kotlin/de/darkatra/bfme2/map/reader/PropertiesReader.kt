@@ -5,20 +5,20 @@ import de.darkatra.bfme2.readUShort
 import org.apache.commons.io.input.CountingInputStream
 
 class PropertiesReader(
-	private val propertyReader: PropertyReader
+    private val propertyReader: PropertyReader
 ) {
 
-	fun read(reader: CountingInputStream, context: MapFileParseContext): List<Property> {
+    fun read(reader: CountingInputStream, context: MapFileParseContext): List<Property> {
 
-		val numberOfProperties = reader.readUShort()
+        val numberOfProperties = reader.readUShort()
 
-		val properties = mutableListOf<Property>()
-		for (i in 0.toUShort() until numberOfProperties step 1) {
-			properties.add(
-				propertyReader.read(reader, context)
-			)
-		}
+        val properties = mutableListOf<Property>()
+        for (i in 0.toUShort() until numberOfProperties step 1) {
+            properties.add(
+                propertyReader.read(reader, context)
+            )
+        }
 
-		return properties
-	}
+        return properties
+    }
 }

@@ -12,53 +12,53 @@ import org.apache.commons.io.input.CountingInputStream
 
 class TriggerAreasReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.TRIGGER_AREAS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.TRIGGER_AREAS.assetName) {
 
-			val numberOfTriggerAreas = reader.readUInt()
+            val numberOfTriggerAreas = reader.readUInt()
 
-			val triggerAreas = mutableListOf<TriggerArea>()
-			for (i in 0u until numberOfTriggerAreas step 1) {
-				triggerAreas.add(
-					readTriggerArea(reader, context)
-				)
-			}
+            val triggerAreas = mutableListOf<TriggerArea>()
+            for (i in 0u until numberOfTriggerAreas step 1) {
+                triggerAreas.add(
+                    readTriggerArea(reader, context)
+                )
+            }
 
-			builder.triggerAreas(triggerAreas)
-		}
-	}
+            builder.triggerAreas(triggerAreas)
+        }
+    }
 
-	@Suppress("DuplicatedCode")
-	private fun readTriggerArea(reader: CountingInputStream, context: MapFileParseContext): TriggerArea {
+    @Suppress("DuplicatedCode")
+    private fun readTriggerArea(reader: CountingInputStream, context: MapFileParseContext): TriggerArea {
 
-		val name = reader.readUShortPrefixedString()
-		val layerName = reader.readUShortPrefixedString()
+        val name = reader.readUShortPrefixedString()
+        val layerName = reader.readUShortPrefixedString()
 
-		val id = reader.readUInt()
+        val id = reader.readUInt()
 
-		val numberOfPoints = reader.readUInt()
-		val points = mutableListOf<Vector2>()
-		for (i in 0u until numberOfPoints step 1) {
-			points.add(
-				Vector2(
-					x = reader.readFloat(),
-					y = reader.readFloat()
-				)
-			)
-		}
+        val numberOfPoints = reader.readUInt()
+        val points = mutableListOf<Vector2>()
+        for (i in 0u until numberOfPoints step 1) {
+            points.add(
+                Vector2(
+                    x = reader.readFloat(),
+                    y = reader.readFloat()
+                )
+            )
+        }
 
-		val unknown = reader.readUInt()
-		if (unknown != 0u) {
-			throw InvalidDataException("Expected unknown to equal '0' but was '$unknown'.")
-		}
+        val unknown = reader.readUInt()
+        if (unknown != 0u) {
+            throw InvalidDataException("Expected unknown to equal '0' but was '$unknown'.")
+        }
 
-		return TriggerArea(
-			name = name,
-			layerName = layerName,
-			id = id,
-			points = points,
-			unknown = unknown
-		)
-	}
+        return TriggerArea(
+            name = name,
+            layerName = layerName,
+            id = id,
+            points = points,
+            unknown = unknown
+        )
+    }
 }

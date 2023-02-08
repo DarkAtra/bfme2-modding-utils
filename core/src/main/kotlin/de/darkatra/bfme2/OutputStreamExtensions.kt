@@ -10,32 +10,34 @@ fun OutputStream.writeUShort(uShort: UShort) = this.write(uShort.toLittleEndianB
 fun OutputStream.writeInt(int: Int) = this.write(int.toLittleEndianBytes())
 fun OutputStream.writeUInt(uInt: UInt) = this.write(uInt.toLittleEndianBytes())
 fun OutputStream.writeFloat(float: Float) = this.write(float.toLittleEndianBytes())
-fun OutputStream.writeBoolean(boolean: Boolean) = this.writeByte(when (boolean) {
-	false -> 0.toByte()
-	true -> 1.toByte()
-})
+fun OutputStream.writeBoolean(boolean: Boolean) = this.writeByte(
+    when (boolean) {
+        false -> 0.toByte()
+        true -> 1.toByte()
+    }
+)
 
 fun OutputStream.writeUShortPrefixedString(string: String, charset: Charset = StandardCharsets.US_ASCII) {
-	val stringLength = string.length
-	if (stringLength.toUInt() > UShort.MAX_VALUE) {
-		throw IllegalArgumentException("The specified string exceeds the max. allowed length of ${Short.MAX_VALUE}.")
-	}
+    val stringLength = string.length
+    if (stringLength.toUInt() > UShort.MAX_VALUE) {
+        throw IllegalArgumentException("The specified string exceeds the max. allowed length of ${Short.MAX_VALUE}.")
+    }
 
-	this.writeUShort(stringLength.toUShort())
-	this.write(string.toByteArray(charset))
+    this.writeUShort(stringLength.toUShort())
+    this.write(string.toByteArray(charset))
 }
 
 fun OutputStream.write7BitString(string: String) {
 
-	val bytesToWrite = string.toByteArray(StandardCharsets.UTF_8)
+    val bytesToWrite = string.toByteArray(StandardCharsets.UTF_8)
 
-	var uInt = bytesToWrite.size.toUInt()
+    var uInt = bytesToWrite.size.toUInt()
 
-	while (uInt > Byte.MAX_VALUE.toUInt()) {
-		this.writeByte(uInt.or(Byte.MIN_VALUE.toUInt()).toByte())
-		uInt = uInt.shr(7)
-	}
-	this.writeByte(uInt.toByte())
+    while (uInt > Byte.MAX_VALUE.toUInt()) {
+        this.writeByte(uInt.or(Byte.MIN_VALUE.toUInt()).toByte())
+        uInt = uInt.shr(7)
+    }
+    this.writeByte(uInt.toByte())
 
-	this.write(bytesToWrite)
+    this.write(bytesToWrite)
 }

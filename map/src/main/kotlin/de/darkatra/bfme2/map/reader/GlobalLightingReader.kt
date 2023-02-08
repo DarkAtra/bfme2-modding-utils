@@ -13,70 +13,70 @@ import java.util.EnumMap
 
 class GlobalLightingReader : AssetReader {
 
-	private val globalLightingConfigurationReader = GlobalLightingConfigurationReader()
+    private val globalLightingConfigurationReader = GlobalLightingConfigurationReader()
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.GLOBAL_LIGHTING.assetName) { version ->
+        MapFileReader.readAsset(reader, context, AssetName.GLOBAL_LIGHTING.assetName) { version ->
 
-			val globalLightingBuilder = GlobalLighting.Builder()
+            val globalLightingBuilder = GlobalLighting.Builder()
 
-			globalLightingBuilder.time(TimeOfDay.ofUInt(reader.readUInt()))
+            globalLightingBuilder.time(TimeOfDay.ofUInt(reader.readUInt()))
 
-			globalLightingBuilder.lightingConfigurations(
-				TimeOfDay.values().map { timeOfDay ->
-					timeOfDay to globalLightingConfigurationReader.read(reader, version)
-				}.toMap(EnumMap(TimeOfDay::class.java))
-			)
+            globalLightingBuilder.lightingConfigurations(
+                TimeOfDay.values().map { timeOfDay ->
+                    timeOfDay to globalLightingConfigurationReader.read(reader, version)
+                }.toMap(EnumMap(TimeOfDay::class.java))
+            )
 
-			globalLightingBuilder.shadowColor(
-				reader.readUInt().let {
-					Color(
-						r = ((it shr 16) and 0xFFu).toInt(),
-						g = ((it shr 8) and 0xFFu).toInt(),
-						b = (it and 0xFFu).toInt(),
-						a = ((it shr 24) and 0xFFu).toInt()
-					)
-				}
-			)
+            globalLightingBuilder.shadowColor(
+                reader.readUInt().let {
+                    Color(
+                        r = ((it shr 16) and 0xFFu).toInt(),
+                        g = ((it shr 8) and 0xFFu).toInt(),
+                        b = (it and 0xFFu).toInt(),
+                        a = ((it shr 24) and 0xFFu).toInt()
+                    )
+                }
+            )
 
-			if (version >= 7u && version < 11u) {
-				globalLightingBuilder.unknown(
-					reader.readNBytes(if (version >= 9u) 4 else 44).toList()
-				)
-			}
+            if (version >= 7u && version < 11u) {
+                globalLightingBuilder.unknown(
+                    reader.readNBytes(if (version >= 9u) 4 else 44).toList()
+                )
+            }
 
-			if (version >= 12u) {
-				globalLightingBuilder.unknown2(
-					Vector3(
-						x = reader.readFloat(),
-						y = reader.readFloat(),
-						z = reader.readFloat()
-					)
-				)
-				globalLightingBuilder.unknown3(
-					reader.readUInt().let {
-						Color(
-							r = ((it shr 16) and 0xFFu).toInt(),
-							g = ((it shr 8) and 0xFFu).toInt(),
-							b = (it and 0xFFu).toInt(),
-							a = ((it shr 24) and 0xFFu).toInt()
-						)
-					}
-				)
-			}
+            if (version >= 12u) {
+                globalLightingBuilder.unknown2(
+                    Vector3(
+                        x = reader.readFloat(),
+                        y = reader.readFloat(),
+                        z = reader.readFloat()
+                    )
+                )
+                globalLightingBuilder.unknown3(
+                    reader.readUInt().let {
+                        Color(
+                            r = ((it shr 16) and 0xFFu).toInt(),
+                            g = ((it shr 8) and 0xFFu).toInt(),
+                            b = (it and 0xFFu).toInt(),
+                            a = ((it shr 24) and 0xFFu).toInt()
+                        )
+                    }
+                )
+            }
 
-			if (version >= 8u) {
-				globalLightingBuilder.noCloudFactor(
-					Vector3(
-						x = reader.readFloat(),
-						y = reader.readFloat(),
-						z = reader.readFloat()
-					)
-				)
-			}
+            if (version >= 8u) {
+                globalLightingBuilder.noCloudFactor(
+                    Vector3(
+                        x = reader.readFloat(),
+                        y = reader.readFloat(),
+                        z = reader.readFloat()
+                    )
+                )
+            }
 
-			builder.globalLighting(globalLightingBuilder.build())
-		}
-	}
+            builder.globalLighting(globalLightingBuilder.build())
+        }
+    }
 }

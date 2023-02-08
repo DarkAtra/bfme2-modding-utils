@@ -23,8 +23,8 @@ fun Float.toBigEndianBytes(): ByteArray = java.lang.Float.floatToIntBits(this).t
 fun Float.toLittleEndianBytes(): ByteArray = java.lang.Float.floatToIntBits(this).toLittleEndianBytes()
 
 fun Boolean.toByte(): Byte = when (this) {
-	false -> 0
-	true -> 1
+    false -> 0
+    true -> 1
 }
 
 // Bytes to Data
@@ -47,14 +47,14 @@ fun ByteArray.toBigEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.to
 fun ByteArray.toLittleEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.toLittleEndianInt())
 
 fun Byte.toBoolean(): Boolean = when (this) {
-	0.toByte() -> false
-	1.toByte() -> true
-	else -> throw ConversionException("Can't convert Byte '$this' to Boolean.")
+    0.toByte() -> false
+    1.toByte() -> true
+    else -> throw ConversionException("Can't convert Byte '$this' to Boolean.")
 }
 
 // TODO: tests
 fun Map<UInt, Map<UInt, UShort>>.to2DUIntArrayAsMap(): Map<UInt, Map<UInt, UInt>> {
-	return this.mapValues { (_, inner) ->
-		inner.mapValues { (_, value) -> value.toUInt() }
-	}
+    return this.mapValues { (_, inner) ->
+        inner.mapValues { (_, value) -> value.toUInt() }
+    }
 }

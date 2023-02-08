@@ -13,38 +13,38 @@ import org.apache.commons.io.input.CountingInputStream
 
 
 class ObjectsReader(
-	private val propertiesReader: PropertiesReader
+    private val propertiesReader: PropertiesReader
 ) : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.OBJECTS_LIST.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.OBJECTS_LIST.assetName) {
 
-			val objects = mutableListOf<MapObject>()
+            val objects = mutableListOf<MapObject>()
 
-			MapFileReader.readAssets(reader, context) { assetName ->
-				if (assetName != AssetName.OBJECT.assetName) {
-					throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.OBJECTS_LIST.assetName}.")
-				}
+            MapFileReader.readAssets(reader, context) { assetName ->
+                if (assetName != AssetName.OBJECT.assetName) {
+                    throw InvalidDataException("Unexpected asset name '$assetName' reading ${AssetName.OBJECTS_LIST.assetName}.")
+                }
 
-				MapFileReader.readAsset(reader, context, AssetName.OBJECT.assetName) {
-					objects.add(
-						MapObject(
-							position = Vector3(
-								reader.readFloat(),
-								reader.readFloat(),
-								reader.readFloat()
-							),
-							angle = reader.readFloat(),
-							roadType = RoadType.ofUInt(reader.readUInt()),
-							typeName = reader.readUShortPrefixedString(),
-							properties = propertiesReader.read(reader, context)
-						)
-					)
-				}
-			}
+                MapFileReader.readAsset(reader, context, AssetName.OBJECT.assetName) {
+                    objects.add(
+                        MapObject(
+                            position = Vector3(
+                                reader.readFloat(),
+                                reader.readFloat(),
+                                reader.readFloat()
+                            ),
+                            angle = reader.readFloat(),
+                            roadType = RoadType.ofUInt(reader.readUInt()),
+                            typeName = reader.readUShortPrefixedString(),
+                            properties = propertiesReader.read(reader, context)
+                        )
+                    )
+                }
+            }
 
-			builder.objects(objects)
-		}
-	}
+            builder.objects(objects)
+        }
+    }
 }

@@ -5,5 +5,5 @@ import org.apache.commons.io.input.CountingInputStream
 
 interface AssetReader {
 
-	fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder)
+    fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder)
 }

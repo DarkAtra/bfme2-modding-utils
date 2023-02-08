@@ -9,36 +9,36 @@ import org.apache.commons.io.input.CountingInputStream
 
 class CliffTextureMappingReader {
 
-	fun read(reader: CountingInputStream): CliffTextureMapping {
+    fun read(reader: CountingInputStream): CliffTextureMapping {
 
-		val textureTile = reader.readUInt()
+        val textureTile = reader.readUInt()
 
-		val bottomLeftCoords = Vector2(
-			x = reader.readFloat(),
-			y = reader.readFloat()
-		)
-		val bottomRightCoords = Vector2(
-			x = reader.readFloat(),
-			y = reader.readFloat()
-		)
-		val topRightCoords = Vector2(
-			x = reader.readFloat(),
-			y = reader.readFloat()
-		)
-		val topLeftCoords = Vector2(
-			x = reader.readFloat(),
-			y = reader.readFloat()
-		)
+        val bottomLeftCoords = Vector2(
+            x = reader.readFloat(),
+            y = reader.readFloat()
+        )
+        val bottomRightCoords = Vector2(
+            x = reader.readFloat(),
+            y = reader.readFloat()
+        )
+        val topRightCoords = Vector2(
+            x = reader.readFloat(),
+            y = reader.readFloat()
+        )
+        val topLeftCoords = Vector2(
+            x = reader.readFloat(),
+            y = reader.readFloat()
+        )
 
-		val unknown2 = reader.readUShort()
+        val unknown2 = reader.readUShort()
 
-		return CliffTextureMapping(
-			textureTile = textureTile,
-			bottomLeftCoords = bottomLeftCoords,
-			bottomRightCoords = bottomRightCoords,
-			topRightCoords = topRightCoords,
-			topLeftCoords = topLeftCoords,
-			unknown2 = unknown2
-		)
-	}
+        return CliffTextureMapping(
+            textureTile = textureTile,
+            bottomLeftCoords = bottomLeftCoords,
+            bottomRightCoords = bottomRightCoords,
+            topRightCoords = topRightCoords,
+            topLeftCoords = topLeftCoords,
+            unknown2 = unknown2
+        )
+    }
 }

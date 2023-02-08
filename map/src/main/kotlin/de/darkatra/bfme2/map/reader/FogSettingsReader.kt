@@ -7,13 +7,13 @@ import org.apache.commons.io.input.CountingInputStream
 
 class FogSettingsReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
-		MapFileReader.readAsset(reader, context, AssetName.FOG_SETTINGS.assetName) {
-			builder.fogSettings(
-				FogSettings(
-					unknown = reader.readNBytes(24).toList()
-				)
-			)
-		}
-	}
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+        MapFileReader.readAsset(reader, context, AssetName.FOG_SETTINGS.assetName) {
+            builder.fogSettings(
+                FogSettings(
+                    unknown = reader.readNBytes(24).toList()
+                )
+            )
+        }
+    }
 }

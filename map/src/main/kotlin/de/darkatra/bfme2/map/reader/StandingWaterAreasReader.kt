@@ -12,63 +12,63 @@ import org.apache.commons.io.input.CountingInputStream
 
 class StandingWaterAreasReader : AssetReader {
 
-	override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
+    override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-		MapFileReader.readAsset(reader, context, AssetName.STANDING_WATER_AREAS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.STANDING_WATER_AREAS.assetName) {
 
-			val numberOfStandingWaterAreas = reader.readUInt()
+            val numberOfStandingWaterAreas = reader.readUInt()
 
-			val standingWaterAreas = mutableListOf<StandingWaterArea>()
-			for (i in 0u until numberOfStandingWaterAreas step 1) {
-				standingWaterAreas.add(
-					readStandingWaterArea(reader)
-				)
-			}
+            val standingWaterAreas = mutableListOf<StandingWaterArea>()
+            for (i in 0u until numberOfStandingWaterAreas step 1) {
+                standingWaterAreas.add(
+                    readStandingWaterArea(reader)
+                )
+            }
 
-			builder.standingWaterAreas(standingWaterAreas)
-		}
+            builder.standingWaterAreas(standingWaterAreas)
+        }
 
-	}
+    }
 
-	@Suppress("DuplicatedCode")
-	private fun readStandingWaterArea(reader: CountingInputStream): StandingWaterArea {
+    @Suppress("DuplicatedCode")
+    private fun readStandingWaterArea(reader: CountingInputStream): StandingWaterArea {
 
-		val id = reader.readUInt()
-		val name = reader.readUShortPrefixedString()
-		val layerName = reader.readUShortPrefixedString()
-		val uvScrollSpeed = reader.readFloat()
-		val useAdditiveBlending = reader.readBoolean()
-		val bumpMapTexture = reader.readUShortPrefixedString()
-		val skyTexture = reader.readUShortPrefixedString()
+        val id = reader.readUInt()
+        val name = reader.readUShortPrefixedString()
+        val layerName = reader.readUShortPrefixedString()
+        val uvScrollSpeed = reader.readFloat()
+        val useAdditiveBlending = reader.readBoolean()
+        val bumpMapTexture = reader.readUShortPrefixedString()
+        val skyTexture = reader.readUShortPrefixedString()
 
-		val numberOfPoints = reader.readUInt()
+        val numberOfPoints = reader.readUInt()
 
-		val points = mutableListOf<Vector2>()
-		for (i in 0u until numberOfPoints step 1) {
-			points.add(
-				Vector2(
-					x = reader.readFloat(),
-					y = reader.readFloat()
-				)
-			)
-		}
+        val points = mutableListOf<Vector2>()
+        for (i in 0u until numberOfPoints step 1) {
+            points.add(
+                Vector2(
+                    x = reader.readFloat(),
+                    y = reader.readFloat()
+                )
+            )
+        }
 
-		val waterHeight = reader.readUInt()
-		val fxShader = reader.readUShortPrefixedString()
-		val depthColors = reader.readUShortPrefixedString()
+        val waterHeight = reader.readUInt()
+        val fxShader = reader.readUShortPrefixedString()
+        val depthColors = reader.readUShortPrefixedString()
 
-		return StandingWaterArea(
-			id = id,
-			name = name,
-			layerName = layerName,
-			uvScrollSpeed = uvScrollSpeed,
-			useAdditiveBlending = useAdditiveBlending,
-			bumpMapTexture = bumpMapTexture,
-			skyTexture = skyTexture,
-			point = points,
-			waterHeight = waterHeight,
-			fxShader = fxShader,
-			depthColor = depthColors
-		)
-	}
+        return StandingWaterArea(
+            id = id,
+            name = name,
+            layerName = layerName,
+            uvScrollSpeed = uvScrollSpeed,
+            useAdditiveBlending = useAdditiveBlending,
+            bumpMapTexture = bumpMapTexture,
+            skyTexture = skyTexture,
+            point = points,
+            waterHeight = waterHeight,
+            fxShader = fxShader,
+            depthColor = depthColors
+        )
+    }
 }

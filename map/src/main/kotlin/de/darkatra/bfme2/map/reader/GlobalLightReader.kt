@@ -7,23 +7,23 @@ import org.apache.commons.io.input.CountingInputStream
 
 class GlobalLightReader {
 
-	fun read(reader: CountingInputStream): GlobalLight {
-		return GlobalLight(
-			ambient = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			),
-			color = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			),
-			direction = Vector3(
-				x = reader.readFloat(),
-				y = reader.readFloat(),
-				z = reader.readFloat()
-			)
-		)
-	}
+    fun read(reader: CountingInputStream): GlobalLight {
+        return GlobalLight(
+            ambient = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            ),
+            color = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            ),
+            direction = Vector3(
+                x = reader.readFloat(),
+                y = reader.readFloat(),
+                z = reader.readFloat()
+            )
+        )
+    }
 }
