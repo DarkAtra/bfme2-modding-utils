@@ -7,11 +7,11 @@
     <parent>
         <groupId>de.darkatra.bfme2</groupId>
         <artifactId>bfme2-modding-utils</artifactId>
-        <version>0.2.8</version>
+        <version>0.2.9</version>
     </parent>
 
     <artifactId>big</artifactId>
-    <version>0.2.8</version>
+    <version>0.2.9</version>
 
     <dependencies>
         <dependency>
@@ -22,6 +22,10 @@
         <dependency>
             <groupId>de.darkatra.bfme2</groupId>
             <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
 
         <dependency>
