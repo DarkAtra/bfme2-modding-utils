@@ -21,7 +21,7 @@ class TriggerAreasReader : AssetReader {
             val triggerAreas = mutableListOf<TriggerArea>()
             for (i in 0u until numberOfTriggerAreas step 1) {
                 triggerAreas.add(
-                    readTriggerArea(reader, context)
+                    readTriggerArea(reader)
                 )
             }
 
@@ -30,7 +30,7 @@ class TriggerAreasReader : AssetReader {
     }
 
     @Suppress("DuplicatedCode")
-    private fun readTriggerArea(reader: CountingInputStream, context: MapFileParseContext): TriggerArea {
+    private fun readTriggerArea(reader: CountingInputStream): TriggerArea {
 
         val name = reader.readUShortPrefixedString()
         val layerName = reader.readUShortPrefixedString()

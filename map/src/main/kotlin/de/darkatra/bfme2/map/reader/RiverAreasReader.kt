@@ -28,7 +28,7 @@ class RiverAreasReader : AssetReader {
             val riverAreas = mutableListOf<RiverArea>()
             for (i in 0u until numberOfRiverAreas step 1) {
                 riverAreas.add(
-                    readRiverArea(reader, context, version)
+                    readRiverArea(reader, version)
                 )
             }
 
@@ -37,7 +37,7 @@ class RiverAreasReader : AssetReader {
     }
 
     @Suppress("DuplicatedCode")
-    private fun readRiverArea(reader: CountingInputStream, context: MapFileParseContext, version: UShort): RiverArea {
+    private fun readRiverArea(reader: CountingInputStream, version: UShort): RiverArea {
 
         val id = reader.readUInt()
         val name = reader.readUShortPrefixedString()

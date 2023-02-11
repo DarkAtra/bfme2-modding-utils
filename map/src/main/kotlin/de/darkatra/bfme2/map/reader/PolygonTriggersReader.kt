@@ -33,7 +33,7 @@ class PolygonTriggersReader : AssetReader {
             val polygonTriggers = mutableListOf<PolygonTrigger>()
             for (i in 0u until numberOfPolygonTriggers step 1) {
                 polygonTriggers.add(
-                    readPolygonTrigger(reader, context, version)
+                    readPolygonTrigger(reader, version)
                 )
             }
 
@@ -41,7 +41,7 @@ class PolygonTriggersReader : AssetReader {
         }
     }
 
-    private fun readPolygonTrigger(reader: CountingInputStream, context: MapFileParseContext, version: UShort): PolygonTrigger {
+    private fun readPolygonTrigger(reader: CountingInputStream, version: UShort): PolygonTrigger {
 
         val polygonTriggerBuilder = PolygonTrigger.Builder()
 
