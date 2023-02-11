@@ -4,7 +4,7 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.read7BitString
+import de.darkatra.bfme2.read7BitIntPrefixedString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
@@ -62,7 +62,7 @@ class MapFileReader {
         const val REFPACK_FOUR_CC = "EAR\u0000"
         const val ZLIB_FOUR_CC = "ZL5\u0000"
 
-        fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
+        internal fun readAssets(reader: CountingInputStream, context: MapFileParseContext, callback: (assetName: String) -> Unit) {
 
             while (reader.byteCount < context.currentEndPosition) {
                 val assetIndex = reader.readUInt()
@@ -72,7 +72,7 @@ class MapFileReader {
             }
         }
 
-        fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: UShort) -> Unit) {
+        internal fun readAsset(reader: CountingInputStream, context: MapFileParseContext, assetName: String, callback: (assetVersion: UShort) -> Unit) {
 
             val assetVersion = reader.readUShort()
 
@@ -176,7 +176,7 @@ class MapFileReader {
 
         val assetNames = mutableMapOf<UInt, String>()
         for (i in numberOfAssetStrings downTo 1u step 1) {
-            val assetName = reader.read7BitString()
+            val assetName = reader.read7BitIntPrefixedString()
             val assetIndex = reader.readUInt()
             if (assetIndex != i) {
                 throw IllegalStateException("Illegal assetIndex for '$assetName'.")
