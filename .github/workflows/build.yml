@@ -5,7 +5,8 @@ on:
     branches:
       - next
     paths:
-      - 'src/**'
+      - '**/src/**'
+      - '**/pom.xml'
       - 'pom.xml'
 
 permissions:
