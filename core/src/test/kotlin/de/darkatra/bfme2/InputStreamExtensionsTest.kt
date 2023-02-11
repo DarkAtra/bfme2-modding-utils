@@ -131,5 +131,81 @@ internal class InputStreamExtensionsTest {
 
             assertThat(inputStream.readUShortPrefixedString(StandardCharsets.UTF_16LE)).isEqualTo("Neutral")
         }
+
+        @Test
+        internal fun shouldReadMaxIntValueFrom7BitInt() {
+
+            // 7 bit encoded, little endian version of Int.MAX_VALUE (0x7FFFFFFF)
+            val bytes = byteArrayOf(
+                0xFF.toByte(), // set most significant bit means: continue reading next bit
+                0xFF.toByte(), // so only the 7 least significant bits are actual integer data
+                0xFF.toByte(), // e.g. there are 28 set bits in the first 4 bytes
+                0xFF.toByte(), // resulting in 0x0FFFFFFF
+                0b00000111.toByte() // the remaining 4 bits (0b0111) are contained in the fifth bit
+            )
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.read7BitInt()).isEqualTo(Int.MAX_VALUE)
+        }
+
+        @Test
+        internal fun shouldRead128From7BitInt() {
+
+            // 7 bit encoded, little endian version of 128 (0x80)
+            val bytes = byteArrayOf(
+                0b1000_0000.toByte(), // set most significant bit means: continue reading next bit
+                0x01.toByte(), // only the least significant bit is set resulting in 0b1000_0000 (0x80)
+            )
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.read7BitInt()).isEqualTo(128)
+        }
+
+        @Test
+        internal fun shouldReadZeroFrom7BitInt() {
+
+            // 7 bit encoded, little endian version of 0 (0x00)
+            val bytes = byteArrayOf(0x00.toByte())
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.read7BitInt()).isEqualTo(0)
+        }
+
+        @Test
+        internal fun shouldReadNegativeOneFrom7BitInt() {
+
+            // 7 bit encoded, little endian version of -1 (0xFFFFFFFF)
+            val bytes = byteArrayOf(
+                0xFF.toByte(), // set most significant bit means: continue reading next bit
+                0xFF.toByte(), // so only the 7 least significant bits are actual integer data
+                0xFF.toByte(), // e.g. there are 28 set bits in the first 4 bytes
+                0xFF.toByte(), // resulting in 0xFFFFFFFF
+                0x0F.toByte() // the remaining 4 bits (0b1111) are contained in the fifth bit
+            )
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.read7BitInt()).isEqualTo(-1)
+        }
+
+        @Test
+        internal fun shouldReadMinIntValueFrom7BitInt() {
+
+            // 7 bit encoded, little endian version of Int.MIN_VALUE (0x80000000)
+            val bytes = byteArrayOf(
+                0x80.toByte(), // set most significant bit means: continue reading next bit
+                0x80.toByte(), // so only the 7 least significant bits are actual integer data
+                0x80.toByte(), // e.g. there are 28 unset bits in the first 4 bytes
+                0x80.toByte(), // resulting in 0x00000000
+                0x08.toByte() // the remaining 4 bits (0b1000) are contained in the fifth bit
+            )
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.read7BitInt()).isEqualTo(Int.MIN_VALUE)
+        }
     }
 }

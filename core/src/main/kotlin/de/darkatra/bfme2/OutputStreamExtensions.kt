@@ -27,17 +27,18 @@ fun OutputStream.writeUShortPrefixedString(string: String, charset: Charset = St
     this.write(string.toByteArray(charset))
 }
 
-fun OutputStream.write7BitString(string: String) {
-
-    val bytesToWrite = string.toByteArray(StandardCharsets.UTF_8)
-
-    var uInt = bytesToWrite.size.toUInt()
-
-    while (uInt > Byte.MAX_VALUE.toUInt()) {
-        this.writeByte(uInt.or(Byte.MIN_VALUE.toUInt()).toByte())
-        uInt = uInt.shr(7)
+fun OutputStream.write7BitInt(int: Int) {
+    var result = int.toUInt()
+    // most significant bit determines if we need to continue writing
+    while (result >= 0b1000_0000u) {
+        this.writeByte(result.or(0b1000_0000u).toByte())
+        result = result.shr(7)
     }
-    this.writeByte(uInt.toByte())
+    this.writeByte(result.toByte())
+}
 
+fun OutputStream.write7BitIntPrefixedString(string: String) {
+    val bytesToWrite = string.toByteArray(StandardCharsets.UTF_8)
+    this.write7BitInt(bytesToWrite.size)
     this.write(bytesToWrite)
 }
