@@ -1,0 +1,71 @@
+// this is a comment
+
+// `*` defines a property with a given type in round brackets. Some types might have additional information such as length in round brackets
+// the following line denotes a property called assetName of type String where that string has a fixed length of 10 bytes
+// * assetName(String(length = 10))
+// it is possible to reference previously parsed properties like so:
+// * assetNameLength(UInt)
+// * assetName(String(length = assetNameLength))
+
+// `-> loop` defines the start of a loop followed by a space and then a definition for the bounds of the loop
+// the following line denotes a loop that starts from 1 (inclusive) and ends at 10 (exclusive)
+// -> loop [1, 10)
+// properties defined in a loop should be intended with one additional star per loop depth
+// `<-` defines the end of the current loop
+// the following 3 lines denote a loop from 0 (inclusive) to 2 (inclusive) where the property name i read/written each cycle
+// -> loop [0, 2]
+// ** name(String(length = 10))
+// <-
+// it is possible to reference previously parsed properties by name
+
+* fourCC(String(length = 4))
+
+// AssetNames
+* numberOfAssetNames(UInt)
+-> loop [numberOfAssetNames, 1]
+** assetNameLength(7BitInt)
+** assetName(String(length = assetNameLength))
+** assetIndex(UInt) // in descending order
+<-
+
+* assetIndex(UInt) // determines what chunk of data follows
+
+// HeightMapData: is the first asset for maps created in world-builder
+* assetVersion(UShort) // rotwk uses assetVersion 5
+* assetSize(UInt)
+* width(UInt)
+* height(UInt)
+* borderWidth(UInt)
+* numberOfBorders(UInt)
+-> loop [0, numberOfBorders)
+// ** borderOffsetX(UInt) // only if assetVersion >= 6
+// ** borderOffsetY(UInt) // only if assetVersion >= 6
+** borderX(UInt)
+** borderY(UInt)
+<-
+* area(UInt) // must match width * height
+-> loop [0, width)
+-> loop [0, height)
+*** elevationAtXY(UShort) // type is Byte if assetVersion < 5
+<-
+<-
+
+// BlendTileData
+// WorldInfo
+// MPPositionList
+// SidesList
+// LibraryMapLists
+// Teams
+// PlayerScriptsList
+// BuildLists
+// ObjectsList
+// TriggerAreas
+// StandingWaterAreas
+// RiverAreas
+// StandingWaveAreas
+// GlobalLighting
+// PostEffectsChunk
+// EnvironmentData
+// NamedCameras
+// CameraAnimationList
+// WaypointsList

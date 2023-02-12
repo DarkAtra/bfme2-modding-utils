@@ -11,9 +11,23 @@ import java.io.InputStream
 
 internal class MapFileReaderTest {
 
-    private val uncompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.txt")
-    private val refpackCompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.refpack")
-    private val zlibCompressedMapPath = getMapInputStream("/maps/bfme2-rotwk/Legendary War.zlib")
+    private val uncompressedMapPath = "/maps/bfme2-rotwk/Legendary War.txt"
+    private val refpackCompressedMapPath = "/maps/bfme2-rotwk/Legendary War.refpack"
+    private val zlibCompressedMapPath = "/maps/bfme2-rotwk/Legendary War.zlib"
+
+    @Test
+    internal fun shouldYieldSameAssetNamesForOldAndNewReaderImplementation() {
+
+        // new reader
+        val assetNameRegistry = de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream(uncompressedMapPath))
+
+        // old reader
+        val mapFile = MapFileReader().read(getMapInputStream(uncompressedMapPath))
+
+        assertThat(assetNameRegistry.assetNameRegistry!!.assetNames).isEqualTo(mapFile.assetNames)
+        assertThat(assetNameRegistry.heightMapV5!!.width).isEqualTo(mapFile.heightMap.width)
+        assertThat(assetNameRegistry.heightMapV5!!.height).isEqualTo(mapFile.heightMap.height)
+    }
 
     @Test
     internal fun shouldReadBfme1MapWithSkyboxSettings() {
@@ -98,7 +112,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun shouldReadMap() {
 
-        val map = MapFileReader().read(uncompressedMapPath)
+        val map = MapFileReader().read(getMapInputStream(uncompressedMapPath))
 
         assertThat(map.assetList).isNull()
         assertThat(map.buildLists).hasSize(17)
@@ -152,9 +166,9 @@ internal class MapFileReaderTest {
     @Test
     internal fun shouldReadTheSameMapInformationForAllCompressions() {
 
-        val plain = MapFileReader().read(uncompressedMapPath)
-        val refpack = MapFileReader().read(refpackCompressedMapPath)
-        val zlib = MapFileReader().read(zlibCompressedMapPath)
+        val plain = MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        val refpack = MapFileReader().read(getMapInputStream(refpackCompressedMapPath))
+        val zlib = MapFileReader().read(getMapInputStream(zlibCompressedMapPath))
 
         assertThat(plain).isEqualTo(refpack)
         assertThat(plain).isEqualTo(zlib)
