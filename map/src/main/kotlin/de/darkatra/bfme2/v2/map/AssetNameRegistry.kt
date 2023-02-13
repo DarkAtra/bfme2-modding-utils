@@ -8,11 +8,10 @@ import de.darkatra.bfme2.v2.map.deserialization.SevenBitIntPrefixedStringDeseria
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 
 class AssetNameRegistry(
-
     // TODO: consider making it possible to place annotations on the parameter
     val assetNames:
     @Deserialize(using = MapDeserializer::class, postProcessor = AssetNamesValidatorValidator::class)
-    @MapDeserializer.Order(order = DeserializationOrder.VALUE_FIRST)
+    @MapDeserializer.MapDeserializerProperties(deserializationOrder = DeserializationOrder.VALUE_FIRST)
     Map<UInt, @Deserialize(using = SevenBitIntPrefixedStringDeserializer::class) String>
 ) {
 

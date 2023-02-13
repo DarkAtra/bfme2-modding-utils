@@ -21,19 +21,21 @@ class MapDeserializer<K, V>(
     private val postProcessor: PostProcessor<Map<K, V>>
 ) : Deserializer<Map<K, V>> {
 
-    class DeserializationOrderArgumentResolver : ArgumentResolver<DeserializationOrder> {
-        override fun resolve(deserializationContext: DeserializationContext): DeserializationOrder {
-            val order = deserializationContext.getCurrentElement().getType().findAnnotation<Order>()
-            return order?.order ?: DeserializationOrder.KEY_FIRST
-        }
-    }
-
     @MustBeDocumented
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
-    annotation class Order(
-        val order: DeserializationOrder
+    annotation class MapDeserializerProperties(
+        val deserializationOrder: DeserializationOrder
     )
+
+    class DeserializationOrderArgumentResolver : ArgumentResolver<DeserializationOrder> {
+        override fun resolve(deserializationContext: DeserializationContext): DeserializationOrder {
+            val deserializerProperties = deserializationContext.getCurrentElement().getType().findAnnotation<MapDeserializerProperties>()
+            return deserializerProperties
+                ?.deserializationOrder
+                ?: DeserializationOrder.KEY_FIRST
+        }
+    }
 
     enum class DeserializationOrder {
         KEY_FIRST,

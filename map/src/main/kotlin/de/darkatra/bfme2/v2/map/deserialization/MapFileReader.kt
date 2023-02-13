@@ -8,6 +8,7 @@ import de.darkatra.bfme2.refpack.RefPackInputStream
 import de.darkatra.bfme2.v2.map.AssetNameRegistry
 import de.darkatra.bfme2.v2.map.HeightMapV5
 import de.darkatra.bfme2.v2.map.MapFile
+import de.darkatra.bfme2.v2.map.WorldInfo
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.NoopPostProcessor
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.CountingInputStream
@@ -33,7 +34,6 @@ class MapFileReader(
         private const val ZLIB_FOUR_CC = "ZL5\u0000"
     }
 
-    // TODO: change return type to MapFile
     fun read(file: Path): MapFile.Builder {
 
         if (!file.exists()) {
@@ -43,7 +43,6 @@ class MapFileReader(
         return read(file.inputStream())
     }
 
-    // TODO: change return type to MapFile
     fun read(inputStream: InputStream): MapFile.Builder {
         return read(inputStream.buffered())
     }
@@ -62,19 +61,22 @@ class MapFileReader(
                 mapFileSize = inputStreamSize
             )
 
-            // TODO: maybe asset names are something that should be parsed manually as the current implementation requires the
-            //  DeserializationContext but that internally requires a parsed assetNameRegistry. Maybe reevaluate when implementing write(mapFile)
+            // TODO: maybe it's best to parse asset names manually as the current implementation requires a DeserializationContext but that internally
+            //  requires a parsed assetNameRegistry. reevaluate when implementing write(mapFile)
             val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, NoopPostProcessor()).deserialize(countingInputStream, context)
             context.assetNameRegistry = assetNameRegistry
             mapBuilder.assetNameRegistry(assetNameRegistry)
 
             readAssets(countingInputStream, context) { assetName ->
                 when (assetName) {
-                    AssetName.HEIGHT_MAP_DATA.assetName -> {
+                    AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
                         // TODO: implement cache for type specific deserializers to improve performance on subsequent map reads
-                        val heightMapV5 = ObjectDeserializer(HeightMapV5::class, NoopPostProcessor()).deserialize(countingInputStream, context)
-                        mapBuilder.heightMapV5(heightMapV5)
-                    }
+                        ObjectDeserializer(HeightMapV5::class, NoopPostProcessor()).deserialize(countingInputStream, context)
+                    )
+
+                    AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
+                        ObjectDeserializer(WorldInfo::class, NoopPostProcessor()).deserialize(countingInputStream, context)
+                    )
 
                     else -> {
                         if (!debugMode) {

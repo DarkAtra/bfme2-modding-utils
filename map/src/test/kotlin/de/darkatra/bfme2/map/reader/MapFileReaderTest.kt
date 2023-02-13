@@ -27,6 +27,9 @@ internal class MapFileReaderTest {
         assertThat(assetNameRegistry.assetNameRegistry!!.assetNames).isEqualTo(mapFile.assetNames)
         assertThat(assetNameRegistry.heightMapV5!!.width).isEqualTo(mapFile.heightMap.width)
         assertThat(assetNameRegistry.heightMapV5!!.height).isEqualTo(mapFile.heightMap.height)
+
+        // TODO: uncomment once blend data is implemented
+        // assertThat(assetNameRegistry.worldInfoV1!!.properties.size).isEqualTo(mapFile.worldSettings.size)
     }
 
     @Test

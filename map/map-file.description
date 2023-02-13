@@ -38,8 +38,8 @@
 * borderWidth(UInt)
 * numberOfBorders(UInt)
 -> loop [0, numberOfBorders)
-// ** borderOffsetX(UInt) // only if assetVersion >= 6
-// ** borderOffsetY(UInt) // only if assetVersion >= 6
+// ** borderOffsetX(UInt) // if assetVersion >= 6
+// ** borderOffsetY(UInt) // if assetVersion >= 6
 ** borderX(UInt)
 ** borderY(UInt)
 <-
@@ -51,7 +51,22 @@
 <-
 
 // BlendTileData
+
 // WorldInfo
+* assetVersion(UShort) // rotwk uses assetVersion 1
+* assetSize(UInt)
+* numberOfProperties(UShort)
+-> loop [0, numberOfProperties)
+** propertyType(UByte)
+** assetNameIndex(UInt(bits = 24)) // little endian 24-bit UInt
+// ** propertyValue(Boolean) // if propertyType == 0
+// ** propertyValue(UInt) // if propertyType == 1
+// ** propertyValue(Float) // if propertyType == 2
+// ** propertyValueLength(UShort) // if propertyType == 3 or propertyType == 4 or propertyType == 5
+// ** propertyValue(String(length = propertyValueLength, charset = ASCII)) // if propertyType == 3 or propertyType == 5
+// ** propertyValue(String(length = propertyValueLength, charset = UTF-16-LE)) // if propertyType == 4
+<-
+
 // MPPositionList
 // SidesList
 // LibraryMapLists
