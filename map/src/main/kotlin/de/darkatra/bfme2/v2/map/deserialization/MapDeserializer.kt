@@ -1,25 +1,25 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
 import de.darkatra.bfme2.readUInt
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.AnnotationParameterArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
-import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
-import kotlin.reflect.full.findAnnotation
 
+@UseDeserializerProperties(MapDeserializer.MapDeserializerProperties::class)
 internal class MapDeserializer<K, V>(
     @Resolve(using = DeserializationContextResolver::class)
     private val context: DeserializationContext,
     @Resolve(using = DeserializersArgumentResolver::class)
     private val deserializers: List<Deserializer<*>>,
-    @Resolve(using = DeserializationOrderArgumentResolver::class)
-    private val order: DeserializationOrder,
     @Resolve(using = PostProcessorArgumentResolver::class)
-    private val postProcessor: PostProcessor<Map<K, V>>
+    private val postProcessor: PostProcessor<Map<K, V>>,
+
+    @Resolve(using = AnnotationParameterArgumentResolver::class)
+    private val order: DeserializationOrder
 ) : Deserializer<Map<K, V>> {
 
     private val keyDeserializer: Deserializer<K>
@@ -39,19 +39,11 @@ internal class MapDeserializer<K, V>(
     @MustBeDocumented
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
+    @DeserializerProperties
+    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
     annotation class MapDeserializerProperties(
         val deserializationOrder: DeserializationOrder
     )
-
-    // TODO: think about a meta annotation on MapDeserializerProperties and a generic AnnotationParameterArgumentResolver
-    class DeserializationOrderArgumentResolver : ArgumentResolver<DeserializationOrder> {
-        override fun resolve(currentElement: ProcessableElement): DeserializationOrder {
-            val deserializerProperties = currentElement.getType().findAnnotation<MapDeserializerProperties>()
-            return deserializerProperties
-                ?.deserializationOrder
-                ?: DeserializationOrder.KEY_FIRST
-        }
-    }
 
     enum class DeserializationOrder {
         KEY_FIRST,

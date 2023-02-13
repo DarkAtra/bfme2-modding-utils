@@ -2,43 +2,35 @@ package de.darkatra.bfme2.v2.map.deserialization
 
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.AnnotationParameterArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializerArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
-import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
-import kotlin.reflect.full.findAnnotation
 
+@UseDeserializerProperties(ListDeserializer.ListDeserializerProperties::class)
 internal class ListDeserializer<T>(
-    @Resolve(using = DeserializerArgumentResolver::class)
-    private val entryDeserializer: Deserializer<T>,
-    @Resolve(using = SizeTypeArgumentResolver::class)
-    private val sizeType: SizeType,
     @Resolve(using = DeserializationContextResolver::class)
     private val context: DeserializationContext,
+    @Resolve(using = DeserializerArgumentResolver::class)
+    private val entryDeserializer: Deserializer<T>,
     @Resolve(using = PostProcessorArgumentResolver::class)
-    private val postProcessor: PostProcessor<List<T>>
+    private val postProcessor: PostProcessor<List<T>>,
+
+    @Resolve(using = AnnotationParameterArgumentResolver::class)
+    private val sizeType: SizeType
 ) : Deserializer<List<T>> {
 
     @MustBeDocumented
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
+    @DeserializerProperties
+    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
     annotation class ListDeserializerProperties(
-        val sizeType: SizeType
+        val sizeType: SizeType = SizeType.UINT
     )
-
-    // TODO: think about a meta annotation on ListDeserializerProperties and a generic AnnotationParameterArgumentResolver
-    class SizeTypeArgumentResolver : ArgumentResolver<SizeType> {
-        override fun resolve(currentElement: ProcessableElement): SizeType {
-            val deserializerProperties = currentElement.getType().findAnnotation<ListDeserializerProperties>()
-            return deserializerProperties
-                ?.sizeType
-                ?: SizeType.UINT
-        }
-    }
 
     enum class SizeType {
         UINT,
