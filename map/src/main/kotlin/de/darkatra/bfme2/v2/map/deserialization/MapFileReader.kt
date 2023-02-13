@@ -66,7 +66,6 @@ class MapFileReader(
             readAssets(countingInputStream, context) { assetName ->
                 when (assetName) {
                     AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
-                        // TODO: implement cache for type specific deserializers to improve performance on subsequent map reads
                         ObjectDeserializer(HeightMapV5::class, context).deserialize(countingInputStream)
                     )
 

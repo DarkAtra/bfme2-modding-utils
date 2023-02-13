@@ -1,5 +1,7 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import kotlin.reflect.KClass
@@ -43,23 +45,31 @@ internal class DeserializerFactory {
         deserializerConstructor.valueParameters.forEach { deserializerParameter ->
 
             val resolveAnnotation = deserializerParameter.findAnnotation<Resolve>()
-                ?: error("Required annotation '${Resolve::class.simpleName}' is missing on parameter '${deserializerParameter}' in deserializer '${deserializerClass.simpleName}'.")
 
-            val argumentResolverClass = resolveAnnotation.using
-            val values = argumentResolverClass.primaryConstructor!!.parameters.mapIndexed { parameterIndex, parameter ->
-                when (parameter.type) {
-                    typeOf<DeserializationContext>() -> context
-                    typeOf<KClass<Deserializer<*>>>() -> deserializerClass
-                    typeOf<KParameter>() -> deserializerParameter
-                    else -> error("Unable to resolve argument of type '${parameter.type}' (pos: $parameterIndex) of class ${argumentResolverClass.simpleName}.")
-                }
-            }
-
-            val argumentResolverInstance = argumentResolverClass.primaryConstructor!!.call(*values.toTypedArray())
+            val argumentResolverClass = resolveAnnotation?.using ?: DefaultArgumentResolver::class
+            val argumentResolverInstance = getArgumentResolver(argumentResolverClass, deserializerClass, deserializerParameter)
             deserializerArguments.add(argumentResolverInstance.resolve(currentElement))
         }
 
         return deserializerConstructor.call(*deserializerArguments.toTypedArray())
+    }
+
+    fun getArgumentResolver(
+        argumentResolverClass: KClass<out ArgumentResolver<*>>,
+        deserializerClass: KClass<out Deserializer<*>>,
+        deserializerParameter: KParameter
+    ): ArgumentResolver<*> {
+
+        val values = argumentResolverClass.primaryConstructor!!.parameters.mapIndexed { parameterIndex, parameter ->
+            when (parameter.type) {
+                typeOf<DeserializationContext>() -> context
+                typeOf<KClass<Deserializer<*>>>() -> deserializerClass
+                typeOf<KParameter>() -> deserializerParameter
+                else -> error("Unable to resolve argument of type '${parameter.type}' (pos: $parameterIndex) of class ${argumentResolverClass.simpleName}.")
+            }
+        }
+
+        return argumentResolverClass.primaryConstructor!!.call(*values.toTypedArray())
     }
 
     private fun getDeserializerByType(type: KType): KClass<out Deserializer<*>>? {

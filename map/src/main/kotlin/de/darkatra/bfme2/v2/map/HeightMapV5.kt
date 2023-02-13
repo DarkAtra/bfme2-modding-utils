@@ -5,8 +5,6 @@ import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserialize
 import de.darkatra.bfme2.v2.map.deserialization.Deserializer
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
@@ -67,7 +65,6 @@ data class HeightMapV5(
     }
 
     internal class ElevationsDeserializer(
-        @Resolve(DeserializationContextResolver::class)
         private val context: DeserializationContext
     ) : Deserializer<Map<UInt, Map<UInt, UShort>>> {
 

@@ -3,11 +3,8 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.TypeArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
@@ -18,13 +15,9 @@ import kotlin.reflect.full.valueParameters
 import de.darkatra.bfme2.v2.map.Asset as AssetAnnotation
 
 internal class ObjectDeserializer<T : Any>(
-    @Resolve(using = TypeArgumentResolver::class)
-    val classOfT: KClass<T>,
-    @Resolve(using = DeserializationContextResolver::class)
+    private val classOfT: KClass<T>,
     private val context: DeserializationContext,
-    @Resolve(using = DeserializersArgumentResolver::class)
-    val deserializers: List<Deserializer<*>>,
-    @Resolve(using = PostProcessorArgumentResolver::class)
+    private val deserializers: List<Deserializer<*>>,
     private val postProcessor: PostProcessor<T>
 ) : Deserializer<T> {
 
@@ -32,7 +25,9 @@ internal class ObjectDeserializer<T : Any>(
     internal constructor(classOfT: KClass<T>, context: DeserializationContext) : this(
         classOfT,
         context,
-        DeserializersArgumentResolver(context).resolve(Class(classOfT)),
+        DeserializersArgumentResolver(context).resolve(Class(classOfT)).also {
+            context.reset()
+        },
         PostProcessorArgumentResolver().resolve(Class(classOfT)) as PostProcessor<T>
     )
 

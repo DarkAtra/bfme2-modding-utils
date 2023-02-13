@@ -9,8 +9,6 @@ import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.toLittleEndianUInt
 import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserializer
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
 import org.apache.commons.io.input.CountingInputStream
 import java.nio.charset.StandardCharsets
 
@@ -53,7 +51,6 @@ data class Property(
     }
 
     internal class PropertyDeserializer(
-        @Resolve(DeserializationContextResolver::class)
         private val context: DeserializationContext
     ) : Deserializer<Property> {
 

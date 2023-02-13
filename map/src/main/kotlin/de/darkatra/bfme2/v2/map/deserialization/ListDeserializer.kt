@@ -2,24 +2,15 @@ package de.darkatra.bfme2.v2.map.deserialization
 
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.AnnotationParameterArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializerArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 
 @UseDeserializerProperties(ListDeserializer.ListDeserializerProperties::class)
 internal class ListDeserializer<T>(
-    @Resolve(using = DeserializationContextResolver::class)
     private val context: DeserializationContext,
-    @Resolve(using = DeserializerArgumentResolver::class)
     private val entryDeserializer: Deserializer<T>,
-    @Resolve(using = PostProcessorArgumentResolver::class)
     private val postProcessor: PostProcessor<List<T>>,
 
-    @Resolve(using = AnnotationParameterArgumentResolver::class)
     private val sizeType: SizeType
 ) : Deserializer<List<T>> {
 
