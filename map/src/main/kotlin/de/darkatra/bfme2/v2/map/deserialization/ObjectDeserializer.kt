@@ -3,10 +3,12 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializePostProcessorArgumentResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializationContextResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.TypeArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.model.ConstructorParameter
+import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.reflect.KClass
@@ -15,19 +17,31 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import de.darkatra.bfme2.v2.map.Asset as AssetAnnotation
 
-class ObjectDeserializer<T : Any>(
+internal class ObjectDeserializer<T : Any>(
     @Resolve(using = TypeArgumentResolver::class)
     val classOfT: KClass<T>,
-    @Resolve(using = DeserializePostProcessorArgumentResolver::class)
+    @Resolve(using = DeserializationContextResolver::class)
+    private val context: DeserializationContext,
+    @Resolve(using = DeserializersArgumentResolver::class)
+    val deserializers: List<Deserializer<*>>,
+    @Resolve(using = PostProcessorArgumentResolver::class)
     private val postProcessor: PostProcessor<T>
 ) : Deserializer<T> {
+
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(classOfT: KClass<T>, context: DeserializationContext) : this(
+        classOfT,
+        context,
+        DeserializersArgumentResolver(context).resolve(Class(classOfT)),
+        PostProcessorArgumentResolver().resolve(Class(classOfT)) as PostProcessor<T>
+    )
 
     private data class Asset(
         val assetVersion: UShort,
         val assetSize: UInt
     )
 
-    override fun deserialize(inputStream: CountingInputStream, deserializationContext: DeserializationContext): T {
+    override fun deserialize(inputStream: CountingInputStream): T {
 
         val primaryConstructor = classOfT.primaryConstructor
             ?: error("${classOfT.simpleName} is required to have a primary constructor.")
@@ -42,20 +56,10 @@ class ObjectDeserializer<T : Any>(
         val parameters = primaryConstructor.valueParameters
 
         val startPosition = inputStream.byteCount
-        deserializationContext.setCurrentType(classOfT)
+        context.setCurrentType(classOfT)
 
-        val values = parameters.map { parameter ->
-
-            deserializationContext.setCurrentParameter(parameter)
-
-            deserializationContext.beginProcessing(
-                ConstructorParameter(parameter)
-            )
-            val deserializer = deserializationContext.deserializerFactory.getDeserializer(deserializationContext)
-
-            deserializer.deserialize(inputStream, deserializationContext).also {
-                deserializationContext.endProcessingCurrentElement()
-            }
+        val values = List(parameters.size) { parameterIndex ->
+            deserializers[parameterIndex].deserialize(inputStream)
         }
 
         if (currentAsset != null) {
@@ -67,7 +71,7 @@ class ObjectDeserializer<T : Any>(
         }
 
         return primaryConstructor.call(*values.toTypedArray()).also {
-            postProcessor.postProcess(it, deserializationContext)
+            postProcessor.postProcess(it, context)
         }
     }
 }

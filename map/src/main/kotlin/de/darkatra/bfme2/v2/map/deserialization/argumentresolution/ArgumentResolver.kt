@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.v2.map.deserialization.argumentresolution
 
-import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
+import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 
-interface ArgumentResolver<T> {
+internal interface ArgumentResolver<T> {
 
-    fun resolve(deserializationContext: DeserializationContext): T
+    fun resolve(currentElement: ProcessableElement): T
 }

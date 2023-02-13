@@ -1,13 +1,13 @@
 package de.darkatra.bfme2.v2.map.deserialization.argumentresolution
 
-import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
+import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import kotlin.reflect.KClass
 
-class TypeArgumentResolver : ArgumentResolver<KClass<*>> {
+internal class TypeArgumentResolver : ArgumentResolver<KClass<*>> {
 
-    override fun resolve(deserializationContext: DeserializationContext): KClass<*> {
+    override fun resolve(currentElement: ProcessableElement): KClass<*> {
 
-        val classOfT = deserializationContext.getCurrentElement().getType().classifier
+        val classOfT = currentElement.getType().classifier
         if (classOfT !is KClass<*>) {
             error("${TypeArgumentResolver::class.simpleName} only supports resolving types for classes.")
         }

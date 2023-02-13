@@ -9,7 +9,6 @@ import de.darkatra.bfme2.v2.map.AssetNameRegistry
 import de.darkatra.bfme2.v2.map.HeightMapV5
 import de.darkatra.bfme2.v2.map.MapFile
 import de.darkatra.bfme2.v2.map.WorldInfo
-import de.darkatra.bfme2.v2.map.deserialization.postprocessing.NoopPostProcessor
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.CountingInputStream
 import java.io.BufferedInputStream
@@ -57,25 +56,22 @@ class MapFileReader(
         countingInputStream.use {
             readAndValidateFourCC(countingInputStream)
 
-            val context = DeserializationContext(
-                mapFileSize = inputStreamSize
-            )
+            val context = DeserializationContext.Builder()
+                .build(inputStreamSize)
 
-            // TODO: maybe it's best to parse asset names manually as the current implementation requires a DeserializationContext but that internally
-            //  requires a parsed assetNameRegistry. reevaluate when implementing write(mapFile)
-            val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, NoopPostProcessor()).deserialize(countingInputStream, context)
-            context.assetNameRegistry = assetNameRegistry
+            val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, context).deserialize(countingInputStream)
+            context.setAssetNameRegistry(assetNameRegistry)
             mapBuilder.assetNameRegistry(assetNameRegistry)
 
             readAssets(countingInputStream, context) { assetName ->
                 when (assetName) {
                     AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
                         // TODO: implement cache for type specific deserializers to improve performance on subsequent map reads
-                        ObjectDeserializer(HeightMapV5::class, NoopPostProcessor()).deserialize(countingInputStream, context)
+                        ObjectDeserializer(HeightMapV5::class, context).deserialize(countingInputStream)
                     )
 
                     AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
-                        ObjectDeserializer(WorldInfo::class, NoopPostProcessor()).deserialize(countingInputStream, context)
+                        ObjectDeserializer(WorldInfo::class, context).deserialize(countingInputStream)
                     )
 
                     else -> {

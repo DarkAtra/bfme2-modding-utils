@@ -3,7 +3,7 @@ package de.darkatra.bfme2.v2.map.deserialization.model
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-class ConstructorParameter(
+internal class ConstructorParameter(
     private val parameter: KParameter
 ) : ProcessableElement {
 

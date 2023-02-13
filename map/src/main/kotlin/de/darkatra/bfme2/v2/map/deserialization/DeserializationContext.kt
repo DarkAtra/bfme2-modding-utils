@@ -6,15 +6,15 @@ import java.util.Stack
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
-// TODO: make internal
-data class DeserializationContext(
-    internal val mapFileSize: Long,
-    internal val deserializerFactory: DeserializerFactory = DeserializerFactory(),
-    internal val sharedData: MutableMap<String, Any> = mutableMapOf()
+internal class DeserializationContext private constructor(
+    internal val mapFileSize: Long
 ) {
 
+    internal val deserializerFactory: DeserializerFactory = DeserializerFactory()
+    internal val sharedData: MutableMap<String, Any> = mutableMapOf()
+
     private val processingStack = Stack<ProcessableElement>()
-    internal lateinit var assetNameRegistry: AssetNameRegistry
+    private lateinit var assetNameRegistry: AssetNameRegistry
 
     private var currentParameter: KParameter? = null
     private var currentType: KClass<*>? = null
@@ -23,8 +23,8 @@ data class DeserializationContext(
     internal fun getCurrentParameter() = currentParameter!!
     internal fun getCurrentType() = currentType!!
 
-    internal fun beginProcessing(processableElement: ProcessableElement) {
-        processingStack.push(processableElement)
+    internal fun beginProcessing(processableElement: ProcessableElement): ProcessableElement {
+        return processingStack.push(processableElement)
     }
 
     internal fun endProcessingCurrentElement() {
@@ -39,8 +39,20 @@ data class DeserializationContext(
         currentType = type
     }
 
+    internal fun setAssetNameRegistry(assetNameRegistry: AssetNameRegistry) {
+        this.assetNameRegistry = assetNameRegistry
+    }
+
     internal fun getAssetName(assetIndex: UInt): String {
         return assetNameRegistry.assetNames[assetIndex]
             ?: throw IllegalArgumentException("Could not find assetName for assetIndex '$assetIndex'.")
+    }
+
+    internal class Builder {
+        internal fun build(mapFileSize: Long): DeserializationContext {
+            return DeserializationContext(mapFileSize).also {
+                it.deserializerFactory.context = it
+            }
+        }
     }
 }

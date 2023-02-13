@@ -5,19 +5,20 @@ import de.darkatra.bfme2.v2.map.deserialization.Deserialize
 import de.darkatra.bfme2.v2.map.deserialization.MapDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.MapDeserializer.DeserializationOrder
 import de.darkatra.bfme2.v2.map.deserialization.SevenBitIntPrefixedStringDeserializer
+import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 
 class AssetNameRegistry(
     // TODO: consider making it possible to place annotations on the parameter
     val assetNames:
-    @Deserialize(using = MapDeserializer::class, postProcessor = AssetNamesValidatorValidator::class)
+    @PostProcess(using = AssetNamesValidatorValidator::class)
     @MapDeserializer.MapDeserializerProperties(deserializationOrder = DeserializationOrder.VALUE_FIRST)
     Map<UInt, @Deserialize(using = SevenBitIntPrefixedStringDeserializer::class) String>
 ) {
 
-    class AssetNamesValidatorValidator : PostProcessor<Map<UInt, String>> {
+    internal class AssetNamesValidatorValidator : PostProcessor<Map<UInt, String>> {
 
-        override fun postProcess(data: Map<UInt, String>, deserializationContext: DeserializationContext) {
+        override fun postProcess(data: Map<UInt, String>, context: DeserializationContext) {
             val totalAssetNames = data.size
             data.entries.forEachIndexed { index, (assetIndex, assetName) ->
                 if ((totalAssetNames - index).toUInt() != assetIndex) {
