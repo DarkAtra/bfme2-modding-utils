@@ -16,6 +16,7 @@ import kotlin.reflect.typeOf
 internal class DeserializerFactory {
 
     private val defaultDeserializers: Map<KType, KClass<out Deserializer<*>>> = mapOf(
+        typeOf<Byte>() to ByteDeserializer::class,
         typeOf<Boolean>() to BooleanDeserializer::class,
         typeOf<UShort>() to UShortDeserializer::class,
         typeOf<Short>() to ShortDeserializer::class,
@@ -25,6 +26,7 @@ internal class DeserializerFactory {
         typeOf<String>() to StringDeserializer::class,
         typeOf<List<*>>() to ListDeserializer::class,
         typeOf<Map<*, *>>() to MapDeserializer::class,
+        typeOf<Enum<*>>() to EnumDeserializer::class,
         typeOf<Any>() to ObjectDeserializer::class
     )
 
@@ -54,7 +56,7 @@ internal class DeserializerFactory {
         return deserializerConstructor.call(*deserializerArguments.toTypedArray())
     }
 
-    fun getArgumentResolver(
+    internal fun getArgumentResolver(
         argumentResolverClass: KClass<out ArgumentResolver<*>>,
         deserializerClass: KClass<out Deserializer<*>>,
         deserializerParameter: KParameter

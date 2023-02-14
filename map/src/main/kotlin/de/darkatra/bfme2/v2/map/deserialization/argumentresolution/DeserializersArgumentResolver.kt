@@ -6,6 +6,7 @@ import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.model.ConstructorParameter
 import de.darkatra.bfme2.v2.map.deserialization.model.Generic
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
@@ -35,16 +36,17 @@ internal class DeserializersArgumentResolver(
         }
 
         // otherwise continue the generic chain
-        return type.arguments.mapIndexed { genericIndex, typeArgument ->
-
-            val genericType = typeArgument.type
-                ?: error("Could not resolve generic at index $genericIndex of '${currentElement.getName()}'.")
-
-            val nextElement = context.beginProcessing(Generic(currentElement, genericIndex, genericType))
-            context.deserializerFactory.getDeserializer(nextElement).also {
-                context.endProcessingCurrentElement()
+        return type.arguments
+            .mapIndexed { genericIndex, typeArgument ->
+                typeArgument.type ?: error("Could not resolve generic at index $genericIndex of '${currentElement.getName()}'.")
             }
-        }
+            .filter { genericType -> !genericType.hasAnnotation<Ignore>() }
+            .mapIndexed { genericIndex, genericType ->
+                val nextElement = context.beginProcessing(Generic(currentElement, genericIndex, genericType))
+                context.deserializerFactory.getDeserializer(nextElement).also {
+                    context.endProcessingCurrentElement()
+                }
+            }
     }
 
     private fun getDeserializersForConstructorParameters(clazz: Class): List<Deserializer<*>> {
@@ -53,12 +55,19 @@ internal class DeserializersArgumentResolver(
             ?: error("${clazz.getName()} is required to have a primary constructor.")
 
         val parameters = primaryConstructor.valueParameters
-        return parameters.map { parameter ->
-            context.setCurrentParameter(parameter)
-            val nextElement = context.beginProcessing(ConstructorParameter(parameter))
-            context.deserializerFactory.getDeserializer(nextElement).also {
-                context.endProcessingCurrentElement()
+        return parameters
+            .filter { parameter -> !parameter.type.hasAnnotation<Ignore>() }
+            .map { parameter ->
+                context.setCurrentParameter(parameter)
+                val nextElement = context.beginProcessing(ConstructorParameter(parameter))
+                context.deserializerFactory.getDeserializer(nextElement).also {
+                    context.endProcessingCurrentElement()
+                }
             }
-        }
     }
+
+    @MustBeDocumented
+    @Retention(AnnotationRetention.RUNTIME)
+    @Target(AnnotationTarget.TYPE)
+    internal annotation class Ignore
 }

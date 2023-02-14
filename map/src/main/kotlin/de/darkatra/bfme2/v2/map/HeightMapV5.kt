@@ -1,23 +1,26 @@
 package de.darkatra.bfme2.v2.map
 
+import com.google.common.collect.Table
 import de.darkatra.bfme2.InvalidDataException
-import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserialize
-import de.darkatra.bfme2.v2.map.deserialization.Deserializer
+import de.darkatra.bfme2.v2.map.deserialization.HeightMapDependentMapDeserializer
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
-import org.apache.commons.io.input.CountingInputStream
+import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidingPostProcessor
 
 @Asset
 @PostProcess(using = HeightMapV5.HeightMapPostProcessor::class)
 data class HeightMapV5(
-    val width: @PostProcess(using = WidthPostProcessor::class) UInt,
-    val height: @PostProcess(using = HeightPostProcessor::class) UInt,
-    val borderWidth: @PostProcess(using = BorderWidthPostProcessor::class) UInt,
+    val width: @PostProcess(using = HeightMapWidthPostProcessor::class) UInt,
+    val height: @PostProcess(using = HeightMapHeightPostProcessor::class) UInt,
+    val borderWidth: @PostProcess(using = HeightMapBorderWidthPostProcessor::class) UInt,
     val borders: List<HeightMapBorder>,
-    val area: @PostProcess(using = AreaPostProcessor::class) UInt,
-    val elevations: @Deserialize(using = ElevationsDeserializer::class) Map<UInt, Map<UInt, UShort>>
+    val area: @PostProcess(using = HeightMapAreaPostProcessor::class) UInt,
+    val elevations:
+    @Deserialize(using = HeightMapDependentMapDeserializer::class)
+    Table<@DeserializersArgumentResolver.Ignore UInt, @DeserializersArgumentResolver.Ignore UInt, UShort>
 ) {
 
     data class HeightMapBorder(
@@ -40,48 +43,8 @@ data class HeightMapV5(
         }
     }
 
-    internal class WidthPostProcessor : PostProcessor<UInt> {
-        override fun postProcess(data: UInt, context: DeserializationContext) {
-            context.sharedData[HEIGHT_MAP_WIDTH] = data
-        }
-    }
-
-    internal class HeightPostProcessor : PostProcessor<UInt> {
-        override fun postProcess(data: UInt, context: DeserializationContext) {
-            context.sharedData[HEIGHT_MAP_HEIGHT] = data
-        }
-    }
-
-    internal class AreaPostProcessor : PostProcessor<UInt> {
-        override fun postProcess(data: UInt, context: DeserializationContext) {
-            context.sharedData[HEIGHT_MAP_AREA] = data
-        }
-    }
-
-    internal class BorderWidthPostProcessor : PostProcessor<UInt> {
-        override fun postProcess(data: UInt, context: DeserializationContext) {
-            context.sharedData[HEIGHT_MAP_BORDER_WIDTH] = data
-        }
-    }
-
-    internal class ElevationsDeserializer(
-        private val context: DeserializationContext
-    ) : Deserializer<Map<UInt, Map<UInt, UShort>>> {
-
-        override fun deserialize(inputStream: CountingInputStream): Map<UInt, Map<UInt, UShort>> {
-
-            val width = context.sharedData[HEIGHT_MAP_WIDTH] as UInt
-            val height = context.sharedData[HEIGHT_MAP_HEIGHT] as UInt
-
-            val elevations = mutableMapOf<UInt, MutableMap<UInt, UShort>>()
-            for (x in 0u until width step 1) {
-                elevations[x] = mutableMapOf()
-                for (y in 0u until height step 1) {
-                    elevations[x]!![y] = inputStream.readUShort()
-                }
-            }
-
-            return elevations
-        }
-    }
+    internal class HeightMapWidthPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_WIDTH)
+    internal class HeightMapHeightPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_HEIGHT)
+    internal class HeightMapAreaPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_AREA)
+    internal class HeightMapBorderWidthPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_BORDER_WIDTH)
 }

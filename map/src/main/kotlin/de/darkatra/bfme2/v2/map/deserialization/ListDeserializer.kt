@@ -5,34 +5,60 @@ import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 
-@UseDeserializerProperties(ListDeserializer.ListDeserializerProperties::class)
+@UseDeserializerProperties(ListDeserializer.Properties::class)
 internal class ListDeserializer<T>(
     private val context: DeserializationContext,
     private val entryDeserializer: Deserializer<T>,
     private val postProcessor: PostProcessor<List<T>>,
 
-    private val sizeType: SizeType
+    private val mode: Mode,
+    private val sizeType: SizeType,
+    private val size: UInt,
+    private val sharedDataKey: String
 ) : Deserializer<List<T>> {
+
+    init {
+        if (mode == Mode.FIXED && size == 0u) {
+            error("${ListDeserializer::class.simpleName} requires 'size' to be set via ${Properties::class.qualifiedName} when 'mode' is '${Mode.FIXED}'.")
+        }
+        if (mode == Mode.SHARED_DATA && sharedDataKey == "") {
+            error("${ListDeserializer::class.simpleName} requires 'sharedDataKey' to be set via ${Properties::class.qualifiedName} when 'mode' is '${Mode.SHARED_DATA}'.")
+        }
+    }
 
     @MustBeDocumented
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
     @DeserializerProperties
     @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
-    annotation class ListDeserializerProperties(
-        val sizeType: SizeType = SizeType.UINT
+    internal annotation class Properties(
+        val mode: Mode = Mode.DEFAULT,
+        val sizeType: SizeType = SizeType.UINT,
+        val size: UInt = 0u,
+        val sharedDataKey: String = ""
     )
 
-    enum class SizeType {
+    internal enum class Mode {
+        DEFAULT,
+        FIXED,
+        SHARED_DATA
+    }
+
+    internal enum class SizeType {
         UINT,
         USHORT
     }
 
     override fun deserialize(inputStream: CountingInputStream): List<T> {
 
-        val numberOfListEntries = when (sizeType) {
-            SizeType.UINT -> inputStream.readUInt()
-            SizeType.USHORT -> inputStream.readUShort().toUInt()
+        val numberOfListEntries = when (mode) {
+            Mode.DEFAULT -> when (sizeType) {
+                SizeType.UINT -> inputStream.readUInt()
+                SizeType.USHORT -> inputStream.readUShort().toUInt()
+            }
+
+            Mode.FIXED -> size
+            Mode.SHARED_DATA -> context.sharedData[sharedDataKey] as UInt
         }
 
         val list = mutableListOf<T>()

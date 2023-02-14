@@ -7,6 +7,6 @@ import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer.SizeType
 @Asset
 data class WorldInfo(
     val properties:
-    @ListDeserializer.ListDeserializerProperties(sizeType = SizeType.USHORT)
+    @ListDeserializer.Properties(sizeType = SizeType.USHORT)
     List<@Deserialize(using = Property.PropertyDeserializer::class) Property>
 )

@@ -4,10 +4,10 @@ import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 
-@UseDeserializerProperties(MapDeserializer.MapDeserializerProperties::class)
+@UseDeserializerProperties(MapDeserializer.Properties::class)
 internal class MapDeserializer<K, V>(
     private val context: DeserializationContext,
-    private val deserializers: List<Deserializer<*>>,
+    deserializers: List<Deserializer<*>>,
     private val postProcessor: PostProcessor<Map<K, V>>,
 
     private val order: DeserializationOrder
@@ -32,11 +32,11 @@ internal class MapDeserializer<K, V>(
     @Target(AnnotationTarget.TYPE)
     @DeserializerProperties
     @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
-    annotation class MapDeserializerProperties(
-        val deserializationOrder: DeserializationOrder
+    internal annotation class Properties(
+        val deserializationOrder: DeserializationOrder = DeserializationOrder.KEY_FIRST
     )
 
-    enum class DeserializationOrder {
+    internal enum class DeserializationOrder {
         KEY_FIRST,
         VALUE_FIRST
     }

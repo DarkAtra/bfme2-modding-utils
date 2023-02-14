@@ -12,7 +12,7 @@ class AssetNameRegistry(
     // TODO: consider making it possible to place annotations on the parameter
     val assetNames:
     @PostProcess(using = AssetNamesValidatorValidator::class)
-    @MapDeserializer.MapDeserializerProperties(deserializationOrder = DeserializationOrder.VALUE_FIRST)
+    @MapDeserializer.Properties(deserializationOrder = DeserializationOrder.VALUE_FIRST)
     Map<UInt, @Deserialize(using = SevenBitIntPrefixedStringDeserializer::class) String>
 ) {
 

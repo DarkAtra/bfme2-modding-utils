@@ -51,8 +51,9 @@
         <java.version>17</java.version>
 
         <version.commons-io>2.11.0</version.commons-io>
+        <version.guava>31.1-jre</version.guava>
+
         <version.assertj>3.24.2</version.assertj>
-        <version.jmh>1.28</version.jmh>
         <version.surefire>3.0.0-M8</version.surefire>
         <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
     </properties>
@@ -98,6 +99,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${version.commons-io}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
             </dependency>
 
             <!-- JUnit5 -->

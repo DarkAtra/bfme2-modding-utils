@@ -8,6 +8,8 @@ import de.darkatra.bfme2.map.TimeOfDay
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.InputStream
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 internal class MapFileReaderTest {
 
@@ -16,20 +18,29 @@ internal class MapFileReaderTest {
     private val zlibCompressedMapPath = "/maps/bfme2-rotwk/Legendary War.zlib"
 
     @Test
-    internal fun shouldYieldSameAssetNamesForOldAndNewReaderImplementation() {
-
-        // new reader
-        val assetNameRegistry = de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream(uncompressedMapPath))
+    @OptIn(ExperimentalTime::class)
+    internal fun shouldYieldSameResultsForOldAndNewReaderImplementation() {
 
         // old reader
-        val mapFile = MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        val oldMapParseTime = measureTimedValue {
+            MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        }
+        val mapFile = oldMapParseTime.value
 
-        assertThat(assetNameRegistry.assetNameRegistry!!.assetNames).isEqualTo(mapFile.assetNames)
-        assertThat(assetNameRegistry.heightMapV5!!.width).isEqualTo(mapFile.heightMap.width)
-        assertThat(assetNameRegistry.heightMapV5!!.height).isEqualTo(mapFile.heightMap.height)
+        println("Took ${oldMapParseTime.duration} to parse using the old MapFileReader.")
 
-        // TODO: uncomment once blend data is implemented
-        // assertThat(assetNameRegistry.worldInfoV1!!.properties.size).isEqualTo(mapFile.worldSettings.size)
+        // new reader
+        val newMapParseTime = measureTimedValue {
+            de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        }
+        val newMapFile = newMapParseTime.value
+
+        println("Took ${newMapParseTime.duration} to parse using the new MapFileReader.")
+
+        assertThat(newMapFile.assetNameRegistry!!.assetNames).isEqualTo(mapFile.assetNames)
+        assertThat(newMapFile.heightMapV5!!.width).isEqualTo(mapFile.heightMap.width)
+        assertThat(newMapFile.heightMapV5!!.height).isEqualTo(mapFile.heightMap.height)
+        assertThat(newMapFile.worldInfo!!.properties.size).isEqualTo(mapFile.worldSettings.size)
     }
 
     @Test

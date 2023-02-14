@@ -6,6 +6,7 @@ import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.refpack.RefPackInputStream
 import de.darkatra.bfme2.v2.map.AssetNameRegistry
+import de.darkatra.bfme2.v2.map.BlendTileDataV18
 import de.darkatra.bfme2.v2.map.HeightMapV5
 import de.darkatra.bfme2.v2.map.MapFile
 import de.darkatra.bfme2.v2.map.WorldInfo
@@ -22,6 +23,9 @@ import java.util.zip.InflaterInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 class MapFileReader(
     private val debugMode: Boolean = true
@@ -47,6 +51,7 @@ class MapFileReader(
     }
 
     // TODO: change return type to MapFile
+    @OptIn(ExperimentalTime::class)
     fun read(bufferedInputStream: BufferedInputStream): MapFile.Builder {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
@@ -56,30 +61,50 @@ class MapFileReader(
         countingInputStream.use {
             readAndValidateFourCC(countingInputStream)
 
-            val context = DeserializationContext.Builder()
-                .build(inputStreamSize)
+            val context = measureTimedValue {
+                DeserializationContext.Builder().build(inputStreamSize)
+            }.also {
+                if (debugMode) {
+                    println("${DeserializationContext::class.simpleName} creation took ${it.duration}.")
+                }
+            }.value
 
-            val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, context).deserialize(countingInputStream)
-            context.setAssetNameRegistry(assetNameRegistry)
-            mapBuilder.assetNameRegistry(assetNameRegistry)
+            measureTime {
+                val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, context).deserialize(countingInputStream)
+                context.setAssetNameRegistry(assetNameRegistry)
+                mapBuilder.assetNameRegistry(assetNameRegistry)
+            }.also {
+                if (debugMode) {
+                    println("Deserialization of '${AssetNameRegistry::class.simpleName}' took $it.")
+                }
+            }
 
             readAssets(countingInputStream, context) { assetName ->
-                when (assetName) {
-                    AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
-                        ObjectDeserializer(HeightMapV5::class, context).deserialize(countingInputStream)
-                    )
 
-                    AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
-                        ObjectDeserializer(WorldInfo::class, context).deserialize(countingInputStream)
-                    )
+                measureTime {
+                    when (assetName) {
+                        AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
+                            ObjectDeserializer(HeightMapV5::class, context).deserialize(countingInputStream)
+                        )
 
-                    else -> {
-                        if (!debugMode) {
-                            throw InvalidDataException("Reader for assetName '$assetName' is not implemented.")
+                        AssetName.BLEND_TILE_DATA.assetName -> mapBuilder.blendTileDataV18(
+                            ObjectDeserializer(BlendTileDataV18::class, context).deserialize(countingInputStream)
+                        )
+
+                        AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
+                            ObjectDeserializer(WorldInfo::class, context).deserialize(countingInputStream)
+                        )
+
+                        else -> {
+                            if (!debugMode) {
+                                throw InvalidDataException("Reader for assetName '$assetName' is not implemented.")
+                            }
+                            countingInputStream.readAllBytes()
                         }
-                        while (countingInputStream.byteCount < context.mapFileSize) {
-                            countingInputStream.read()
-                        }
+                    }
+                }.also {
+                    if (debugMode) {
+                        println("Deserialization of '$assetName' took $it.")
                     }
                 }
             }

@@ -9,6 +9,8 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.javaGetter
+import kotlin.reflect.typeOf
 
 internal class AnnotationParameterArgumentResolver(
     private val deserializerClass: KClass<Deserializer<*>>,
@@ -38,7 +40,11 @@ internal class AnnotationParameterArgumentResolver(
             error("Expected exactly one ${DeserializerProperties::class.simpleName} field to be of type '${deserializerParameter.type}'. Found for '${currentElement.getName()}': $annotationProperties")
         }
 
-        return annotationProperties.first().getter.call(deserializerProperties)!!
+        return try {
+            annotationProperties.first().getter.call(deserializerProperties)!!
+        } catch (e: Exception) {
+            getDefaultValue(currentElement)
+        }
     }
 
     private fun isMetaAnnotatedWithDeserializerProperties(annotation: Annotation, alreadyVisited: Set<Annotation> = emptySet()): Boolean {
@@ -55,20 +61,27 @@ internal class AnnotationParameterArgumentResolver(
     private fun getDefaultValue(currentElement: ProcessableElement): Any {
 
         val useDeserializerProperties = deserializerClass.findAnnotation<UseDeserializerProperties>()
-            ?: error("Could not resolve default value for parameter '${deserializerParameter.name}' on class '${deserializerClass.simpleName}'.")
+            ?: error("Could not find UseDeserializerProperties on class '${deserializerClass.simpleName}'.")
 
         if (!useDeserializerProperties.annotation.hasAnnotation<DeserializerProperties>()) {
             error("Argument of ${UseDeserializerProperties::class.simpleName} is required to be meta annotated with ${DeserializerProperties::class.simpleName}.")
         }
 
-        // we have to use java reflection here as kotlin reflect does not expose default values for annotation
-        val annotationMethods = useDeserializerProperties.annotation.java.declaredMethods
-            .filter { method -> method.returnType == (deserializerParameter.type.classifier as KClass<*>).java }
+        val annotationMethods = useDeserializerProperties.annotation.members
+            .filterIsInstance<KProperty<*>>()
+            .filter { annotationProperty -> annotationProperty.returnType == deserializerParameter.type }
 
         if (annotationMethods.size != 1) {
-            error("Expected exactly one ${DeserializerProperties::class.simpleName} field to be of type '${deserializerParameter.type}'. Found for '${currentElement.getName()}': ${useDeserializerProperties.annotation}")
+            error("Expected exactly one ${DeserializerProperties::class.simpleName} field to be of type '${deserializerParameter.type}'. Found for '${currentElement.getName()}': ${annotationMethods.map { it.name }}")
         }
 
-        return annotationMethods.first().defaultValue
+        // we have to use java reflection here as kotlin reflect does not expose default values for annotation
+        val defaultValue = annotationMethods.first().javaGetter!!.defaultValue
+            ?: error("Could not resolve default value for parameter '${deserializerParameter.name}' on class '${deserializerClass.simpleName}'.")
+
+        return when (deserializerParameter.type) {
+            typeOf<UInt>() -> (defaultValue as Int).toUInt()
+            else -> defaultValue
+        }
     }
 }

@@ -53,8 +53,15 @@ internal class ObjectDeserializer<T : Any>(
         val startPosition = inputStream.byteCount
         context.setCurrentType(classOfT)
 
-        val values = List(parameters.size) { parameterIndex ->
-            deserializers[parameterIndex].deserialize(inputStream)
+        val values = parameters.mapIndexed { parameterIndex, parameter ->
+            try {
+                deserializers[parameterIndex].deserialize(inputStream)
+            } catch (e: Exception) {
+                throw InvalidDataException(
+                    "Error deserializing value for '${classOfT.simpleName}#${parameter.name}' using ${deserializers[parameterIndex]::class.simpleName}.",
+                    e
+                )
+            }
         }
 
         if (currentAsset != null) {

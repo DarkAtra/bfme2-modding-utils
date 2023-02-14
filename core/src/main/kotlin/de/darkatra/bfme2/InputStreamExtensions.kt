@@ -89,27 +89,37 @@ fun InputStream.read7BitIntPrefixedString(): String {
     return this.readNBytes(stringLength).toString(StandardCharsets.UTF_8)
 }
 
+// TODO: remove this once v2 is final
 private inline fun <reified T> read2DArrayAsMap(width: UInt, height: UInt, readFunction: (x: UInt, y: UInt) -> T): Map<UInt, Map<UInt, T>> {
     val result = mutableMapOf<UInt, MutableMap<UInt, T>>()
     for (y in 0u until height step 1) {
         for (x in 0u until width step 1) {
-            result[x] = mutableMapOf()
+            if (result[x] == null) {
+                result[x] = mutableMapOf()
+            }
             result[x]!![y] = readFunction(x, y)
         }
     }
     return result
 }
 
+// TODO: remove this once v2 is final
 inline fun <reified T> InputStream.read2DByteArrayAsMap(width: UInt, height: UInt, mappingFunction: (byte: Byte) -> T): Map<UInt, Map<UInt, T>> {
     return read2DByteArrayAsMap(width, height).mapValues { (_, inner) ->
         inner.mapValues { (_, value) -> mappingFunction(value) }
     }
 }
 
+// TODO: remove this once v2 is final
 fun InputStream.read2DUShortArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, UShort>> = read2DArrayAsMap(width, height) { _, _ -> readUShort() }
+
+// TODO: remove this once v2 is final
 fun InputStream.read2DUIntArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, UInt>> = read2DArrayAsMap(width, height) { _, _ -> readUInt() }
+
+// TODO: remove this once v2 is final
 fun InputStream.read2DByteArrayAsMap(width: UInt, height: UInt): Map<UInt, Map<UInt, Byte>> = read2DArrayAsMap(width, height) { _, _ -> readByte() }
 
+// TODO: remove this once v2 is final
 fun InputStream.read2DSageBooleanArray(width: UInt, height: UInt): Map<UInt, Map<UInt, Boolean>> {
     val result = mutableMapOf<UInt, MutableMap<UInt, Boolean>>()
     for (y in 0u until height step 1) {
@@ -118,7 +128,9 @@ fun InputStream.read2DSageBooleanArray(width: UInt, height: UInt): Map<UInt, Map
             if (x % 8u == 0u) {
                 temp = readByte()
             }
-            result[x] = mutableMapOf()
+            if (result[x] == null) {
+                result[x] = mutableMapOf()
+            }
             result[x]!![y] = temp and (1u shl (x % 8u).toInt()).toByte() != 0.toByte()
         }
     }
