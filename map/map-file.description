@@ -119,7 +119,37 @@
 * textureCellCount(UInt)
 * blendsCount(UInt) // the game subtracts 1 if the value is greater than 0 for some reason
 * cliffBlendsCount(UInt) // the game subtracts 1 if the value is greater than 0 for some reason
-// TODO: list remaining properties
+* numberOfBlendTileTextures(UInt)
+-> loop [0, numberOfBlendTileTextures)
+** cellStart(UInt)
+** cellCount(UInt)
+** cellSize(UInt)
+** magicValue(UInt)
+** textureNameLength(UShort)
+** textureName(String(length = textureNameLength))
+<-
+* magicValue1(UInt)
+* magicValue2(UInt)
+-> loop [0, blendsCount)
+* secondaryTextureTile(UInt)
+* rawBlendDirection(ByteArray(length = 4))
+* flags(Byte)
+* twoSided(Boolean)
+* magicValue1(UInt)
+* magicValue2(UInt)
+<-
+-> loop [0, cliffBlendsCount)
+* textureTile(UInt)
+* bottomLeftX(Float)
+* bottomLeftY(Float)
+* bottomRightX(Float)
+* bottomRightY(Float)
+* topRightX(Float)
+* topRightY(Float)
+* topLeftX(Float)
+* topLeftY(Float)
+* unknown2(UShort)
+<-
 
 // WorldInfo
 * assetVersion(UShort) // rotwk uses assetVersion 1
