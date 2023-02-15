@@ -24,9 +24,9 @@ internal class MapFileReaderTest {
         // new reader
         val newMapFile = de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream(uncompressedMapPath))
 
-        assertThat(newMapFile.heightMapV5!!.width).isEqualTo(mapFile.heightMap.width)
-        assertThat(newMapFile.heightMapV5!!.height).isEqualTo(mapFile.heightMap.height)
-        assertThat(newMapFile.worldInfo!!.properties.size).isEqualTo(mapFile.worldSettings.size)
+        assertThat(newMapFile.heightMapV5.width).isEqualTo(mapFile.heightMap.width)
+        assertThat(newMapFile.heightMapV5.height).isEqualTo(mapFile.heightMap.height)
+        assertThat(newMapFile.worldInfo.properties.size).isEqualTo(mapFile.worldSettings.size)
     }
 
     @Test

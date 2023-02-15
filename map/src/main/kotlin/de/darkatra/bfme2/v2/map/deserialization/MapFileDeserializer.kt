@@ -19,19 +19,17 @@ internal class MapFileDeserializer(
     private val postProcessor: PostProcessor<MapFile>
 ) : Deserializer<MapFile> {
 
-    private val classOfT: KClass<MapFile> = MapFile::class
-
     @OptIn(ExperimentalTime::class)
     override fun deserialize(inputStream: CountingInputStream): MapFile {
 
-        val primaryConstructor = classOfT.primaryConstructor
-            ?: error("${classOfT.simpleName} is required to have a primary constructor.")
+        val primaryConstructor = MapFile::class.primaryConstructor
+            ?: error("${MapFile::class.simpleName} is required to have a primary constructor.")
 
         val parameters = primaryConstructor.valueParameters
 
         val assetNameToParameterIndexList = parameters.mapIndexed { parameterIndex, parameter ->
             val assetAnnotation = getClassOfParameter(parameter).findAnnotation<Asset>()
-                ?: error("All properties in the primary constructor of '${classOfT::class.simpleName}' must be annotated with '${Asset::class.simpleName}'.")
+                ?: error("All properties in the primary constructor of '${MapFile::class::class.simpleName}' must be annotated with '${Asset::class.simpleName}'.")
 
             Pair(assetAnnotation.name, parameterIndex)
         }
