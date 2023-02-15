@@ -8,5 +8,6 @@ data class MapFile(
     val blendTileDataV18: BlendTileDataV18,
     val heightMapV5: HeightMapV5,
     val multiplayerPositions: MultiplayerPositions,
+    val sides: Sides,
     val worldInfo: WorldInfo
 )

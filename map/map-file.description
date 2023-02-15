@@ -125,8 +125,7 @@
 ** cellCount(UInt)
 ** cellSize(UInt)
 ** magicValue(UInt)
-** textureNameLength(UShort)
-** textureName(String(length = textureNameLength))
+** textureName(UShortPrefixedString)
 <-
 * magicValue1(UInt)
 * magicValue2(UInt)
@@ -161,9 +160,8 @@
 ** propertyValue(Boolean) // if propertyType == 0
 ** propertyValue(UInt) // if propertyType == 1
 ** propertyValue(Float) // if propertyType == 2
-** propertyValueLength(UShort) // if propertyType == 3 or propertyType == 4 or propertyType == 5
-** propertyValue(String(length = propertyValueLength, charset = ASCII)) // if propertyType == 3 or propertyType == 5
-** propertyValue(String(length = propertyValueLength, charset = UTF-16-LE)) // if propertyType == 4
+** propertyValue(UShortPrefixedString(charset = ASCII)) // if propertyType == 3 or propertyType == 5
+** propertyValue(UShortPrefixedString(charset = UTF-16-LE)) // if propertyType == 4
 <-
 
 // MPPositionList
@@ -186,6 +184,39 @@
 <-
 
 // SidesList
+* assetVersion(UShort) // rotwk uses assetVersion 6
+* assetSize(UInt)
+* unknown(Boolean)
+* numberOfPlayers(UInt)
+-> loop [0, numberOfPlayers)
+** numberOfProperties(UShort)
+-> loop [0, numberOfProperties)
+*** propertyType(UByte)
+*** assetNameIndex(UInt(bits = 24)) // little endian 24-bit UInt
+*** propertyValue(Boolean) // if propertyType == 0
+*** propertyValue(UInt) // if propertyType == 1
+*** propertyValue(Float) // if propertyType == 2
+*** propertyValue(UShortPrefixedString(charset = ASCII)) // if propertyType == 3 or propertyType == 5
+*** propertyValue(UShortPrefixedString(charset = UTF-16-LE)) // if propertyType == 4
+<-
+** numberOfBuildListItems(UInt)
+-> loop [0, numberOfBuildListItems)
+*** buildingName(UShortPrefixedString)
+*** name(UShortPrefixedString)
+*** positionX(Float)
+*** positionY(Float)
+*** positionZ(Float)
+*** angle(Float)
+*** isAlreadyBuilt(Boolean)
+*** rebuilds(UInt)
+*** script(UShortPrefixedString)
+*** startingHealth(UInt)
+*** unknown1(Boolean)
+*** unknown2(Boolean)
+*** unknown3(Boolean)
+<-
+<-
+
 // LibraryMapLists
 // Teams
 // PlayerScriptsList

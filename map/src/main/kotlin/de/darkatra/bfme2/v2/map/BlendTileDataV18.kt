@@ -4,20 +4,17 @@ import com.google.common.collect.Table
 import de.darkatra.bfme2.ConversionException
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.v2.map.deserialization.BlendCountDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserialize
-import de.darkatra.bfme2.v2.map.deserialization.Deserializer
 import de.darkatra.bfme2.v2.map.deserialization.HeightMapDependentMapDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.HeightMapDependentMapDeserializer.Mode
 import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer
-import de.darkatra.bfme2.v2.map.deserialization.UIntDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.UShortPrefixedStringDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidingPostProcessor
-import org.apache.commons.io.input.CountingInputStream
 import kotlin.experimental.or
 
 @Asset(name = "BlendTileData")
@@ -195,21 +192,6 @@ data class BlendTileDataV18(
     internal companion object {
         const val BLEND_COUNT = "blend-count"
         const val CLIFF_BLEND_COUNT = "cliff-blend-count"
-    }
-
-    internal class BlendCountDeserializer(
-        private val context: DeserializationContext,
-        private val postProcessor: PostProcessor<UInt>
-    ) : Deserializer<UInt> {
-
-        private val uIntDeserializer = UIntDeserializer(context, NoopPostProcessor())
-
-        override fun deserialize(inputStream: CountingInputStream): UInt {
-            // the game subtracts 1 from blendsCount and cliffBlendsCount if the deserialized value is greater than 0 for some weird reason
-            return (uIntDeserializer.deserialize(inputStream) - 1u).coerceAtLeast(0u).also {
-                postProcessor.postProcess(it, context)
-            }
-        }
     }
 
     internal class BlendTileDataPostProcessor : PostProcessor<BlendTileDataV18> {

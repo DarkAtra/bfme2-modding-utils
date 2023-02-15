@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
+import de.darkatra.bfme2.v2.map.Property
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
@@ -31,6 +32,7 @@ internal class DeserializerFactory(
         typeOf<List<*>>() to ListDeserializer::class,
         typeOf<Map<*, *>>() to MapDeserializer::class,
         typeOf<Enum<*>>() to EnumDeserializer::class,
+        typeOf<Property>() to PropertyDeserializer::class,
         typeOf<Any>() to ObjectDeserializer::class
     )
 
