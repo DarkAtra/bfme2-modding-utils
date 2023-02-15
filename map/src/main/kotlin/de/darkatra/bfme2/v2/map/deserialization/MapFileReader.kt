@@ -3,14 +3,11 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.AssetName
+import de.darkatra.bfme2.read7BitIntPrefixedString
 import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
-import de.darkatra.bfme2.v2.map.AssetNameRegistry
-import de.darkatra.bfme2.v2.map.BlendTileDataV18
-import de.darkatra.bfme2.v2.map.HeightMapV5
 import de.darkatra.bfme2.v2.map.MapFile
-import de.darkatra.bfme2.v2.map.MultiplayerPositions
-import de.darkatra.bfme2.v2.map.WorldInfo
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.CountingInputStream
 import java.io.BufferedInputStream
@@ -27,27 +24,40 @@ import kotlin.io.path.inputStream
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-class MapFileReader(
-    private val debugMode: Boolean = true
-) {
+class MapFileReader {
 
     companion object {
         private const val UNCOMPRESSED_FOUR_CC = "CkMp"
         private const val REFPACK_FOUR_CC = "EAR\u0000"
         private const val ZLIB_FOUR_CC = "ZL5\u0000"
 
-        internal fun readAssets(inputStream: CountingInputStream, context: DeserializationContext, callback: (assetName: String) -> Unit) {
+        internal fun readAssets(inputStream: CountingInputStream, deserializationContext: DeserializationContext, callback: (assetName: String) -> Unit) {
 
-            while (inputStream.byteCount < context.currentEndPosition) {
+            while (inputStream.byteCount < deserializationContext.currentEndPosition) {
                 val assetIndex = inputStream.readUInt()
-                val assetName = context.getAssetName(assetIndex)
+                val assetName = deserializationContext.getAssetName(assetIndex)
 
+                val currentAsset = DeserializationContext.AssetEntry(
+                    assetName = assetName,
+                    assetVersion = inputStream.readUShort(),
+                    assetSize = inputStream.readUInt().toLong(),
+                    startPosition = inputStream.byteCount
+                )
+
+                deserializationContext.push(currentAsset)
                 callback(assetName)
+                deserializationContext.pop()
+
+                val currentEndPosition = inputStream.byteCount
+                val expectedEndPosition = currentAsset.endPosition
+                if (!deserializationContext.debugMode && currentEndPosition != expectedEndPosition) {
+                    throw InvalidDataException("Error reading '${currentAsset.assetName}'. Expected reader to be at position $expectedEndPosition, but was at $currentEndPosition.")
+                }
             }
         }
     }
 
-    fun read(file: Path): MapFile.Builder {
+    fun read(file: Path): MapFile {
 
         if (!file.exists()) {
             throw FileNotFoundException("File '${file.absolutePathString()}' does not exist.")
@@ -56,78 +66,51 @@ class MapFileReader(
         return read(file.inputStream())
     }
 
-    fun read(inputStream: InputStream): MapFile.Builder {
+    fun read(inputStream: InputStream): MapFile {
         return read(inputStream.buffered())
     }
 
-    // TODO: change return type to MapFile
     @OptIn(ExperimentalTime::class)
-    fun read(bufferedInputStream: BufferedInputStream): MapFile.Builder {
+    fun read(bufferedInputStream: BufferedInputStream): MapFile {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
         val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
-        val mapBuilder = MapFile.Builder()
 
-        countingInputStream.use {
+        return countingInputStream.use {
             readAndValidateFourCC(countingInputStream)
 
-            val deserializationContext = DeserializationContext()
+            val deserializationContext = DeserializationContext(true)
             val annotationProcessingContext = AnnotationProcessingContext()
-            val deserializerFactory = DeserializerFactory(annotationProcessingContext, deserializationContext).also {
-                annotationProcessingContext.setDeserializerFactory(it)
-            }
+            val deserializerFactory = DeserializerFactory(annotationProcessingContext, deserializationContext)
 
             measureTime {
-                val assetNameRegistry = deserializerFactory.getDeserializer(AssetNameRegistry::class).deserialize(countingInputStream)
-                deserializationContext.setAssetNameRegistry(assetNameRegistry)
-                mapBuilder.assetNameRegistry(assetNameRegistry)
-            }.also {
-                if (debugMode) {
-                    println("Deserialization of '${AssetNameRegistry::class.simpleName}' took $it.")
+                val assetNames = readAssetNames(countingInputStream)
+                deserializationContext.setAssetNames(assetNames)
+            }.also { elapsedTime ->
+                if (deserializationContext.debugMode) {
+                    println("Reading asset names took $elapsedTime.")
                 }
             }
 
-            deserializationContext.push(AssetName.MAP.assetName, inputStreamSize)
+            deserializationContext.push(
+                DeserializationContext.AssetEntry(
+                    assetName = AssetName.MAP.assetName,
+                    assetVersion = 0u,
+                    assetSize = inputStreamSize,
+                    startPosition = 0
+                )
+            )
 
-            readAssets(countingInputStream, deserializationContext) { assetName ->
+            val mapFileDeserializer = deserializerFactory.getDeserializer(MapFile::class)
 
-                measureTime {
-                    when (assetName) {
-                        // TODO: resolve assetName via Asset annotation
-                        AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
-                            deserializerFactory.getDeserializer(HeightMapV5::class).deserialize(countingInputStream)
-                        )
+            annotationProcessingContext.invalidate()
 
-                        AssetName.BLEND_TILE_DATA.assetName -> mapBuilder.blendTileDataV18(
-                            deserializerFactory.getDeserializer(BlendTileDataV18::class).deserialize(countingInputStream)
-                        )
-
-                        AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
-                            deserializerFactory.getDeserializer(WorldInfo::class).deserialize(countingInputStream)
-                        )
-
-                        AssetName.MP_POSITION_LIST.assetName -> mapBuilder.multiplayerPositions(
-                            deserializerFactory.getDeserializer(MultiplayerPositions::class).deserialize(countingInputStream)
-                        )
-
-                        else -> {
-                            if (!debugMode) {
-                                throw InvalidDataException("Reader for assetName '$assetName' is not implemented.")
-                            }
-                            countingInputStream.readAllBytes()
-                        }
-                    }
-                }.also {
-                    if (debugMode) {
-                        println("Deserialization of '$assetName' took $it.")
-                    }
-                }
-            }
+            val mapFile = mapFileDeserializer.deserialize(countingInputStream)
 
             deserializationContext.pop()
-        }
 
-        return mapBuilder
+            mapFile
+        }
     }
 
     private fun getInputStreamSize(bufferedInputStream: BufferedInputStream): Long {
@@ -141,6 +124,22 @@ class MapFileReader(
         bufferedInputStream.reset()
 
         return inputStreamSize
+    }
+
+    private fun readAssetNames(reader: CountingInputStream): Map<UInt, String> {
+
+        val numberOfAssetStrings = reader.readUInt()
+
+        val assetNames = mutableMapOf<UInt, String>()
+        for (i in numberOfAssetStrings downTo 1u step 1) {
+            val assetName = reader.read7BitIntPrefixedString()
+            val assetIndex = reader.readUInt()
+            if (assetIndex != i) {
+                throw IllegalStateException("Illegal assetIndex for '$assetName'.")
+            }
+            assetNames[assetIndex] = assetName
+        }
+        return assetNames
     }
 
     private fun decodeIfNecessary(inputStream: InputStream): InputStream {

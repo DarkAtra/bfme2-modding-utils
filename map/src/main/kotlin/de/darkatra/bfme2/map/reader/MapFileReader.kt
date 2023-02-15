@@ -125,8 +125,6 @@ class MapFileReader {
             readAndValidateFourCC(countingInputStream)
 
             val assetNames = readAssetNames(countingInputStream)
-            mapBuilder.assetNames(assetNames)
-
             val context = MapFileParseContext(assetNames)
             context.push(AssetName.MAP.assetName, inputStreamSize)
 

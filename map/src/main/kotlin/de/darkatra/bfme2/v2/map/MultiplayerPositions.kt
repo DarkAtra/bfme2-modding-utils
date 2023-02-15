@@ -7,7 +7,6 @@ import de.darkatra.bfme2.v2.map.deserialization.UShortPrefixedStringDeserializer
 @Asset(name = "MPPositionList")
 data class MultiplayerPositions(
     val positions:
-    @AssetListDeserializer.Properties(expectedAssetName = "MPPositionInfo") // TODO: make expectedAssetName a constant
     @Deserialize(using = AssetListDeserializer::class)
     List<MultiplayerPosition>
 ) {

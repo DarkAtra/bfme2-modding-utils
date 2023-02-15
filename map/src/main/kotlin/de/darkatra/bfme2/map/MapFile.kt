@@ -38,7 +38,6 @@ data class MapFile(
     val unknown: Boolean,
     val waypointPaths: List<WaypointPath>,
     val worldSettings: List<Property>,
-    val assetNames: Map<UInt, String>
 ) {
 
     class Builder {
@@ -72,7 +71,6 @@ data class MapFile(
         private var unknown: Boolean? = null
         private var waypointPaths: List<WaypointPath>? = null
         private var worldSettings: List<Property>? = null
-        private var assetNames: Map<UInt, String>? = null
 
         fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
         fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }
@@ -104,7 +102,6 @@ data class MapFile(
         fun unknown(unknown: Boolean) = apply { this.unknown = unknown }
         fun waypointPaths(waypointPaths: List<WaypointPath>) = apply { this.waypointPaths = waypointPaths }
         fun worldSettings(worldSettings: List<Property>) = apply { this.worldSettings = worldSettings }
-        fun assetNames(assetNames: Map<UInt, String>) = apply { this.assetNames = assetNames }
 
         fun build() = MapFile(
             assetList = assetList,
@@ -136,8 +133,7 @@ data class MapFile(
             triggerAreas = triggerAreas,
             unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),
             waypointPaths = waypointPaths ?: throwIllegalStateExceptionForField("waypointPaths"),
-            worldSettings = worldSettings ?: throwIllegalStateExceptionForField("worldSettings"),
-            assetNames = assetNames ?: throwIllegalStateExceptionForField("assetNames")
+            worldSettings = worldSettings ?: throwIllegalStateExceptionForField("worldSettings")
         )
 
         private fun throwIllegalStateExceptionForField(fieldName: String): Nothing {

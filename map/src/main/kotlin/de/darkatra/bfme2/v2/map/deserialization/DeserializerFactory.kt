@@ -44,6 +44,7 @@ internal class DeserializerFactory(
         val type = currentElement.getType()
 
         val deserializerClass = type.findAnnotation<Deserialize>()?.using
+            ?: getDeserializerByClass(currentElement)
             ?: getDeserializerByType(type)
             ?: error("No suitable deserializer found for '${currentElement.getName()}'.")
 
@@ -81,6 +82,13 @@ internal class DeserializerFactory(
         }
 
         return argumentResolverClass.primaryConstructor!!.call(*values.toTypedArray())
+    }
+
+    private fun getDeserializerByClass(currentElement: ProcessableElement): KClass<out Deserializer<*>>? {
+        return when (currentElement) {
+            is Class -> currentElement.clazz.findAnnotation<Deserialize>()?.using
+            else -> null
+        }
     }
 
     private fun getDeserializerByType(type: KType): KClass<out Deserializer<*>>? {
