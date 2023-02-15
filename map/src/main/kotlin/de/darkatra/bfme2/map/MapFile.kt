@@ -72,7 +72,7 @@ data class MapFile(
         private var unknown: Boolean? = null
         private var waypointPaths: List<WaypointPath>? = null
         private var worldSettings: List<Property>? = null
-        internal var assetNames: Map<UInt, String>? = null
+        private var assetNames: Map<UInt, String>? = null
 
         fun assetList(assetList: List<AssetListItem>) = apply { this.assetList = assetList }
         fun blendTileData(blendTileData: BlendTileData) = apply { this.blendTileData = blendTileData }

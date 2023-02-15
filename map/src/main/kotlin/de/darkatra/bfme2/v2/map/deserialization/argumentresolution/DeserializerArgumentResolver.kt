@@ -1,14 +1,16 @@
 package de.darkatra.bfme2.v2.map.deserialization.argumentresolution
 
-import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
+import de.darkatra.bfme2.v2.map.deserialization.AnnotationProcessingContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserializer
+import de.darkatra.bfme2.v2.map.deserialization.DeserializerFactory
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 
 internal class DeserializerArgumentResolver(
-    context: DeserializationContext
+    annotationProcessingContext: AnnotationProcessingContext,
+    deserializerFactory: DeserializerFactory
 ) : ArgumentResolver<Deserializer<*>> {
 
-    private val deserializersArgumentResolver = DeserializersArgumentResolver(context)
+    private val deserializersArgumentResolver = DeserializersArgumentResolver(annotationProcessingContext, deserializerFactory)
 
     override fun resolve(currentElement: ProcessableElement): Deserializer<*> {
 

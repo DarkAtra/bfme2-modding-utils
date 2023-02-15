@@ -20,7 +20,7 @@ import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidi
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.experimental.or
 
-@Asset
+@Asset(name = "BlendTileData")
 @PostProcess(using = BlendTileDataV18.BlendTileDataPostProcessor::class)
 data class BlendTileDataV18(
     val numberOfTiles: UInt,

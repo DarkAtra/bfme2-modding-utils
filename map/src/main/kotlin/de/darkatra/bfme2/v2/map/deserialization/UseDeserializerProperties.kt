@@ -6,5 +6,5 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 internal annotation class UseDeserializerProperties(
-    val annotation: KClass<*>
+    val propertiesClass: KClass<*>
 )

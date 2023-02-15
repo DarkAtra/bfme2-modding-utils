@@ -1,7 +1,8 @@
 package de.darkatra.bfme2.v2.map.deserialization.argumentresolution
 
-import de.darkatra.bfme2.v2.map.deserialization.DeserializationContext
+import de.darkatra.bfme2.v2.map.deserialization.AnnotationProcessingContext
 import de.darkatra.bfme2.v2.map.deserialization.Deserializer
+import de.darkatra.bfme2.v2.map.deserialization.DeserializerFactory
 import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.model.ConstructorParameter
 import de.darkatra.bfme2.v2.map.deserialization.model.Generic
@@ -11,7 +12,8 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
 internal class DeserializersArgumentResolver(
-    private val context: DeserializationContext
+    private val annotationProcessingContext: AnnotationProcessingContext,
+    private val deserializerFactory: DeserializerFactory
 ) : ArgumentResolver<List<Deserializer<*>>> {
 
     private val typeArgumentResolver = TypeArgumentResolver()
@@ -42,9 +44,9 @@ internal class DeserializersArgumentResolver(
             }
             .filter { genericType -> !genericType.hasAnnotation<Ignore>() }
             .mapIndexed { genericIndex, genericType ->
-                val nextElement = context.beginProcessing(Generic(currentElement, genericIndex, genericType))
-                context.deserializerFactory.getDeserializer(nextElement).also {
-                    context.endProcessingCurrentElement()
+                val nextElement = annotationProcessingContext.beginProcessing(Generic(currentElement, genericIndex, genericType))
+                deserializerFactory.getDeserializer(nextElement).also {
+                    annotationProcessingContext.endProcessingCurrentElement()
                 }
             }
     }
@@ -58,10 +60,9 @@ internal class DeserializersArgumentResolver(
         return parameters
             .filter { parameter -> !parameter.type.hasAnnotation<Ignore>() }
             .map { parameter ->
-                context.setCurrentParameter(parameter)
-                val nextElement = context.beginProcessing(ConstructorParameter(parameter))
-                context.deserializerFactory.getDeserializer(nextElement).also {
-                    context.endProcessingCurrentElement()
+                val nextElement = annotationProcessingContext.beginProcessing(ConstructorParameter(parameter))
+                deserializerFactory.getDeserializer(nextElement).also {
+                    annotationProcessingContext.endProcessingCurrentElement()
                 }
             }
     }

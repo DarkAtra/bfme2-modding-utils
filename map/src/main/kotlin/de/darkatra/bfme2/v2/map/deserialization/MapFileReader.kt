@@ -9,6 +9,7 @@ import de.darkatra.bfme2.v2.map.AssetNameRegistry
 import de.darkatra.bfme2.v2.map.BlendTileDataV18
 import de.darkatra.bfme2.v2.map.HeightMapV5
 import de.darkatra.bfme2.v2.map.MapFile
+import de.darkatra.bfme2.v2.map.MultiplayerPositions
 import de.darkatra.bfme2.v2.map.WorldInfo
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.CountingInputStream
@@ -25,7 +26,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
-import kotlin.time.measureTimedValue
 
 class MapFileReader(
     private val debugMode: Boolean = true
@@ -35,6 +35,16 @@ class MapFileReader(
         private const val UNCOMPRESSED_FOUR_CC = "CkMp"
         private const val REFPACK_FOUR_CC = "EAR\u0000"
         private const val ZLIB_FOUR_CC = "ZL5\u0000"
+
+        internal fun readAssets(inputStream: CountingInputStream, context: DeserializationContext, callback: (assetName: String) -> Unit) {
+
+            while (inputStream.byteCount < context.currentEndPosition) {
+                val assetIndex = inputStream.readUInt()
+                val assetName = context.getAssetName(assetIndex)
+
+                callback(assetName)
+            }
+        }
     }
 
     fun read(file: Path): MapFile.Builder {
@@ -61,17 +71,15 @@ class MapFileReader(
         countingInputStream.use {
             readAndValidateFourCC(countingInputStream)
 
-            val context = measureTimedValue {
-                DeserializationContext.Builder().build(inputStreamSize)
-            }.also {
-                if (debugMode) {
-                    println("${DeserializationContext::class.simpleName} creation took ${it.duration}.")
-                }
-            }.value
+            val deserializationContext = DeserializationContext()
+            val annotationProcessingContext = AnnotationProcessingContext()
+            val deserializerFactory = DeserializerFactory(annotationProcessingContext, deserializationContext).also {
+                annotationProcessingContext.setDeserializerFactory(it)
+            }
 
             measureTime {
-                val assetNameRegistry = ObjectDeserializer(AssetNameRegistry::class, context).deserialize(countingInputStream)
-                context.setAssetNameRegistry(assetNameRegistry)
+                val assetNameRegistry = deserializerFactory.getDeserializer(AssetNameRegistry::class).deserialize(countingInputStream)
+                deserializationContext.setAssetNameRegistry(assetNameRegistry)
                 mapBuilder.assetNameRegistry(assetNameRegistry)
             }.also {
                 if (debugMode) {
@@ -79,20 +87,27 @@ class MapFileReader(
                 }
             }
 
-            readAssets(countingInputStream, context) { assetName ->
+            deserializationContext.push(AssetName.MAP.assetName, inputStreamSize)
+
+            readAssets(countingInputStream, deserializationContext) { assetName ->
 
                 measureTime {
                     when (assetName) {
+                        // TODO: resolve assetName via Asset annotation
                         AssetName.HEIGHT_MAP_DATA.assetName -> mapBuilder.heightMapV5(
-                            ObjectDeserializer(HeightMapV5::class, context).deserialize(countingInputStream)
+                            deserializerFactory.getDeserializer(HeightMapV5::class).deserialize(countingInputStream)
                         )
 
                         AssetName.BLEND_TILE_DATA.assetName -> mapBuilder.blendTileDataV18(
-                            ObjectDeserializer(BlendTileDataV18::class, context).deserialize(countingInputStream)
+                            deserializerFactory.getDeserializer(BlendTileDataV18::class).deserialize(countingInputStream)
                         )
 
                         AssetName.WORLD_INFO.assetName -> mapBuilder.worldInfo(
-                            ObjectDeserializer(WorldInfo::class, context).deserialize(countingInputStream)
+                            deserializerFactory.getDeserializer(WorldInfo::class).deserialize(countingInputStream)
+                        )
+
+                        AssetName.MP_POSITION_LIST.assetName -> mapBuilder.multiplayerPositions(
+                            deserializerFactory.getDeserializer(MultiplayerPositions::class).deserialize(countingInputStream)
                         )
 
                         else -> {
@@ -108,19 +123,11 @@ class MapFileReader(
                     }
                 }
             }
+
+            deserializationContext.pop()
         }
 
         return mapBuilder
-    }
-
-    private fun readAssets(inputStream: CountingInputStream, context: DeserializationContext, callback: (assetName: String) -> Unit) {
-
-        while (inputStream.byteCount < context.mapFileSize) {
-            val assetIndex = inputStream.readUInt()
-            val assetName = context.getAssetName(assetIndex)
-
-            callback(assetName)
-        }
     }
 
     private fun getInputStreamSize(bufferedInputStream: BufferedInputStream): Long {

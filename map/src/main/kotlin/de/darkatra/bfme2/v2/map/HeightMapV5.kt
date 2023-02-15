@@ -10,7 +10,7 @@ import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidingPostProcessor
 
-@Asset
+@Asset(name = "HeightMapData")
 @PostProcess(using = HeightMapV5.HeightMapPostProcessor::class)
 data class HeightMapV5(
     val width: @PostProcess(using = HeightMapWidthPostProcessor::class) UInt,

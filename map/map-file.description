@@ -17,6 +17,13 @@
 // ** name(String(length = 10))
 // <-
 // it is possible to reference previously parsed properties by name
+// property names can be used multiple times, if a property is referenced the closest definition is used
+// in the following example the inner length property is referenced
+// * length(UInt)
+// -> loop(0, length) // references the length property outside of the loop
+// ** length(UInt)
+// ** name(String(length = length)) // references the length inside of the loop
+// <-
 
 * fourCC(String(length = 4))
 
@@ -61,19 +68,58 @@
 <-
 -> loop [0, height)
 -> loop [0, width)
-*** blend(UInt) // type is UShort if 14 <= assetVersion < 23
+*** blend(UShort) // type is UInt if assetVersion < 14 or assetVersion >= 23
 <-
 <-
 -> loop [0, height)
 -> loop [0, width)
-*** threeWayBlend(UInt) // type is UShort if 14 <= assetVersion < 23
+*** threeWayBlend(UInt)
 <-
 <-
 -> loop [0, height)
 -> loop [0, width)
-*** cliffTexture(UInt) // type is UShort if 14 <= assetVersion < 23
+*** cliffTexture(UInt)
 <-
 <-
+-> loop [0, height)
+-> loop [0, width)
+*** impassability(SageBoolean) // TODO: document how SageBooleans are parsed
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** impassabilityToPlayers(SageBoolean)
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** passageWidths(SageBoolean)
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** taintability(SageBoolean)
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** extraPassability(SageBoolean)
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** flammability(Byte)
+<-
+<-
+-> loop [0, height)
+-> loop [0, width)
+*** visibility(SageBoolean)
+<-
+<-
+* textureCellCount(UInt)
+* blendsCount(UInt) // the game subtracts 1 if the value is greater than 0 for some reason
+* cliffBlendsCount(UInt) // the game subtracts 1 if the value is greater than 0 for some reason
+// TODO: list remaining properties
 
 // WorldInfo
 * assetVersion(UShort) // rotwk uses assetVersion 1
@@ -91,6 +137,24 @@
 <-
 
 // MPPositionList
+* assetVersion(UShort) // rotwk uses assetVersion 0
+* assetSize(UInt)
+-> while (currentInputStreamPosition < currentAssetEndPosition)
+// MPPositionInfo
+** assetIndex(UInt) // this index must resolve to a MPPositionInfo asset
+** assetVersion(UShort) // rotwk uses assetVersion 1
+** assetSize(UInt)
+** isHuman(Boolean)
+** isComputer(Boolean)
+** loadAIScript(Boolean)
+** team(UInt)
+** numberOfSideRestrictions(UInt)
+-> loop [0, numberOfSideRestrictions)
+*** sideRestrictionLength(UShort)
+*** sideRestriction(String(length = sideRestrictionLength))
+<-
+<-
+
 // SidesList
 // LibraryMapLists
 // Teams

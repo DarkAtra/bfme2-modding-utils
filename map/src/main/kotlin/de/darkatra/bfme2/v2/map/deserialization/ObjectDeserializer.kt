@@ -3,9 +3,6 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.PostProcessorArgumentResolver
-import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.reflect.KClass
@@ -16,22 +13,13 @@ import de.darkatra.bfme2.v2.map.Asset as AssetAnnotation
 
 internal class ObjectDeserializer<T : Any>(
     private val classOfT: KClass<T>,
-    private val context: DeserializationContext,
+    private val deserializationContext: DeserializationContext,
     private val deserializers: List<Deserializer<*>>,
     private val postProcessor: PostProcessor<T>
 ) : Deserializer<T> {
 
-    @Suppress("UNCHECKED_CAST")
-    internal constructor(classOfT: KClass<T>, context: DeserializationContext) : this(
-        classOfT,
-        context,
-        DeserializersArgumentResolver(context).resolve(Class(classOfT)).also {
-            context.reset()
-        },
-        PostProcessorArgumentResolver().resolve(Class(classOfT)) as PostProcessor<T>
-    )
-
     private data class Asset(
+        val assetName: String,
         val assetVersion: UShort,
         val assetSize: UInt
     )
@@ -41,8 +29,9 @@ internal class ObjectDeserializer<T : Any>(
         val primaryConstructor = classOfT.primaryConstructor
             ?: error("${classOfT.simpleName} is required to have a primary constructor.")
 
-        val currentAsset = classOfT.findAnnotation<AssetAnnotation>()?.let {
+        val currentAsset = classOfT.findAnnotation<AssetAnnotation>()?.let { assetAnnotation ->
             Asset(
+                assetName = assetAnnotation.name,
                 assetVersion = inputStream.readUShort(),
                 assetSize = inputStream.readUInt()
             )
@@ -51,7 +40,11 @@ internal class ObjectDeserializer<T : Any>(
         val parameters = primaryConstructor.valueParameters
 
         val startPosition = inputStream.byteCount
-        context.setCurrentType(classOfT)
+
+        if (currentAsset != null) {
+            val endPosition = currentAsset.assetSize.toLong() + startPosition
+            deserializationContext.push(currentAsset.assetName, endPosition)
+        }
 
         val values = parameters.mapIndexed { parameterIndex, parameter ->
             try {
@@ -65,6 +58,8 @@ internal class ObjectDeserializer<T : Any>(
         }
 
         if (currentAsset != null) {
+            deserializationContext.pop()
+
             val currentEndPosition = inputStream.byteCount
             val expectedEndPosition = currentAsset.assetSize.toLong() + startPosition
             if (currentEndPosition != expectedEndPosition) {
@@ -73,7 +68,7 @@ internal class ObjectDeserializer<T : Any>(
         }
 
         return primaryConstructor.call(*values.toTypedArray()).also {
-            postProcessor.postProcess(it, context)
+            postProcessor.postProcess(it, deserializationContext)
         }
     }
 }

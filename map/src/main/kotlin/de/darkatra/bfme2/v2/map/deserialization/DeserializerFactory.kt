@@ -3,6 +3,7 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
+import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -13,7 +14,10 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.typeOf
 
-internal class DeserializerFactory {
+internal class DeserializerFactory(
+    private val annotationProcessingContext: AnnotationProcessingContext,
+    private val deserializationContext: DeserializationContext
+) {
 
     private val defaultDeserializers: Map<KType, KClass<out Deserializer<*>>> = mapOf(
         typeOf<Byte>() to ByteDeserializer::class,
@@ -30,7 +34,10 @@ internal class DeserializerFactory {
         typeOf<Any>() to ObjectDeserializer::class
     )
 
-    internal lateinit var context: DeserializationContext
+    internal fun <T : Any> getDeserializer(clazz: KClass<T>): Deserializer<T> {
+        @Suppress("UNCHECKED_CAST")
+        return getDeserializer(Class(clazz)) as Deserializer<T>
+    }
 
     internal fun getDeserializer(currentElement: ProcessableElement): Deserializer<*> {
 
@@ -64,7 +71,9 @@ internal class DeserializerFactory {
 
         val values = argumentResolverClass.primaryConstructor!!.parameters.mapIndexed { parameterIndex, parameter ->
             when (parameter.type) {
-                typeOf<DeserializationContext>() -> context
+                typeOf<AnnotationProcessingContext>() -> annotationProcessingContext
+                typeOf<DeserializationContext>() -> deserializationContext
+                typeOf<DeserializerFactory>() -> this
                 typeOf<KClass<Deserializer<*>>>() -> deserializerClass
                 typeOf<KParameter>() -> deserializerParameter
                 else -> error("Unable to resolve argument of type '${parameter.type}' (pos: $parameterIndex) of class ${argumentResolverClass.simpleName}.")

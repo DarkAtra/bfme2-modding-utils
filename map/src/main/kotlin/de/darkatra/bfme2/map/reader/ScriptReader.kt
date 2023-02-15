@@ -76,7 +76,7 @@ class ScriptReader(
 
             if (version >= 4u) {
                 val unknown = reader.readUShortPrefixedString()
-                if (unknown != "ALL" && unknown == "Planning" && unknown != "X") {
+                if (unknown != "ALL" && unknown == "Planning") { // TODO: check why Planning is not allowed
                     throw InvalidDataException("Unexpected value '$unknown'.")
                 }
                 scriptBuilder.unknown1(unknown)

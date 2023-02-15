@@ -63,11 +63,11 @@ internal class AnnotationParameterArgumentResolver(
         val useDeserializerProperties = deserializerClass.findAnnotation<UseDeserializerProperties>()
             ?: error("Could not find UseDeserializerProperties on class '${deserializerClass.simpleName}'.")
 
-        if (!useDeserializerProperties.annotation.hasAnnotation<DeserializerProperties>()) {
+        if (!useDeserializerProperties.propertiesClass.hasAnnotation<DeserializerProperties>()) {
             error("Argument of ${UseDeserializerProperties::class.simpleName} is required to be meta annotated with ${DeserializerProperties::class.simpleName}.")
         }
 
-        val annotationMethods = useDeserializerProperties.annotation.members
+        val annotationMethods = useDeserializerProperties.propertiesClass.members
             .filterIsInstance<KProperty<*>>()
             .filter { annotationProperty -> annotationProperty.returnType == deserializerParameter.type }
 
