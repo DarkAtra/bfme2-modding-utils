@@ -53,6 +53,10 @@ internal class DeserializerFactory(
         val deserializerConstructor = deserializerClass.primaryConstructor
             ?: error("${deserializerClass.simpleName} is required to have a primary constructor.")
 
+        if (annotationProcessingContext.debugMode) {
+            println("Using '${deserializerClass.simpleName}' for '${currentElement.getName()}' (${currentElement.getType()}).")
+        }
+
         val deserializerArguments = mutableListOf<Any?>()
         deserializerConstructor.valueParameters.forEach { deserializerParameter ->
 
@@ -60,6 +64,11 @@ internal class DeserializerFactory(
 
             val argumentResolverClass = resolveAnnotation?.using ?: DefaultArgumentResolver::class
             val argumentResolverInstance = getArgumentResolver(argumentResolverClass, deserializerClass, deserializerParameter)
+
+            if (annotationProcessingContext.debugMode) {
+                println("* Resolving parameter '${deserializerParameter.name}' using '${argumentResolverInstance::class.simpleName}'.")
+            }
+
             deserializerArguments.add(argumentResolverInstance.resolve(currentElement))
         }
 

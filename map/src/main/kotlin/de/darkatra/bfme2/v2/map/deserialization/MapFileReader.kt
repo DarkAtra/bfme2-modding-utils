@@ -80,7 +80,7 @@ class MapFileReader {
             readAndValidateFourCC(countingInputStream)
 
             val deserializationContext = DeserializationContext(true)
-            val annotationProcessingContext = AnnotationProcessingContext()
+            val annotationProcessingContext = AnnotationProcessingContext(false)
             val deserializerFactory = DeserializerFactory(annotationProcessingContext, deserializationContext)
 
             measureTime {

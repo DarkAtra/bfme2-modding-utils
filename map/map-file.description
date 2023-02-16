@@ -178,8 +178,7 @@
 ** team(UInt)
 ** numberOfSideRestrictions(UInt)
 -> loop [0, numberOfSideRestrictions)
-*** sideRestrictionLength(UShort)
-*** sideRestriction(String(length = sideRestrictionLength))
+*** sideRestriction(UShortPrefixedString)
 <-
 <-
 
@@ -218,7 +217,36 @@
 <-
 
 // LibraryMapLists
+* assetVersion(UShort) // rotwk uses assetVersion 1
+* assetSize(UInt)
+-> while (currentInputStreamPosition < currentAssetEndPosition)
+// LibraryMaps
+** assetIndex(UInt) // this index must resolve to a LibraryMaps asset
+** assetVersion(UShort) // rotwk uses assetVersion 1
+** assetSize(UInt)
+** numberOfLibraryMaps(UInt)
+-> loop [0, numberOfLibraryMaps)
+*** name(UShortPrefixedString)
+<-
+<-
+
 // Teams
+* assetVersion(UShort) // rotwk uses assetVersion 1
+* assetSize(UInt)
+* numberOfTeams(UInt)
+-> loop [0, numberOfTeams)
+** numberOfProperties(UShort)
+-> loop [0, numberOfProperties)
+*** propertyType(UByte)
+*** assetNameIndex(UInt(bits = 24)) // little endian 24-bit UInt
+*** propertyValue(Boolean) // if propertyType == 0
+*** propertyValue(UInt) // if propertyType == 1
+*** propertyValue(Float) // if propertyType == 2
+*** propertyValue(UShortPrefixedString(charset = ASCII)) // if propertyType == 3 or propertyType == 5
+*** propertyValue(UShortPrefixedString(charset = UTF-16-LE)) // if propertyType == 4
+<-
+<-
+
 // PlayerScriptsList
 // BuildLists
 // ObjectsList

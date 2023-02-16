@@ -7,7 +7,9 @@ import java.util.Stack
  * Contains data relevant for resolution of deserializer arguments via [ArgumentResolver][de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver]s.
  * Is invalidated after the root deserializer for the MapFile is constructed.
  */
-internal class AnnotationProcessingContext {
+internal class AnnotationProcessingContext(
+    internal val debugMode: Boolean
+) {
 
     private var isInvalid: Boolean = false
     private val processingStack = Stack<ProcessableElement>()
