@@ -3,7 +3,7 @@ package de.darkatra.bfme2.v2.map.deserialization
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.v2.map.HeightMapV5
+import de.darkatra.bfme2.v2.map.HeightMap
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.experimental.and
@@ -34,8 +34,8 @@ internal class HeightMapDependentMapDeserializer<V : Any>(
     // TODO: consider using Map<UInt, Map<UInt, V>> instead of Table here to remove the dependency on guava
     override fun deserialize(inputStream: CountingInputStream): Table<UInt, UInt, V> {
 
-        val width = context.sharedData[HeightMapV5.HEIGHT_MAP_WIDTH] as UInt
-        val height = context.sharedData[HeightMapV5.HEIGHT_MAP_HEIGHT] as UInt
+        val width = context.sharedData[HeightMap.HEIGHT_MAP_WIDTH] as UInt
+        val height = context.sharedData[HeightMap.HEIGHT_MAP_HEIGHT] as UInt
 
         val map = HashBasedTable.create<UInt, UInt, V>(width.toInt(), height.toInt())
         for (x in 0u until width step 1) {

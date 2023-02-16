@@ -10,9 +10,9 @@ import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidingPostProcessor
 
-@Asset(name = "HeightMapData")
-@PostProcess(using = HeightMapV5.HeightMapPostProcessor::class)
-data class HeightMapV5(
+@Asset(name = "HeightMapData", version = 5u)
+@PostProcess(using = HeightMap.HeightMapPostProcessor::class)
+data class HeightMap(
     val width: @PostProcess(using = HeightMapWidthPostProcessor::class) UInt,
     val height: @PostProcess(using = HeightMapHeightPostProcessor::class) UInt,
     val borderWidth: @PostProcess(using = HeightMapBorderWidthPostProcessor::class) UInt,
@@ -35,8 +35,8 @@ data class HeightMapV5(
         const val HEIGHT_MAP_BORDER_WIDTH = "height-map-border-width"
     }
 
-    internal class HeightMapPostProcessor : PostProcessor<HeightMapV5> {
-        override fun postProcess(data: HeightMapV5, context: DeserializationContext) {
+    internal class HeightMapPostProcessor : PostProcessor<HeightMap> {
+        override fun postProcess(data: HeightMap, context: DeserializationContext) {
             if (data.width * data.height != data.area) {
                 throw InvalidDataException("Width (${data.width}) times height (${data.height}) does not equal to the area (${data.area}).")
             }

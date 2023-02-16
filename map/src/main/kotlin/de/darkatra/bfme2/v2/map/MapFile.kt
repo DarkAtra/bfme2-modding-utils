@@ -5,8 +5,8 @@ import de.darkatra.bfme2.v2.map.deserialization.MapFileDeserializer
 
 @Deserialize(using = MapFileDeserializer::class)
 data class MapFile(
-    val blendTileDataV18: BlendTileDataV18,
-    val heightMapV5: HeightMapV5,
+    val blendTileData: BlendTileData,
+    val heightMap: HeightMap,
     val libraryMapsList: LibraryMapsList,
     val multiplayerPositions: MultiplayerPositions,
     val sides: Sides,

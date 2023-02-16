@@ -2,7 +2,7 @@ package de.darkatra.bfme2.v2.map
 
 import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer
 
-@Asset(name = "Teams")
+@Asset(name = "Teams", version = 1u)
 data class Teams(
     val teams: List<Team>
 ) {

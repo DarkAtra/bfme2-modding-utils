@@ -24,13 +24,16 @@ internal class ObjectDeserializer<T : Any>(
         val primaryConstructor = classOfT.primaryConstructor
             ?: error("${classOfT.simpleName} is required to have a primary constructor.")
 
-        val expectedAssetName = classOfT.findAnnotation<AssetAnnotation>()?.name
+        val expectedAsset = classOfT.findAnnotation<AssetAnnotation>()
         val parameters = primaryConstructor.valueParameters
 
-        if (expectedAssetName != null) {
+        if (expectedAsset != null) {
             val currentAsset = deserializationContext.peek()
-            if (expectedAssetName != currentAsset.assetName) {
-                throw InvalidDataException("Unexpected assetName '${expectedAssetName}' reading $currentElementName. Expected: '${currentAsset.assetName}'")
+            if (expectedAsset.name != currentAsset.assetName) {
+                throw InvalidDataException("Unexpected assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${expectedAsset.name}'")
+            }
+            if (expectedAsset.version != currentAsset.assetVersion) {
+                throw InvalidDataException("Unexpected assetVersion '${currentAsset.assetVersion}' reading $currentElementName. Expected: '${expectedAsset.version}'")
             }
         }
 

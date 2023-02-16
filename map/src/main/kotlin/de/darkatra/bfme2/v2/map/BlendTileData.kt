@@ -17,9 +17,9 @@ import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.SharedDataProvidingPostProcessor
 import kotlin.experimental.or
 
-@Asset(name = "BlendTileData")
-@PostProcess(using = BlendTileDataV18.BlendTileDataPostProcessor::class)
-data class BlendTileDataV18(
+@Asset(name = "BlendTileData", version = 18u)
+@PostProcess(using = BlendTileData.BlendTileDataPostProcessor::class)
+data class BlendTileData(
     val numberOfTiles: UInt,
     val tiles:
     @Deserialize(using = HeightMapDependentMapDeserializer::class)
@@ -194,8 +194,8 @@ data class BlendTileDataV18(
         const val CLIFF_BLEND_COUNT = "cliff-blend-count"
     }
 
-    internal class BlendTileDataPostProcessor : PostProcessor<BlendTileDataV18> {
-        override fun postProcess(data: BlendTileDataV18, context: DeserializationContext) {
+    internal class BlendTileDataPostProcessor : PostProcessor<BlendTileData> {
+        override fun postProcess(data: BlendTileData, context: DeserializationContext) {
             if (data.magicValue2 != 0u) {
                 throw InvalidDataException("Expected magicValue2 to be zero.")
             }

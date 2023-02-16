@@ -4,12 +4,12 @@ import de.darkatra.bfme2.v2.map.deserialization.AssetListDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.Deserialize
 import de.darkatra.bfme2.v2.map.deserialization.UShortPrefixedStringDeserializer
 
-@Asset(name = "MPPositionList")
+@Asset(name = "MPPositionList", version = 0u)
 data class MultiplayerPositions(
     val positions: @Deserialize(using = AssetListDeserializer::class) List<MultiplayerPosition>
 ) {
 
-    @Asset(name = "MPPositionInfo")
+    @Asset(name = "MPPositionInfo", version = 1u)
     data class MultiplayerPosition(
         val isHuman: Boolean,
         val isComputer: Boolean,
