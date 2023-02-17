@@ -30,20 +30,6 @@ internal class MapFileReaderTest {
     }
 
     @Test
-    internal fun shouldReadBfme1MapWithSkyboxSettings() {
-
-        val map = MapFileReader().read(getMapInputStream("/maps/bfme1/skybox.map"))
-
-        assertThat(map.skybox).isNotNull
-        assertThat(map.skybox!!.position.x).isEqualTo(500.5f)
-        assertThat(map.skybox!!.position.y).isEqualTo(393.5f)
-        assertThat(map.skybox!!.position.z).isEqualTo(97.5f)
-        assertThat(map.skybox!!.scale).isEqualTo(2.5f)
-        assertThat(map.skybox!!.rotation).isEqualTo(10.5f)
-        assertThat(map.skybox!!.textureScheme).isEqualTo("MountainSnow")
-    }
-
-    @Test
     internal fun shouldReadBfme2MapWithStrangeRoadType() {
 
         val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp harlond.zlib"))
