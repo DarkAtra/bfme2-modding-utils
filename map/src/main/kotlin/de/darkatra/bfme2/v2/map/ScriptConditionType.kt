@@ -1,4 +1,4 @@
-package de.darkatra.bfme2.map
+package de.darkatra.bfme2.v2.map
 
 import de.darkatra.bfme2.ConversionException
 

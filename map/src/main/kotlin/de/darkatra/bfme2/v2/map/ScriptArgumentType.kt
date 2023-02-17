@@ -1,8 +1,8 @@
-package de.darkatra.bfme2.map
+package de.darkatra.bfme2.v2.map
 
 import de.darkatra.bfme2.ConversionException
 
-// TODO: make it game specific as there seem to be differences between BFME and other sage games
+// TODO: make it game specific
 enum class ScriptArgumentType(
     private val id: UInt
 ) {

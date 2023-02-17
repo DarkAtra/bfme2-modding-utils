@@ -8,7 +8,7 @@ data class StandingWaveArea(
     val layerName: String,
     val uvScrollSpeed: Float,
     val useAdditiveBlending: Boolean,
-    val point: List<Vector2>,
+    val points: List<Vector2>,
     val unknown: UInt,
     val finalWidth: UInt?,
     val finalHeight: UInt?,
@@ -30,7 +30,7 @@ data class StandingWaveArea(
         private var layerName: String? = null
         private var uvScrollSpeed: Float? = null
         private var useAdditiveBlending: Boolean? = null
-        private var point: List<Vector2>? = null
+        private var points: List<Vector2>? = null
         private var unknown: UInt? = null
         private var finalWidth: UInt? = null
         private var finalHeight: UInt? = null
@@ -50,7 +50,7 @@ data class StandingWaveArea(
         fun layerName(layerName: String) = apply { this.layerName = layerName }
         fun uvScrollSpeed(uvScrollSpeed: Float) = apply { this.uvScrollSpeed = uvScrollSpeed }
         fun useAdditiveBlending(useAdditiveBlending: Boolean) = apply { this.useAdditiveBlending = useAdditiveBlending }
-        fun point(point: List<Vector2>) = apply { this.point = point }
+        fun points(points: List<Vector2>) = apply { this.points = points }
         fun unknown(unknown: UInt) = apply { this.unknown = unknown }
         fun finalWidth(finalWidth: UInt) = apply { this.finalWidth = finalWidth }
         fun finalHeight(finalHeight: UInt) = apply { this.finalHeight = finalHeight }
@@ -71,7 +71,7 @@ data class StandingWaveArea(
             layerName = layerName ?: throwIllegalStateExceptionForField("layerName"),
             uvScrollSpeed = uvScrollSpeed ?: throwIllegalStateExceptionForField("uvScrollSpeed"),
             useAdditiveBlending = useAdditiveBlending ?: throwIllegalStateExceptionForField("useAdditiveBlending"),
-            point = point ?: throwIllegalStateExceptionForField("point"),
+            points = points ?: throwIllegalStateExceptionForField("points"),
             unknown = unknown ?: throwIllegalStateExceptionForField("unknown"),
             finalWidth = finalWidth,
             finalHeight = finalHeight,

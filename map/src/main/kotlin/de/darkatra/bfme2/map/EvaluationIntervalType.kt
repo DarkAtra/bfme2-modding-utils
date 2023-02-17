@@ -2,7 +2,6 @@ package de.darkatra.bfme2.map
 
 import de.darkatra.bfme2.ConversionException
 
-@Suppress("unused")
 enum class EvaluationIntervalType(
     val uInt: UInt
 ) {

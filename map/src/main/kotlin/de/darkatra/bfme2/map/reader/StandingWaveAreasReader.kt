@@ -53,7 +53,7 @@ class StandingWaveAreasReader : AssetReader {
                 )
             )
         }
-        standingWaveArea.point(points)
+        standingWaveArea.points(points)
 
         val unknown = reader.readUInt()
         if (unknown != 0u) {

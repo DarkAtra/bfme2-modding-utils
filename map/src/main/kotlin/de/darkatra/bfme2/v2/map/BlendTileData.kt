@@ -10,7 +10,6 @@ import de.darkatra.bfme2.v2.map.deserialization.Deserialize
 import de.darkatra.bfme2.v2.map.deserialization.HeightMapDependentMapDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.HeightMapDependentMapDeserializer.Mode
 import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer
-import de.darkatra.bfme2.v2.map.deserialization.UShortPrefixedStringDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DeserializersArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcess
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
@@ -150,7 +149,7 @@ data class BlendTileData(
          */
         val cellSize: UInt,
         val magicValue: UInt,
-        val name: @Deserialize(using = UShortPrefixedStringDeserializer::class) String
+        val name: String
     ) {
 
         internal class BlendTileTexturePostProcessor : PostProcessor<BlendTileTexture> {

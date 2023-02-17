@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
+import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.v2.map.Property
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
@@ -28,11 +29,13 @@ internal class DeserializerFactory(
         typeOf<Int>() to IntDeserializer::class,
         typeOf<UInt>() to UIntDeserializer::class,
         typeOf<Float>() to FloatDeserializer::class,
-        typeOf<String>() to StringDeserializer::class,
+        typeOf<String>() to UShortPrefixedStringDeserializer::class,
         typeOf<List<*>>() to ListDeserializer::class,
         typeOf<Map<*, *>>() to MapDeserializer::class,
         typeOf<Enum<*>>() to EnumDeserializer::class,
+        typeOf<Color>() to ColorDeserializer::class,
         typeOf<Property>() to PropertyDeserializer::class,
+        typeOf<Property.PropertyKey>() to PropertyKeyDeserializer::class,
         typeOf<Any>() to ObjectDeserializer::class
     )
 

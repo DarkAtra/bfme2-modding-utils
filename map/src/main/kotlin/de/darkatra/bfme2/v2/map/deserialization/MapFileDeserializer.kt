@@ -29,7 +29,7 @@ internal class MapFileDeserializer(
 
         val assetNameToParameterIndexList = parameters.mapIndexed { parameterIndex, parameter ->
             val assetAnnotation = getClassOfParameter(parameter).findAnnotation<Asset>()
-                ?: error("All properties in the primary constructor of '${MapFile::class::class.simpleName}' must be annotated with '${Asset::class.simpleName}'.")
+                ?: error("All properties in the primary constructor of '${MapFile::class.simpleName}' must be annotated with '${Asset::class.simpleName}'.")
 
             Pair(assetAnnotation.name, parameterIndex)
         }

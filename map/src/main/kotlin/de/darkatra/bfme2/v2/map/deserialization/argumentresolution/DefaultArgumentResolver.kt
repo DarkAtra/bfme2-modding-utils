@@ -24,6 +24,7 @@ internal class DefaultArgumentResolver(
         typeOf<Deserializer<*>>() to DeserializerArgumentResolver::class,
         typeOf<List<Deserializer<*>>>() to DeserializersArgumentResolver::class,
         typeOf<PostProcessor<*>>() to PostProcessorArgumentResolver::class,
+        typeOf<DeserializerFactory>() to DeserializerFactoryResolver::class,
         typeOf<KClass<*>>() to TypeArgumentResolver::class,
         typeOf<Any>() to AnnotationParameterArgumentResolver::class
     )

@@ -23,7 +23,6 @@ data class Property(
             UNKNOWN;
 
             companion object {
-
                 fun ofByte(byte: Byte): PropertyType {
                     return when (byte) {
                         0.toByte() -> BOOLEAN

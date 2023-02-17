@@ -33,7 +33,7 @@ internal class ObjectDeserializer<T : Any>(
                 throw InvalidDataException("Unexpected assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${expectedAsset.name}'")
             }
             if (expectedAsset.version != currentAsset.assetVersion) {
-                throw InvalidDataException("Unexpected assetVersion '${currentAsset.assetVersion}' reading $currentElementName. Expected: '${expectedAsset.version}'")
+                throw InvalidDataException("Unexpected assetVersion '${currentAsset.assetVersion}' for assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${expectedAsset.version}'")
             }
         }
 
