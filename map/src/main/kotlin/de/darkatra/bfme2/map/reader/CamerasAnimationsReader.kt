@@ -21,7 +21,7 @@ class CamerasAnimationsReader : AssetReader {
 
     override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.CAMERA_ANIMATION_LIST.assetName) {
 
             val numberOfAnimations = reader.readUInt()
 

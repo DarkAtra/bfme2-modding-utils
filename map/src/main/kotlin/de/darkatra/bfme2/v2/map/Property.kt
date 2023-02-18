@@ -1,7 +1,5 @@
 package de.darkatra.bfme2.v2.map
 
-import de.darkatra.bfme2.ConversionException
-
 data class Property(
     val key: PropertyKey,
     val value: Any
@@ -12,30 +10,17 @@ data class Property(
         val name: String
     ) {
 
-        enum class PropertyType {
-            BOOLEAN,
-            INTEGER,
-            FLOAT,
-            ASCII_STRING,
-            UNICODE_STRING,
+        enum class PropertyType(
+            internal val byte: Byte
+        ) {
+            BOOLEAN(0),
+            INTEGER(1),
+            FLOAT(2),
+            ASCII_STRING(3),
+            UNICODE_STRING(4),
 
             // seems to be the same as ASCII_STRING
-            UNKNOWN;
-
-            companion object {
-                fun ofByte(byte: Byte): PropertyType {
-                    return when (byte) {
-                        0.toByte() -> BOOLEAN
-                        1.toByte() -> INTEGER
-                        2.toByte() -> FLOAT
-                        3.toByte() -> ASCII_STRING
-                        4.toByte() -> UNICODE_STRING
-                        5.toByte() -> UNKNOWN
-                        else -> throw ConversionException("Unknown PropertyType for byte '$byte'.")
-                    }
-                }
-            }
+            UNKNOWN(5)
         }
-
     }
 }

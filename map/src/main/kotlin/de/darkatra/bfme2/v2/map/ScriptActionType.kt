@@ -1,10 +1,8 @@
 package de.darkatra.bfme2.v2.map
 
-import de.darkatra.bfme2.ConversionException
-
 // TODO: make it game specific
 enum class ScriptActionType(
-    private val id: UInt
+    internal val id: UInt
 ) {
 
     DEBUG_MESSAGE_BOX(0u),
@@ -222,7 +220,7 @@ enum class ScriptActionType(
     WAREHOUSE_SET_VALUE(212u),
     OBJECT_CREATE_RADAR_EVENT(213u),
     TEAM_CREATE_RADAR_EVENT(214u),
-    DISPLAY_CINEMATIC_TEXT(215u),
+    MODIFY_OBJECT_BUILDABILITY(215u),
     SOUND_DISABLE_TYPE(217u),
     SOUND_ENABLE_TYPE(218u),
     SOUND_ENABLE_ALL(219u),
@@ -259,7 +257,7 @@ enum class ScriptActionType(
     SKIRMISH_MOVE_TO_APPROACH_PATH(249u),
     SKIRMISH_BUILD_BASE_DEFENSE_FRONT(250u),
     SKIRMISH_FIRE_SPECIAL_POWER_AT_MOST_COST(251u),
-    PLACEHOLDER_252(252u),
+    SET_CUSTOM_UNIT_COLOR(252u),
     PLAYER_REPAIR_NAMED_STRUCTURE(253u),
     SKIRMISH_BUILD_BASE_DEFENSE_FLANK(254u),
     SKIRMISH_BUILD_STRUCTURE_FRONT(255u),
@@ -493,7 +491,7 @@ enum class ScriptActionType(
     UNKNOWN_11(521u),
     UNKNOWN_12(525u),
     UNKNOWN_13(537u),
-    UNKNOWN_14(544u),
+    ATTACK_MOVE_TEAM_TO_WAYPOINT(544u),
     UNKNOWN_15(545u),
     UNKNOWN_16(546u),
     UNKNOWN_17(547u),
@@ -517,11 +515,7 @@ enum class ScriptActionType(
     UNKNOWN_35(593u),
     UNKNOWN_36(594u),
     UNKNOWN_37(599u),
-    TERRAIN_RENDER_DISABLE(UInt.MAX_VALUE); // TODO: BFME2 = 372
-
-    companion object {
-        fun ofId(id: UInt): ScriptActionType {
-            return values().find { it.id == id } ?: throw ConversionException("Unknown ScriptActionType for id '$id'.")
-        }
-    }
+    UNKNOWN_470(470u),
+    UNKNOWN_581(581u),
+    TERRAIN_RENDER_DISABLE(UInt.MAX_VALUE) // TODO: BFME2 = 372
 }

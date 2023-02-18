@@ -16,7 +16,7 @@ class PostEffectReader : AssetReader {
 
     override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
+        MapFileReader.readAsset(reader, context, AssetName.POST_EFFECTS_CHUNK.assetName) { version ->
 
             val numberOfPostEffects = when {
                 version >= 2u -> reader.readUInt()

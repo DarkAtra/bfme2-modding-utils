@@ -23,7 +23,7 @@ internal class DeserializersArgumentResolver(
         return when (currentElement) {
             is Generic -> getDeserializersForType(currentElement)
             is ConstructorParameter -> getDeserializersForType(currentElement)
-            is Class -> getDeserializersForConstructorParameters(currentElement)
+            is Class -> getDeserializersForInterfaceOrConstructorParameters(currentElement)
             else -> error("${DeserializersArgumentResolver::class.simpleName} only supports resolution on Generics, ConstructorParameters and Classes")
         }
     }
@@ -34,7 +34,7 @@ internal class DeserializersArgumentResolver(
         val type = currentElement.getType()
         if (type.arguments.isEmpty()) {
             val targetClass = typeArgumentResolver.resolve(currentElement)
-            return getDeserializersForConstructorParameters(Class(targetClass))
+            return getDeserializersForInterfaceOrConstructorParameters(Class(targetClass))
         }
 
         // otherwise continue the generic chain
@@ -51,8 +51,14 @@ internal class DeserializersArgumentResolver(
             }
     }
 
-    private fun getDeserializersForConstructorParameters(clazz: Class): List<Deserializer<*>> {
+    private fun getDeserializersForInterfaceOrConstructorParameters(clazz: Class): List<Deserializer<*>> {
 
+        // resolve deserializer via annotation on abstract classes or interfaces
+        if (clazz.clazz.isAbstract) {
+            return listOf(deserializerFactory.getDeserializer(clazz.clazz))
+        }
+
+        // resolve deserializers by inspecting the primary constructor parameters
         val primaryConstructor = clazz.clazz.primaryConstructor
             ?: error("${clazz.getName()} is required to have a primary constructor.")
 

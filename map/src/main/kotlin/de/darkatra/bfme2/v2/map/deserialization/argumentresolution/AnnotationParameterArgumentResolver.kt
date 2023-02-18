@@ -7,8 +7,10 @@ import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.typeOf
 
@@ -17,10 +19,19 @@ internal class AnnotationParameterArgumentResolver(
     private val deserializerParameter: KParameter
 ) : ArgumentResolver<Any> {
 
+    private val typeArgumentResolver = TypeArgumentResolver()
+
     override fun resolve(currentElement: ProcessableElement): Any {
 
-        val deserializerPropertiesAnnotations = currentElement.getType().annotations
+        val deserializerPropertiesAnnotations: MutableList<Annotation> = currentElement.getType().annotations
             .filter { isMetaAnnotatedWithDeserializerProperties(it) }
+            .toMutableList()
+
+        // fallback to class based annotations if type was not explicitly annotated
+        if (deserializerPropertiesAnnotations.isEmpty()) {
+            deserializerPropertiesAnnotations += typeArgumentResolver.resolve(currentElement).annotations
+                .filter { isMetaAnnotatedWithDeserializerProperties(it) }
+        }
 
         if (deserializerPropertiesAnnotations.size > 1) {
             error("At most one ${DeserializerProperties::class.simpleName} annotation is supported per type. Found for '${currentElement.getName()}': $deserializerPropertiesAnnotations")
@@ -34,14 +45,14 @@ internal class AnnotationParameterArgumentResolver(
 
         val annotationProperties = deserializerProperties.annotationClass.members
             .filterIsInstance<KProperty<*>>()
-            .filter { property -> property.returnType == deserializerParameter.type }
+            .filter { property -> isCompatible(deserializerParameter.type, property.returnType) }
 
         if (annotationProperties.size != 1) {
             error("Expected exactly one ${DeserializerProperties::class.simpleName} field to be of type '${deserializerParameter.type}'. Found for '${currentElement.getName()}': $annotationProperties")
         }
 
         return try {
-            annotationProperties.first().getter.call(deserializerProperties)!!
+            convertIfNecessary(annotationProperties.first().getter.call(deserializerProperties)!!)
         } catch (e: Exception) {
             getDefaultValue(currentElement)
         }
@@ -69,7 +80,10 @@ internal class AnnotationParameterArgumentResolver(
 
         val annotationMethods = useDeserializerProperties.propertiesClass.members
             .filterIsInstance<KProperty<*>>()
-            .filter { annotationProperty -> annotationProperty.returnType == deserializerParameter.type }
+            .filter { annotationProperty ->
+                annotationProperty.returnType == deserializerParameter.type
+                    || innerGenericIsCompatible(annotationProperty.returnType, deserializerParameter.type)
+            }
 
         if (annotationMethods.size != 1) {
             error("Expected exactly one ${DeserializerProperties::class.simpleName} field to be of type '${deserializerParameter.type}'. Found for '${currentElement.getName()}': ${annotationMethods.map { it.name }}")
@@ -79,9 +93,41 @@ internal class AnnotationParameterArgumentResolver(
         val defaultValue = annotationMethods.first().javaGetter!!.defaultValue
             ?: error("Could not resolve default value for parameter '${deserializerParameter.name}' on class '${deserializerClass.simpleName}'.")
 
-        return when (deserializerParameter.type) {
-            typeOf<UInt>() -> (defaultValue as Int).toUInt()
-            else -> defaultValue
+        return convertIfNecessary(
+            when (deserializerParameter.type) {
+                // default value specific conversion
+                typeOf<UInt>() -> (defaultValue as Int).toUInt()
+                else -> defaultValue
+            }
+        )
+    }
+
+    private fun innerGenericIsCompatible(expectedType: KType, actualType: KType): Boolean {
+
+        if (expectedType.arguments.isEmpty() || actualType.arguments.isEmpty()) {
+            return false
+        }
+
+        return expectedType.arguments.zip(actualType.arguments)
+            .all { (expectedType, deserializerType) ->
+                expectedType.type == null
+                    || expectedType.type!!.isSupertypeOf(deserializerType.type!!)
+                    || innerGenericIsCompatible(expectedType.type!!, deserializerType.type!!)
+            }
+    }
+
+    private fun isCompatible(annotationType: KType, deserializerParameterType: KType): Boolean {
+        if (annotationType != deserializerParameterType) {
+            return innerGenericIsCompatible(typeOf<Array<*>>(), annotationType) && innerGenericIsCompatible(typeOf<List<*>>(), deserializerParameterType)
+        }
+        return true
+    }
+
+    private fun convertIfNecessary(value: Any): Any {
+        return when (value) {
+            is Array<*> -> value.toList().map { convertIfNecessary(it!!) }
+            is Class<*> -> value.kotlin
+            else -> value
         }
     }
 }

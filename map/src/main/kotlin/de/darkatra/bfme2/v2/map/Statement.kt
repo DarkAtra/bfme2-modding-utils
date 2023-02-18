@@ -2,11 +2,14 @@ package de.darkatra.bfme2.v2.map
 
 import de.darkatra.bfme2.v2.map.Property.PropertyKey
 import de.darkatra.bfme2.v2.map.deserialization.AssetListDeserializer
+import de.darkatra.bfme2.v2.map.deserialization.ConditionalDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.Deserialize
 import de.darkatra.bfme2.v2.map.deserialization.ScriptArgumentDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.UIntBooleanDeserializer
 
-interface Statement
+@Deserialize(using = ConditionalDeserializer::class)
+@ConditionalDeserializer.Properties(assetTypes = [Action::class, ActionFalse::class, Condition::class, OrCondition::class])
+sealed interface Statement
 
 @Asset(name = "ScriptAction", version = 3u)
 data class Action(

@@ -1,10 +1,8 @@
 package de.darkatra.bfme2.v2.map
 
-import de.darkatra.bfme2.ConversionException
-
 // TODO: make it game specific
 enum class ScriptArgumentType(
-    private val id: UInt
+    internal val id: UInt
 ) {
 
     INTEGER(0u),
@@ -71,11 +69,5 @@ enum class ScriptArgumentType(
     HERO(62u),
     EMOTION(63u),
     UNKNOWN_1(64u),
-    UNKNOWN_2(77u);
-
-    companion object {
-        fun ofId(id: UInt): ScriptArgumentType {
-            return values().find { it.id == id } ?: throw ConversionException("Unknown ScriptArgumentType for id '$id'.")
-        }
-    }
+    OBJECTIVE_COMPLETE(77u)
 }

@@ -10,11 +10,12 @@ import org.apache.commons.io.input.CountingInputStream
 import java.nio.charset.StandardCharsets
 
 internal class PropertyDeserializer(
+    deserializerFactory: DeserializerFactory,
     private val deserializationContext: DeserializationContext,
     private val postProcessor: PostProcessor<Property>
 ) : Deserializer<Property> {
 
-    private val propertyKeyDeserializer = PropertyKeyDeserializer(deserializationContext)
+    private val propertyKeyDeserializer = PropertyKeyDeserializer(deserializerFactory, deserializationContext)
 
     override fun deserialize(inputStream: CountingInputStream): Property {
 

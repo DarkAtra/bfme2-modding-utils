@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
+import de.darkatra.bfme2.readByte
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
@@ -46,7 +47,8 @@ internal class ListDeserializer<T>(
 
     internal enum class SizeType {
         UINT,
-        USHORT
+        USHORT,
+        BYTE
     }
 
     override fun deserialize(inputStream: CountingInputStream): List<T> {
@@ -55,6 +57,7 @@ internal class ListDeserializer<T>(
             Mode.DEFAULT -> when (sizeType) {
                 SizeType.UINT -> inputStream.readUInt()
                 SizeType.USHORT -> inputStream.readUShort().toUInt()
+                SizeType.BYTE -> inputStream.readByte().toUInt()
             }
 
             Mode.FIXED -> size

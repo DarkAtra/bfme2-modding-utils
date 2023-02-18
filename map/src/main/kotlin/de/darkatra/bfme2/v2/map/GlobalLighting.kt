@@ -1,7 +1,6 @@
 package de.darkatra.bfme2.v2.map
 
 import de.darkatra.bfme2.Color
-import de.darkatra.bfme2.ConversionException
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer
 import de.darkatra.bfme2.v2.map.deserialization.ListDeserializer.Mode
@@ -16,18 +15,12 @@ data class GlobalLighting(
 ) {
 
     enum class TimeOfDay(
-        val uInt: UInt
+        internal val uInt: UInt
     ) {
         MORNING(1u),
         AFTERNOON(2u),
         EVENING(3u),
-        NIGHT(4u);
-
-        companion object {
-            fun ofUInt(uInt: UInt): TimeOfDay { // TODO: make enum deserialization functions nullable and throw the exception in enum converter instead
-                return values().find { it.uInt == uInt } ?: throw ConversionException("Unknown TimeOfDay for uInt '$uInt'.")
-            }
-        }
+        NIGHT(4u)
     }
 
     data class GlobalLightingConfiguration(

@@ -19,10 +19,10 @@ internal class MapFileReaderTest {
     internal fun shouldYieldSameResultsForOldAndNewReaderImplementation() {
 
         // old reader
-        val mapFile = MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        val mapFile = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/Gladiator.map"))
 
         // new reader
-        val newMapFile = de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream(uncompressedMapPath))
+        val newMapFile = de.darkatra.bfme2.v2.map.deserialization.MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/Gladiator.map"))
 
         assertThat(newMapFile.heightMap.width).isEqualTo(mapFile.heightMap.width)
         assertThat(newMapFile.heightMap.height).isEqualTo(mapFile.heightMap.height)

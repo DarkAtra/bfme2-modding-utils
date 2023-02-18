@@ -106,7 +106,7 @@ data class BlendTileData(
             }
 
         enum class BlendDirection(
-            val byte: Byte
+            internal val byte: Byte
         ) {
             BLEND_TOWARDS_RIGHT(1),     // Or towards left, if BlendDescription.Flags contains Flipped
             BLEND_TOWARDS_TOP(2),       // Or towards bottom, if BlendDescription.Flags contains Flipped
@@ -121,18 +121,12 @@ data class BlendTileData(
         }
 
         enum class BlendFlags(
-            val byte: Byte
+            internal val byte: Byte
         ) {
             NONE(0),
             FLIPPED(1),
             ALSO_HAS_BOTTOM_LEFT_OR_TOP_RIGHT_BLEND(2),
-            FLIPPED_ALSO_HAS_BOTTOM_LEFT_OR_TOP_RIGHT_BLEND(FLIPPED.byte or ALSO_HAS_BOTTOM_LEFT_OR_TOP_RIGHT_BLEND.byte);
-
-            companion object {
-                fun ofByte(byte: Byte): BlendFlags {
-                    return values().find { it.byte == byte } ?: throw ConversionException("Unknown BlendFlags for byte '$byte'.")
-                }
-            }
+            FLIPPED_ALSO_HAS_BOTTOM_LEFT_OR_TOP_RIGHT_BLEND(FLIPPED.byte or ALSO_HAS_BOTTOM_LEFT_OR_TOP_RIGHT_BLEND.byte)
         }
     }
 
@@ -174,18 +168,12 @@ data class BlendTileData(
     )
 
     enum class TileFlammability(
-        val byte: Byte
+        internal val byte: Byte
     ) {
         FIRE_RESISTANT(0),
         GRASS(1),
         HIGHLY_FLAMMABLE(2),
-        UNDEFINED(3);
-
-        companion object {
-            fun ofByte(byte: Byte): TileFlammability {
-                return values().find { it.byte == byte } ?: throw ConversionException("Unknown TileFlammability for byte '$byte'.")
-            }
-        }
+        UNDEFINED(3)
     }
 
     internal companion object {

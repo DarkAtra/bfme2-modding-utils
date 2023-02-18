@@ -3,7 +3,6 @@ package de.darkatra.bfme2.v2.map.deserialization
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readInt
-import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.v2.map.ScriptArgument
 import de.darkatra.bfme2.v2.map.ScriptArgumentType
@@ -11,13 +10,16 @@ import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 
 internal class ScriptArgumentDeserializer(
+    deserializerFactory: DeserializerFactory,
     private val deserializationContext: DeserializationContext,
     private val postProcessor: PostProcessor<ScriptArgument>
 ) : Deserializer<ScriptArgument> {
 
+    private val scriptArgumentTypeDeserializer: Deserializer<ScriptArgumentType> = deserializerFactory.getDeserializer(ScriptArgumentType::class)
+
     override fun deserialize(inputStream: CountingInputStream): ScriptArgument {
 
-        val argumentType = ScriptArgumentType.ofId(inputStream.readUInt())
+        val argumentType = scriptArgumentTypeDeserializer.deserialize(inputStream)
 
         return when (argumentType) {
             ScriptArgumentType.POSITION_COORDINATE -> ScriptArgument(

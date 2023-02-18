@@ -12,7 +12,7 @@ class EnvironmentDataReader : AssetReader {
 
     override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) { version ->
+        MapFileReader.readAsset(reader, context, AssetName.ENVIRONMENT_DATA.assetName) { version ->
 
             val waterMaxAlphaDepth = when {
                 version >= 3u -> reader.readFloat()

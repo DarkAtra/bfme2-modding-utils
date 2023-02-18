@@ -1,10 +1,8 @@
 package de.darkatra.bfme2.v2.map
 
-import de.darkatra.bfme2.ConversionException
-
 // TODO: make it game specific as there seem to be differences between BFME and other sage games
 enum class ScriptConditionType(
-    private val id: UInt
+    internal val id: UInt
 ) {
 
     FALSE(0u),
@@ -65,7 +63,7 @@ enum class ScriptConditionType(
     NAMED_DYING(55u),
     NAMED_TOTALLY_DEAD(56u),
     PLAYER_HAS_OBJECT_COMPARISON(57u),
-    PLACEHOLDER_58(58u),
+    PLAYER_HAS_UNIT_OR_STRUCTURE_COMPARISON(58u),
     PLACEHOLDER_59(59u),
     PLAYER_TRIGGERED_SPECIAL_POWER(60u),
     PLAYER_COMPLETED_SPECIAL_POWER(61u),
@@ -165,11 +163,5 @@ enum class ScriptConditionType(
     UNKNOWN_0(118u),
     UNKNOWN_1(188u),
     UNKNOWN_2(195u),
-    UNKNOWN_3(200u);
-
-    companion object {
-        fun ofId(id: UInt): ScriptConditionType {
-            return values().find { it.id == id } ?: throw ConversionException("Unknown ScriptConditionType for id '$id'.")
-        }
-    }
+    UNKNOWN_3(200u)
 }

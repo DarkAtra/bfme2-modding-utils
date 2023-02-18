@@ -5,7 +5,9 @@ import de.darkatra.bfme2.v2.map.Property
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
+import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.TypeArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.model.Class
+import de.darkatra.bfme2.v2.map.deserialization.model.Generic
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -20,6 +22,8 @@ internal class DeserializerFactory(
     private val annotationProcessingContext: AnnotationProcessingContext,
     private val deserializationContext: DeserializationContext
 ) {
+
+    private val typeArgumentResolver = TypeArgumentResolver()
 
     private val defaultDeserializers: Map<KType, KClass<out Deserializer<*>>> = mapOf(
         typeOf<Byte>() to ByteDeserializer::class,
@@ -101,6 +105,11 @@ internal class DeserializerFactory(
     private fun getDeserializerByClass(currentElement: ProcessableElement): KClass<out Deserializer<*>>? {
         return when (currentElement) {
             is Class -> currentElement.clazz.findAnnotation<Deserialize>()?.using
+            is Generic -> when (currentElement.getType().arguments.size) {
+                0 -> typeArgumentResolver.resolve(currentElement).findAnnotation<Deserialize>()?.using
+                else -> null
+            }
+
             else -> null
         }
     }
