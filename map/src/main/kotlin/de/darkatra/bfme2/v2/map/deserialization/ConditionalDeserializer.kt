@@ -30,7 +30,7 @@ internal class ConditionalDeserializer(
 
     private val deserializers: Map<String, Deserializer<Any>> = assetTypes.associate { assetType ->
         val assetName = assetType.findAnnotation<Asset>()
-            ?: error("${ConditionalDeserializer::class.simpleName} only supports classes that are annotated with '${Asset::class.simpleName}.")
+            ?: error("${ConditionalDeserializer::class.simpleName} only supports classes that are annotated with '${Asset::class.simpleName}'. Found none on '${assetType.simpleName}'.")
         Pair(assetName.name, deserializerFactory.getDeserializer(assetType))
     }
 

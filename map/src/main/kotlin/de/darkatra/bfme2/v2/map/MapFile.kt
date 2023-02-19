@@ -7,6 +7,7 @@ import de.darkatra.bfme2.v2.map.deserialization.MapFileDeserializer
 data class MapFile(
     val blendTileData: BlendTileData,
     val buildLists: BuildLists,
+    val cameraAnimations: CameraAnimations,
     val cameras: Cameras,
     val environmentData: EnvironmentData,
     val globalLighting: GlobalLighting,
@@ -22,5 +23,6 @@ data class MapFile(
     val standingWaveAreas: StandingWaveAreas,
     val teams: Teams,
     val triggerAreas: TriggerAreas,
+    val waypointList: WaypointList,
     val worldInfo: WorldInfo
 )

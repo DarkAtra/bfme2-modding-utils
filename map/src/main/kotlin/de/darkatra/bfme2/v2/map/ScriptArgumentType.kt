@@ -1,6 +1,5 @@
 package de.darkatra.bfme2.v2.map
 
-// TODO: make it game specific
 enum class ScriptArgumentType(
     internal val id: UInt
 ) {

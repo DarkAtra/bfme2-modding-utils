@@ -10,7 +10,7 @@ class WaypointPathsReader : AssetReader {
 
     override fun read(reader: CountingInputStream, context: MapFileParseContext, builder: MapFile.Builder) {
 
-        MapFileReader.readAsset(reader, context, AssetName.POLYGON_TRIGGERS.assetName) {
+        MapFileReader.readAsset(reader, context, AssetName.WAYPOINTS_LIST.assetName) {
 
             val numberOfWaypointPaths = reader.readUInt()
 

@@ -1,6 +1,5 @@
 package de.darkatra.bfme2.v2.map
 
-// TODO: make it game specific as there seem to be differences between BFME and other sage games
 enum class ScriptConditionType(
     internal val id: UInt
 ) {

@@ -49,11 +49,7 @@ internal class MapFileDeserializer(
                     }
                 }
             } else {
-                if (!deserializationContext.debugMode) {
-                    error("Asset with name '$assetName' is not implemented yet.")
-                } else {
-                    inputStream.readAllBytes()
-                }
+                error("Asset with name '$assetName' is not implemented yet.")
             }
         }
 

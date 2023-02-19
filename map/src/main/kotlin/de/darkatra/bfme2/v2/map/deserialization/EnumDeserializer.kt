@@ -35,7 +35,11 @@ internal class EnumDeserializer<T : Enum<*>>(
 
     private fun getEnumValue(value: Any): T {
         return enumValues.firstOrNull { enumValue ->
-            value == enumDeserializationValueGetter.call(enumValue)
+            val deserializationEnumValue = enumDeserializationValueGetter.call(enumValue)
+            if (value is String && deserializationEnumValue is String) {
+                return@firstOrNull value.equals(deserializationEnumValue, true)
+            }
+            return@firstOrNull value == deserializationEnumValue
         } ?: throw ConversionException("Could not deserialize ${classOfT.simpleName} from '$value' (${value::class.simpleName})")
     }
 
