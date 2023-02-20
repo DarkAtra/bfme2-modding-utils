@@ -42,14 +42,24 @@ internal class ObjectDeserializer<T : Any>(
                 deserializers[parameterIndex].deserialize(inputStream)
             } catch (e: Exception) {
                 throw InvalidDataException(
-                    "Error deserializing value for '${classOfT.simpleName}#${parameter.name}' using ${deserializers[parameterIndex]::class.simpleName}.",
+                    "Error deserializing value for '${classOfT.simpleName}#${parameter.name}' using '${deserializers[parameterIndex]::class.simpleName}'.",
                     e
                 )
             }
         }
 
-        return primaryConstructor.call(*values.toTypedArray()).also {
-            postProcessor.postProcess(it, deserializationContext)
+        return try {
+            primaryConstructor.call(*values.toTypedArray()).also {
+                postProcessor.postProcess(it, deserializationContext)
+            }
+        } catch (e: Exception) {
+            throw InvalidDataException(
+                """Error deserializing value for '${classOfT.simpleName}' using '${ObjectDeserializer::class.simpleName}'.
+                    |Expected: ${parameters.map { (it.type.classifier as KClass<*>).simpleName }}
+                    |Found:    ${values.map { it?.let { it::class.simpleName } ?: Nothing::class.simpleName }}
+                """.trimMargin(),
+                e
+            )
         }
     }
 }

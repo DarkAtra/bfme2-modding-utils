@@ -1,7 +1,6 @@
 package de.darkatra.bfme2.v2.map.deserialization
 
 import de.darkatra.bfme2.Color
-import de.darkatra.bfme2.v2.map.Property
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.ArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.DefaultArgumentResolver
 import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.Resolve
@@ -9,6 +8,8 @@ import de.darkatra.bfme2.v2.map.deserialization.argumentresolution.TypeArgumentR
 import de.darkatra.bfme2.v2.map.deserialization.model.Class
 import de.darkatra.bfme2.v2.map.deserialization.model.Generic
 import de.darkatra.bfme2.v2.map.deserialization.model.ProcessableElement
+import de.darkatra.bfme2.v2.map.property.Property
+import de.darkatra.bfme2.v2.map.property.PropertyKey
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -39,7 +40,7 @@ internal class DeserializerFactory(
         typeOf<Enum<*>>() to EnumDeserializer::class,
         typeOf<Color>() to ColorDeserializer::class,
         typeOf<Property>() to PropertyDeserializer::class,
-        typeOf<Property.PropertyKey>() to PropertyKeyDeserializer::class,
+        typeOf<PropertyKey>() to PropertyKeyDeserializer::class,
         typeOf<Any>() to ObjectDeserializer::class
     )
 

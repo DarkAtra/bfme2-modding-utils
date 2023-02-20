@@ -4,7 +4,9 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.v2.map.Asset
-import de.darkatra.bfme2.v2.map.PlayerScriptsList
+import de.darkatra.bfme2.v2.map.scripting.Script
+import de.darkatra.bfme2.v2.map.scripting.ScriptFolder
+import de.darkatra.bfme2.v2.map.scripting.ScriptListEntry
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.reflect.full.findAnnotation
 
@@ -12,14 +14,14 @@ internal class ScriptListEntryDeserializer(
     deserializerFactory: DeserializerFactory,
     annotationProcessingContext: AnnotationProcessingContext,
     private val deserializationContext: DeserializationContext
-) : Deserializer<PlayerScriptsList.ScriptListEntry> {
+) : Deserializer<ScriptListEntry> {
 
     private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
-    private val scriptAssetName = PlayerScriptsList.Script::class.findAnnotation<Asset>()!!.name
-    private val scriptFolderAssetAnnotation = PlayerScriptsList.ScriptFolder::class.findAnnotation<Asset>()!!
-    private val scriptDeserializer = deserializerFactory.getDeserializer(PlayerScriptsList.Script::class)
+    private val scriptAssetName = Script::class.findAnnotation<Asset>()!!.name
+    private val scriptFolderAssetAnnotation = ScriptFolder::class.findAnnotation<Asset>()!!
+    private val scriptDeserializer = deserializerFactory.getDeserializer(Script::class)
 
-    override fun deserialize(inputStream: CountingInputStream): PlayerScriptsList.ScriptListEntry {
+    override fun deserialize(inputStream: CountingInputStream): ScriptListEntry {
         return when (val assetName = deserializationContext.peek().assetName) {
             scriptAssetName -> scriptDeserializer.deserialize(inputStream)
             scriptFolderAssetAnnotation.name -> deserializeAssetFolder(inputStream)
@@ -27,7 +29,7 @@ internal class ScriptListEntryDeserializer(
         }
     }
 
-    private fun deserializeAssetFolder(inputStream: CountingInputStream): PlayerScriptsList.ScriptListEntry {
+    private fun deserializeAssetFolder(inputStream: CountingInputStream): ScriptListEntry {
 
         val currentAsset = deserializationContext.peek()
         if (scriptFolderAssetAnnotation.version != currentAsset.assetVersion) {
@@ -38,16 +40,16 @@ internal class ScriptListEntryDeserializer(
         val active = inputStream.readBoolean()
         val subroutine = inputStream.readBoolean()
 
-        val scripts = mutableListOf<PlayerScriptsList.ScriptListEntry>()
+        val scripts = mutableListOf<ScriptListEntry>()
         MapFileReader.readAssets(inputStream, deserializationContext) {
             scripts.add(deserialize(inputStream))
         }
 
-        return PlayerScriptsList.ScriptFolder(
+        return ScriptFolder(
             name = name,
             active = active,
             subroutine = subroutine,
-            scripts = scripts
+            scriptListEntries = scripts
         )
     }
 

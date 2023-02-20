@@ -2,7 +2,6 @@ package de.darkatra.bfme2.v2.map.deserialization
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
-import de.darkatra.bfme2.map.AssetName
 import de.darkatra.bfme2.read7BitIntPrefixedString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
@@ -94,7 +93,7 @@ class MapFileReader {
 
             deserializationContext.push(
                 DeserializationContext.AssetEntry(
-                    assetName = AssetName.MAP.assetName,
+                    assetName = "Map",
                     assetVersion = 0u,
                     assetSize = inputStreamSize,
                     startPosition = 0

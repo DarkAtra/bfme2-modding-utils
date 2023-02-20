@@ -4,9 +4,9 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readInt
 import de.darkatra.bfme2.readUShortPrefixedString
-import de.darkatra.bfme2.v2.map.ScriptArgument
-import de.darkatra.bfme2.v2.map.ScriptArgumentType
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
+import de.darkatra.bfme2.v2.map.scripting.ScriptArgument
+import de.darkatra.bfme2.v2.map.scripting.ScriptArgumentType
 import org.apache.commons.io.input.CountingInputStream
 
 internal class ScriptArgumentDeserializer(

@@ -3,8 +3,8 @@ package de.darkatra.bfme2.v2.map.deserialization
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.v2.map.HeightMap
 import de.darkatra.bfme2.v2.map.deserialization.postprocessing.PostProcessor
+import de.darkatra.bfme2.v2.map.heightmap.HeightMap
 import org.apache.commons.io.input.CountingInputStream
 import kotlin.experimental.and
 
