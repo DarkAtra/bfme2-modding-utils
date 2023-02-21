@@ -17,6 +17,52 @@ internal class MapFileReaderTest {
     private val zlibCompressedMapPath = "/maps/bfme2-rotwk/Legendary War.zlib"
 
     @Test
+    internal fun shouldReadMap() {
+
+        val map = MapFileReader().read(getMapInputStream(uncompressedMapPath))
+
+        assertThat(map.blendTileData.numberOfTiles).isEqualTo(640u * 640u)
+        assertThat(map.blendTileData.textures).hasSize(4)
+        assertThat(map.blendTileData.textures.map { it.name }).containsExactly("LothlorienGrass05", "CliffLothlorien01", "AsphaltType1", "GrassIsengard19")
+        assertThat(map.buildLists.buildLists).hasSize(17)
+        assertThat(map.cameraAnimations.animations).hasSize(0)
+        assertThat(map.cameras.cameras).hasSize(0)
+        assertThat(map.environmentData).isNotNull
+        assertThat(map.environmentData.waterMaxAlphaDepth).isEqualTo(3f)
+        assertThat(map.environmentData.deepWaterAlpha).isEqualTo(1f)
+        assertThat(map.environmentData.isMacroTextureStretched).isEqualTo(false)
+        assertThat(map.environmentData.macroTexture).isEqualTo("TSNoiseUrb.tga")
+        assertThat(map.environmentData.cloudTexture).isEqualTo("TSCloudMed.tga")
+        assertThat(map.globalLighting.time).isEqualTo(TimeOfDay.AFTERNOON)
+        assertThat(map.globalLighting.lightingConfigurations).hasSize(4)
+        assertThat(map.globalLighting.shadowColor).isEqualTo(Color(0, 0, 0, 64))
+        assertThat(map.globalLighting.unknown).hasSize(44)
+        assertThat(map.globalLighting.noCloudFactor).isEqualTo(Vector3(1f, 1f, 1f))
+        assertThat(map.heightMap.width).isEqualTo(640u)
+        assertThat(map.heightMap.height).isEqualTo(640u)
+        assertThat(map.heightMap.borderWidth).isEqualTo(20u)
+        assertThat(map.heightMap.borders).hasSize(1)
+        assertThat(map.heightMap.borders.first().x).isEqualTo(600u)
+        assertThat(map.heightMap.borders.first().y).isEqualTo(600u)
+        assertThat(map.heightMap.elevations.size()).isEqualTo(640 * 640)
+        assertThat(map.heightMap.area).isEqualTo(640u * 640u)
+        assertThat(map.libraryMapsList.libraryMaps).hasSize(17)
+        assertThat(map.multiplayerPositions.positions).hasSize(8)
+        assertThat(map.objects.objects).hasSize(666)
+        assertThat(map.playerScriptsList.scriptLists).hasSize(17)
+        assertThat(map.postEffects.postEffects).hasSize(0)
+        assertThat(map.riverAreas.areas).hasSize(0)
+        assertThat(map.sides.unknown).isEqualTo(true)
+        assertThat(map.sides.players).hasSize(17)
+        assertThat(map.standingWaterAreas.areas).hasSize(0)
+        assertThat(map.standingWaveAreas.areas).hasSize(0)
+        assertThat(map.teams.teams).hasSize(17)
+        assertThat(map.triggerAreas.areas).hasSize(0)
+        assertThat(map.worldInfo.properties).hasSize(12)
+        assertThat(map.worldInfo["cameraMaxHeight"]!!.value).isEqualTo(800f)
+    }
+
+    @Test
     internal fun shouldReadBfme2MapWithStrangeRoadType() {
 
         val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp harlond.zlib"))
@@ -81,41 +127,6 @@ internal class MapFileReaderTest {
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions[0].conditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.IS_GAME_MODE_ACTIVE)
-    }
-
-    @Test
-    internal fun shouldReadMap() {
-
-        val map = MapFileReader().read(getMapInputStream(uncompressedMapPath))
-
-        assertThat(map.buildLists.buildLists).hasSize(17)
-        assertThat(map.cameraAnimations.animations).hasSize(0)
-        assertThat(map.cameras.cameras).hasSize(0)
-        assertThat(map.environmentData).isNotNull
-        assertThat(map.environmentData.waterMaxAlphaDepth).isEqualTo(3f)
-        assertThat(map.environmentData.deepWaterAlpha).isEqualTo(1f)
-        assertThat(map.environmentData.isMacroTextureStretched).isEqualTo(false)
-        assertThat(map.environmentData.macroTexture).isEqualTo("TSNoiseUrb.tga")
-        assertThat(map.environmentData.cloudTexture).isEqualTo("TSCloudMed.tga")
-        assertThat(map.globalLighting.time).isEqualTo(TimeOfDay.AFTERNOON)
-        assertThat(map.globalLighting.lightingConfigurations).hasSize(4)
-        assertThat(map.globalLighting.shadowColor).isEqualTo(Color(0, 0, 0, 64))
-        assertThat(map.globalLighting.unknown).hasSize(44)
-        assertThat(map.globalLighting.noCloudFactor).isEqualTo(Vector3(1f, 1f, 1f))
-        assertThat(map.heightMap.width).isEqualTo(640u)
-        assertThat(map.heightMap.height).isEqualTo(640u)
-        assertThat(map.heightMap.borderWidth).isEqualTo(20u)
-        assertThat(map.heightMap.borders).hasSize(1)
-        assertThat(map.heightMap.elevations.size()).isEqualTo(640 * 640)
-        assertThat(map.heightMap.area).isEqualTo(640u * 640u)
-        assertThat(map.multiplayerPositions.positions).hasSize(8)
-        assertThat(map.objects.objects).hasSize(666)
-        assertThat(map.postEffects.postEffects).hasSize(0)
-        assertThat(map.riverAreas.areas).hasSize(0)
-        assertThat(map.standingWaterAreas.areas).hasSize(0)
-        assertThat(map.standingWaveAreas.areas).hasSize(0)
-        assertThat(map.teams.teams).hasSize(17)
-        assertThat(map.triggerAreas.areas).hasSize(0)
     }
 
     @Test

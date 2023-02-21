@@ -8,4 +8,11 @@ import de.darkatra.bfme2.v2.map.property.Property
 @Asset(name = "WorldInfo", version = 1u)
 data class WorldInfo(
     val properties: @ListDeserializer.Properties(sizeType = SizeType.USHORT) List<Property>
-)
+) {
+
+    operator fun get(propertyName: String): Property? {
+        return properties.firstOrNull { property ->
+            property.key.name == propertyName
+        }
+    }
+}
