@@ -1,6 +1,8 @@
 package de.darkatra.bfme2.v2.map.wave
 
 import de.darkatra.bfme2.Vector2
+import de.darkatra.bfme2.v2.map.deserialization.Deserialize
+import de.darkatra.bfme2.v2.map.deserialization.UIntBooleanDeserializer
 
 data class StandingWaveArea(
     val id: UInt,
@@ -20,6 +22,5 @@ data class StandingWaveArea(
     val timeOffset2ndWave: UInt,
     val distanceFromShore: UInt,
     val texture: String,
-    val enablePcaWave: Boolean,
-    val waveParticleFXName: String
+    val enablePcaWave: @Deserialize(using = UIntBooleanDeserializer::class) Boolean
 )

@@ -7,7 +7,6 @@ import de.darkatra.bfme2.v2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.v2.map.`object`.RoadType
 import de.darkatra.bfme2.v2.map.scripting.ScriptConditionType
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.InputStream
 
@@ -27,7 +26,6 @@ internal class MapFileReaderTest {
     }
 
     @Test
-    @Disabled // FIXME
     internal fun shouldReadBfme2MapWithStandingWaveAreas() {
 
         val map = MapFileReader().read(getMapInputStream("/maps/bfme2-rotwk/map mp midgewater.zlib"))

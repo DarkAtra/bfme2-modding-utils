@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.v2.map.scripting
 
+// FIXME: double check enum values and change them to be specific to BfME 2 and RotWK
 enum class ScriptActionType(
     internal val id: UInt
 ) {
@@ -516,5 +517,5 @@ enum class ScriptActionType(
     UNKNOWN_37(599u),
     UNKNOWN_470(470u),
     UNKNOWN_581(581u),
-    TERRAIN_RENDER_DISABLE(UInt.MAX_VALUE) // TODO: BFME2 = 372
+    TERRAIN_RENDER_DISABLE(UInt.MAX_VALUE)
 }
