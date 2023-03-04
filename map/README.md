@@ -21,14 +21,14 @@ compressed maps (`EAR`) and zlib compressed maps (`ZL5`), just like the games th
 To read a map from the file system use:
 
 ```kotlin
-import de.darkatra.bfme2.map.deserialization.MapFileReader
+import de.darkatra.bfme2.map.serialization.MapFileReader
 import java.nio.file.Path
 
 val mapFilePath: Path = Path.of("/path/to/the/map/file.map")
 
 val mapFile: MapFile = MapFileReader().read(mapFilePath)
 
-println(mapFile.worldSettings.find { property -> property.key.name == "cameraMaxHeight" })
+println(mapFile.worldSettings["cameraMaxHeight"])
 
 // results in:
 // Property(key=PropertyKey(propertyType=FLOAT, name=cameraMaxHeight), value=800.0)

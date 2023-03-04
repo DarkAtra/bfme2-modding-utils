@@ -2,10 +2,10 @@ package de.darkatra.bfme2.map.reader
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
-import de.darkatra.bfme2.v2.map.deserialization.MapFileReader
-import de.darkatra.bfme2.v2.map.globallighting.TimeOfDay
-import de.darkatra.bfme2.v2.map.`object`.RoadType
-import de.darkatra.bfme2.v2.map.scripting.ScriptConditionType
+import de.darkatra.bfme2.map.globallighting.TimeOfDay
+import de.darkatra.bfme2.map.`object`.RoadType
+import de.darkatra.bfme2.map.scripting.ScriptConditionType
+import de.darkatra.bfme2.map.serialization.MapFileReader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.InputStream
