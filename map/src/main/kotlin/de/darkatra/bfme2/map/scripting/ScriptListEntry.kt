@@ -1,9 +1,9 @@
 package de.darkatra.bfme2.map.scripting
 
-import de.darkatra.bfme2.map.serialization.Deserialize
-import de.darkatra.bfme2.map.serialization.ScriptListEntryDeserializer
+import de.darkatra.bfme2.map.serialization.ScriptListEntrySerde
+import de.darkatra.bfme2.map.serialization.Serialize
 
-@Deserialize(using = ScriptListEntryDeserializer::class)
+@Serialize(using = ScriptListEntrySerde::class)
 sealed interface ScriptListEntry {
     val name: String
     val active: Boolean

@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.blendtile
 
 import de.darkatra.bfme2.InvalidDataException
-import de.darkatra.bfme2.map.serialization.DeserializationContext
+import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 
@@ -15,7 +15,7 @@ data class BlendTileTexture(
 ) {
 
     internal class BlendTileTexturePostProcessor : PostProcessor<BlendTileTexture> {
-        override fun postProcess(data: BlendTileTexture, context: DeserializationContext) {
+        override fun postProcess(data: BlendTileTexture, context: SerializationContext) {
             if (data.cellSize * data.cellSize != data.cellCount) {
                 throw InvalidDataException("Expected cellCount '${data.cellCount}' to equal cellSize times cellSize (${data.cellSize} * ${data.cellSize}).")
             }

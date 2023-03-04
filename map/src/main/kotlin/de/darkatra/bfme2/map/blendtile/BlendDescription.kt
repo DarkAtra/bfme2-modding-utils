@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.map.blendtile
 
 import de.darkatra.bfme2.InvalidDataException
-import de.darkatra.bfme2.map.serialization.DeserializationContext
-import de.darkatra.bfme2.map.serialization.ListDeserializer
+import de.darkatra.bfme2.map.serialization.ListSerde
+import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import kotlin.experimental.or
@@ -10,7 +10,7 @@ import kotlin.experimental.or
 @PostProcess(using = BlendDescription.BlendDescriptionPostProcessor::class)
 data class BlendDescription(
     val secondaryTextureTile: UInt,
-    private val rawBlendDirection: @ListDeserializer.Properties(mode = ListDeserializer.Mode.FIXED, size = 4u) List<Byte>,
+    private val rawBlendDirection: @ListSerde.Properties(mode = ListSerde.Mode.FIXED, size = 4u) List<Byte>,
     val flags: BlendFlags,
     val twoSided: Boolean,
     val magicValue1: UInt,
@@ -34,7 +34,7 @@ data class BlendDescription(
         }
 
     internal class BlendDescriptionPostProcessor : PostProcessor<BlendDescription> {
-        override fun postProcess(data: BlendDescription, context: DeserializationContext) {
+        override fun postProcess(data: BlendDescription, context: SerializationContext) {
             if (data.magicValue1 != 0xffffffffu) {
                 throw InvalidDataException("Expected magicValue1 to be '0xffffffffu'. Found: ${data.magicValue1.toString(16)}")
             }

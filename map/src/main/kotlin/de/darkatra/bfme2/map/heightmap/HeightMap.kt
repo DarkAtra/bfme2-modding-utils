@@ -3,10 +3,10 @@ package de.darkatra.bfme2.map.heightmap
 import com.google.common.collect.Table
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.Asset
-import de.darkatra.bfme2.map.serialization.DeserializationContext
-import de.darkatra.bfme2.map.serialization.Deserialize
-import de.darkatra.bfme2.map.serialization.HeightMapDependentMapDeserializer
-import de.darkatra.bfme2.map.serialization.argumentresolution.DeserializersArgumentResolver
+import de.darkatra.bfme2.map.serialization.HeightMapDependentMapSerde
+import de.darkatra.bfme2.map.serialization.SerializationContext
+import de.darkatra.bfme2.map.serialization.Serialize
+import de.darkatra.bfme2.map.serialization.argumentresolution.SerdesArgumentResolver
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.SharedDataProvidingPostProcessor
@@ -20,8 +20,8 @@ data class HeightMap(
     val borders: List<HeightMapBorder>,
     val area: @PostProcess(using = HeightMapAreaPostProcessor::class) UInt,
     val elevations:
-    @Deserialize(using = HeightMapDependentMapDeserializer::class)
-    Table<@DeserializersArgumentResolver.Ignore UInt, @DeserializersArgumentResolver.Ignore UInt, UShort>
+    @Serialize(using = HeightMapDependentMapSerde::class)
+    Table<@SerdesArgumentResolver.Ignore UInt, @SerdesArgumentResolver.Ignore UInt, UShort>
 ) {
 
     internal companion object {
@@ -32,7 +32,7 @@ data class HeightMap(
     }
 
     internal class HeightMapPostProcessor : PostProcessor<HeightMap> {
-        override fun postProcess(data: HeightMap, context: DeserializationContext) {
+        override fun postProcess(data: HeightMap, context: SerializationContext) {
             if (data.width * data.height != data.area) {
                 throw InvalidDataException("Width (${data.width}) times height (${data.height}) does not equal to the area (${data.area}).")
             }

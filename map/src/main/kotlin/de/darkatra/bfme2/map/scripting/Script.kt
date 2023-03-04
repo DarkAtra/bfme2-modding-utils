@@ -1,8 +1,8 @@
 package de.darkatra.bfme2.map.scripting
 
 import de.darkatra.bfme2.map.Asset
-import de.darkatra.bfme2.map.serialization.AssetListDeserializer
-import de.darkatra.bfme2.map.serialization.Deserialize
+import de.darkatra.bfme2.map.serialization.AssetListSerde
+import de.darkatra.bfme2.map.serialization.Serialize
 
 @Asset(name = "Script", version = 4u)
 data class Script(
@@ -23,7 +23,7 @@ data class Script(
     val sequentialTargetType: SequentialScriptTarget,
     val sequentialTargetName: String,
     val unknown1: String,
-    val statements: @Deserialize(using = AssetListDeserializer::class) List<Statement>
+    val statements: @Serialize(using = AssetListSerde::class) List<Statement>
 ) : ScriptListEntry {
 
     val actions = statements.filterIsInstance<Action>()

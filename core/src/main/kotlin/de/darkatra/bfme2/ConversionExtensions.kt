@@ -51,10 +51,3 @@ fun Byte.toBoolean(): Boolean = when (this) {
     1.toByte() -> true
     else -> throw ConversionException("Can't convert Byte '$this' to Boolean.")
 }
-
-// TODO: remove this once v2 is final
-fun Map<UInt, Map<UInt, UShort>>.to2DUIntArrayAsMap(): Map<UInt, Map<UInt, UInt>> {
-    return this.mapValues { (_, inner) ->
-        inner.mapValues { (_, value) -> value.toUInt() }
-    }
-}

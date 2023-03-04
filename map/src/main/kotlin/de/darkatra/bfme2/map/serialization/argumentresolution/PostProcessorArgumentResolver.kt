@@ -4,6 +4,7 @@ import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
+import de.darkatra.bfme2.map.toKClass
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
@@ -11,12 +12,10 @@ import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 internal class PostProcessorArgumentResolver : ArgumentResolver<PostProcessor<*>> {
 
-    private val typeArgumentResolver = TypeArgumentResolver()
-
     override fun resolve(currentElement: ProcessableElement): PostProcessor<*> {
 
         val postProcessorClass = getPostProcessorClassFromAnnotation(currentElement)
-            ?: getPostProcessorClassFromTargetClass(currentElement)
+            ?: currentElement.getType().toKClass().findAnnotation<PostProcess>()?.using
             ?: NoopPostProcessor::class
 
         return postProcessorClass.createInstance()
@@ -32,10 +31,5 @@ internal class PostProcessorArgumentResolver : ArgumentResolver<PostProcessor<*>
             // null means we were unable to resolve a specific post processor
             null
         }
-    }
-
-    private fun getPostProcessorClassFromTargetClass(currentElement: ProcessableElement): KClass<out PostProcessor<*>>? {
-        val targetClass = typeArgumentResolver.resolve(currentElement)
-        return targetClass.findAnnotation<PostProcess>()?.using
     }
 }

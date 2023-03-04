@@ -14,8 +14,8 @@ import de.darkatra.bfme2.map.player.Sides
 import de.darkatra.bfme2.map.posteffect.PostEffects
 import de.darkatra.bfme2.map.riverarea.RiverAreas
 import de.darkatra.bfme2.map.scripting.PlayerScriptsList
-import de.darkatra.bfme2.map.serialization.Deserialize
-import de.darkatra.bfme2.map.serialization.MapFileDeserializer
+import de.darkatra.bfme2.map.serialization.MapFileSerde
+import de.darkatra.bfme2.map.serialization.Serialize
 import de.darkatra.bfme2.map.team.Teams
 import de.darkatra.bfme2.map.trigger.TriggerAreas
 import de.darkatra.bfme2.map.water.StandingWaterAreas
@@ -23,7 +23,7 @@ import de.darkatra.bfme2.map.wave.StandingWaveAreas
 import de.darkatra.bfme2.map.waypoint.WaypointList
 import de.darkatra.bfme2.map.worldinfo.WorldInfo
 
-@Deserialize(using = MapFileDeserializer::class)
+@Serialize(using = MapFileSerde::class)
 data class MapFile(
     val blendTileData: BlendTileData,
     val buildLists: BuildLists,

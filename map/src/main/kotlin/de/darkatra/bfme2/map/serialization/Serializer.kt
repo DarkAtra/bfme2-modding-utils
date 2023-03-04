@@ -4,5 +4,5 @@ import java.io.OutputStream
 
 internal interface Serializer<T> {
 
-    fun serialize(outputStream: OutputStream): T
+    fun serialize(outputStream: OutputStream, data: T)
 }

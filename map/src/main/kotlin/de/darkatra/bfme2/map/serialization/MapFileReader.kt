@@ -30,26 +30,26 @@ class MapFileReader {
         private const val REFPACK_FOUR_CC = "EAR\u0000"
         private const val ZLIB_FOUR_CC = "ZL5\u0000"
 
-        internal fun readAssets(inputStream: CountingInputStream, deserializationContext: DeserializationContext, callback: (assetName: String) -> Unit) {
+        internal fun readAssets(inputStream: CountingInputStream, serializationContext: SerializationContext, callback: (assetName: String) -> Unit) {
 
-            while (inputStream.byteCount < deserializationContext.currentEndPosition) {
+            while (inputStream.byteCount < serializationContext.currentEndPosition) {
                 val assetIndex = inputStream.readUInt()
-                val assetName = deserializationContext.getAssetName(assetIndex)
+                val assetName = serializationContext.getAssetName(assetIndex)
 
-                val currentAsset = DeserializationContext.AssetEntry(
+                val currentAsset = SerializationContext.AssetEntry(
                     assetName = assetName,
                     assetVersion = inputStream.readUShort(),
                     assetSize = inputStream.readUInt().toLong(),
                     startPosition = inputStream.byteCount
                 )
 
-                deserializationContext.push(currentAsset)
+                serializationContext.push(currentAsset)
                 callback(assetName)
-                deserializationContext.pop()
+                serializationContext.pop()
 
                 val currentEndPosition = inputStream.byteCount
                 val expectedEndPosition = currentAsset.endPosition
-                if (!deserializationContext.debugMode && currentEndPosition != expectedEndPosition) {
+                if (!serializationContext.debugMode && currentEndPosition != expectedEndPosition) {
                     throw InvalidDataException("Error reading '${currentAsset.assetName}'. Expected reader to be at position $expectedEndPosition, but was at $currentEndPosition.")
                 }
             }
@@ -78,21 +78,21 @@ class MapFileReader {
         return countingInputStream.use {
             readAndValidateFourCC(countingInputStream)
 
-            val deserializationContext = DeserializationContext(true)
+            val serializationContext = SerializationContext(true)
             val annotationProcessingContext = AnnotationProcessingContext(false)
-            val deserializerFactory = DeserializerFactory(annotationProcessingContext, deserializationContext)
+            val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
             measureTime {
                 val assetNames = readAssetNames(countingInputStream)
-                deserializationContext.setAssetNames(assetNames)
+                serializationContext.setAssetNames(assetNames)
             }.also { elapsedTime ->
-                if (deserializationContext.debugMode) {
+                if (serializationContext.debugMode) {
                     println("Reading asset names took $elapsedTime.")
                 }
             }
 
-            deserializationContext.push(
-                DeserializationContext.AssetEntry(
+            serializationContext.push(
+                SerializationContext.AssetEntry(
                     assetName = "Map",
                     assetVersion = 0u,
                     assetSize = inputStreamSize,
@@ -100,13 +100,13 @@ class MapFileReader {
                 )
             )
 
-            val mapFileDeserializer = deserializerFactory.getDeserializer(MapFile::class)
+            val mapFileSerde = serdeFactory.getSerde(MapFile::class)
 
             annotationProcessingContext.invalidate()
 
-            val mapFile = mapFileDeserializer.deserialize(countingInputStream)
+            val mapFile = mapFileSerde.deserialize(countingInputStream)
 
-            deserializationContext.pop()
+            serializationContext.pop()
 
             mapFile
         }

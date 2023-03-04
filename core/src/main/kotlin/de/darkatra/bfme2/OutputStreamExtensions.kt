@@ -17,6 +17,11 @@ fun OutputStream.writeBoolean(boolean: Boolean) = this.writeByte(
     }
 )
 
+fun OutputStream.writeBooleanAsUInt(boolean: Boolean) {
+    this.writeBoolean(boolean)
+    this.write(byteArrayOf(0, 0, 0))
+}
+
 fun OutputStream.writeUShortPrefixedString(string: String, charset: Charset = StandardCharsets.US_ASCII) {
     val stringLength = string.length
     if (stringLength.toUInt() > UShort.MAX_VALUE) {

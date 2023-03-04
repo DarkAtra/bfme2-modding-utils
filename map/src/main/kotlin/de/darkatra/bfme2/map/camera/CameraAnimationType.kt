@@ -1,10 +1,10 @@
 package de.darkatra.bfme2.map.camera
 
-import de.darkatra.bfme2.map.serialization.Deserialize
-import de.darkatra.bfme2.map.serialization.FourBitStringDeserializer
+import de.darkatra.bfme2.map.serialization.FourByteStringSerde
+import de.darkatra.bfme2.map.serialization.Serialize
 
 enum class CameraAnimationType(
-    internal val rawName: @Deserialize(using = FourBitStringDeserializer::class) String
+    internal val rawName: @Serialize(using = FourByteStringSerde::class) String
 ) {
     FREE("EERF"),
     LOOK("KOOL")

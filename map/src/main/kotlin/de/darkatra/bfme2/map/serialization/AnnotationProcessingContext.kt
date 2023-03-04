@@ -4,8 +4,8 @@ import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import java.util.Stack
 
 /**
- * Contains data relevant for resolution of deserializer arguments via [ArgumentResolver][de.darkatra.bfme2.map.serialization.argumentresolution.ArgumentResolver]s.
- * Is invalidated after the root deserializer for the MapFile is constructed.
+ * Contains data relevant for resolution of [Serde][de.darkatra.bfme2.map.serialization.Serde] arguments via [ArgumentResolver][de.darkatra.bfme2.map.serialization.argumentresolution.ArgumentResolver]s.
+ * Is invalidated after the root [Serde][de.darkatra.bfme2.map.serialization.Serde] for the [MapFile][de.darkatra.bfme2.map.MapFile] is constructed.
  */
 internal class AnnotationProcessingContext(
     internal val debugMode: Boolean
@@ -39,7 +39,7 @@ internal class AnnotationProcessingContext(
 
     private fun ensureContextIsValid() {
         if (isInvalid) {
-            error("${AnnotationProcessingContext::class.simpleName} is marked as invalid. This error only occurs if any ${Deserializer::class.simpleName} attempts to access data from this context which is prohibited.")
+            error("${AnnotationProcessingContext::class.simpleName} is marked as invalid. This error only occurs if any ${Serde::class.simpleName} attempts to access data from this context which is prohibited.")
         }
     }
 }
