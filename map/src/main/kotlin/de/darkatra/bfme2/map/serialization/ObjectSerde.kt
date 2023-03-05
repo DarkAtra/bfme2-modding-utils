@@ -20,6 +20,10 @@ internal class ObjectSerde<T : Any>(
 
     private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
+    override fun calculateByteCount(data: T): Long {
+        TODO("Not yet implemented")
+    }
+
     override fun serialize(outputStream: OutputStream, data: T) {
         TODO("Not yet implemented")
     }

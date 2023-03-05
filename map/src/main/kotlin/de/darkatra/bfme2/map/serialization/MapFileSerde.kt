@@ -18,6 +18,10 @@ internal class MapFileSerde(
     private val postProcessor: PostProcessor<MapFile>
 ) : Serde<MapFile> {
 
+    override fun calculateByteCount(data: MapFile): Long {
+        TODO("Not yet implemented")
+    }
+
     override fun serialize(outputStream: OutputStream, data: MapFile) {
         TODO("Not yet implemented")
     }

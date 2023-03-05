@@ -17,4 +17,7 @@ internal class FloatSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: Float): Long = 4
+}

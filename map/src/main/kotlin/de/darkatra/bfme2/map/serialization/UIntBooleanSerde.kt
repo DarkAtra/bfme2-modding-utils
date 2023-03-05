@@ -17,4 +17,7 @@ internal class UIntBooleanSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: Boolean): Long = 4
+}

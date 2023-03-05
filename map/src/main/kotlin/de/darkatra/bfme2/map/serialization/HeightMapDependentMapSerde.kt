@@ -36,6 +36,21 @@ internal class HeightMapDependentMapSerde<V : Any>(
         SAGE_BOOLEAN
     }
 
+    override fun calculateByteCount(data: Table<UInt, UInt, V>): Long {
+
+        return data.rowKeySet().sumOf { x ->
+            data.columnKeySet().sumOf { y ->
+                when (mode) {
+                    Mode.DEFAULT -> valueSerde.calculateByteCount(data[x, y]!!)
+                    else -> when (x > 0u && x % 8u == 0u) {
+                        true -> 1
+                        else -> 0
+                    }
+                }
+            }
+        }
+    }
+
     override fun serialize(outputStream: OutputStream, data: Table<UInt, UInt, V>) {
 
         preProcessor.preProcess(data, context).let { map ->

@@ -14,6 +14,8 @@ internal class ColorSerde(
     private val postProcessor: PostProcessor<Color>
 ) : Serde<Color> {
 
+    override fun calculateByteCount(data: Color): Long = 4
+
     override fun serialize(outputStream: OutputStream, data: Color) {
         preProcessor.preProcess(data, context).let {
             outputStream.writeUInt(

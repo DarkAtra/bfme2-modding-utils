@@ -33,6 +33,7 @@ class MapFileReader {
         internal fun readAssets(inputStream: CountingInputStream, serializationContext: SerializationContext, callback: (assetName: String) -> Unit) {
 
             while (inputStream.byteCount < serializationContext.currentEndPosition) {
+
                 val assetIndex = inputStream.readUInt()
                 val assetName = serializationContext.getAssetName(assetIndex)
 
@@ -56,6 +57,7 @@ class MapFileReader {
         }
     }
 
+    @Suppress("unused") // public api
     fun read(file: Path): MapFile {
 
         if (!file.exists()) {

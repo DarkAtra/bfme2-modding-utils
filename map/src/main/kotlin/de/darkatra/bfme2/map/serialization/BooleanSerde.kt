@@ -17,4 +17,7 @@ internal class BooleanSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: Boolean): Long = 1
+}

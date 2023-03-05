@@ -17,4 +17,7 @@ internal class UIntSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: UInt): Long = 4
+}

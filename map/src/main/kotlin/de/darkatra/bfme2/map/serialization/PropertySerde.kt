@@ -27,6 +27,18 @@ internal class PropertySerde(
 
     private val propertyKeySerde = PropertyKeySerde(serdeFactory, serializationContext, NoopPreProcessor(), NoopPostProcessor())
 
+    override fun calculateByteCount(data: Property): Long {
+        return propertyKeySerde.calculateByteCount(data.key) +
+            when (data.key.propertyType) {
+                PropertyType.BOOLEAN -> 1 // TODO: consider introducing lookup table for byte counts of primitives
+                PropertyType.INTEGER -> 4
+                PropertyType.FLOAT -> 4
+                PropertyType.ASCII_STRING -> 2L + (data.value as String).length
+                PropertyType.UNICODE_STRING -> 2L + ((data.value as String).length * 2)
+                PropertyType.UNKNOWN -> 2L + (data.value as String).length
+            }
+    }
+
     override fun serialize(outputStream: OutputStream, data: Property) {
 
         preProcessor.preProcess(data, serializationContext).let { property ->

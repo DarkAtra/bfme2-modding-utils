@@ -13,6 +13,8 @@ internal class FourByteStringSerde(
     private val postProcessor: PostProcessor<String>
 ) : Serde<String> {
 
+    override fun calculateByteCount(data: String): Long = 4
+
     override fun serialize(outputStream: OutputStream, data: String) {
         preProcessor.preProcess(data, context).let {
             if (it.length != 4) {

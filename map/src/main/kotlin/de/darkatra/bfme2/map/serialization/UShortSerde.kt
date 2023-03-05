@@ -17,4 +17,7 @@ internal class UShortSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: UShort): Long = 2
+}

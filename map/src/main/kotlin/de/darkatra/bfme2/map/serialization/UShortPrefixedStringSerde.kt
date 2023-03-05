@@ -17,4 +17,7 @@ internal class UShortPrefixedStringSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: String): Long = 2L + data.length
+}

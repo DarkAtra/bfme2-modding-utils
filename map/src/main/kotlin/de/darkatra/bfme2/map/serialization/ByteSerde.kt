@@ -17,4 +17,7 @@ internal class ByteSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: Byte): Long = 1
+}

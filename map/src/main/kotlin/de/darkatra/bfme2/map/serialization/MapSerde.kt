@@ -45,12 +45,17 @@ internal class MapSerde<K, V>(
         VALUE_FIRST
     }
 
+    override fun calculateByteCount(data: Map<K, V>): Long {
+        return 4 + data.entries.sumOf { (key, value) ->
+            keySerde.calculateByteCount(key) + valueSerde.calculateByteCount(value)
+        }
+    }
+
     override fun serialize(outputStream: OutputStream, data: Map<K, V>) {
 
         preProcessor.preProcess(data, context).let { map ->
 
-            val numberOfMapEntries = map.size.toUInt()
-            outputStream.writeUInt(numberOfMapEntries)
+            outputStream.writeUInt(map.size.toUInt())
 
             map.forEach { (key, value) ->
                 serializeKeyAndValue(outputStream, key, value)

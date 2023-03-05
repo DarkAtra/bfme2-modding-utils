@@ -17,6 +17,10 @@ internal class PropertyKeySerde(
 
     private val propertyTypeSerde: Serde<PropertyType> = serdeFactory.getSerde(PropertyType::class)
 
+    override fun calculateByteCount(data: PropertyKey): Long {
+        return propertyTypeSerde.calculateByteCount(data.propertyType) + 3
+    }
+
     override fun serialize(outputStream: OutputStream, data: PropertyKey) {
 
         preProcessor.preProcess(data, serializationContext).let { propertyKey ->

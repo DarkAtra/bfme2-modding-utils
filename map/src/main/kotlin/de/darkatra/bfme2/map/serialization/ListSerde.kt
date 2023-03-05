@@ -57,6 +57,20 @@ internal class ListSerde<T>(
         BYTE
     }
 
+    override fun calculateByteCount(data: List<T>): Long {
+        return when (mode) {
+            Mode.DEFAULT -> when (sizeType) {
+                SizeType.UINT -> 4
+                SizeType.USHORT -> 2
+                SizeType.BYTE -> 1
+            }
+
+            else -> 0
+        } + data.sumOf {
+            entrySerde.calculateByteCount(it)
+        }
+    }
+
     override fun serialize(outputStream: OutputStream, data: List<T>) {
 
         preProcessor.preProcess(data, context).let { list ->

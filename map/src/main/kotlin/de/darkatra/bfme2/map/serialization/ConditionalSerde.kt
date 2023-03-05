@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
+import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 import kotlin.reflect.KClass
@@ -13,6 +14,7 @@ internal class ConditionalSerde(
     serdeFactory: SerdeFactory,
     annotationProcessingContext: AnnotationProcessingContext,
     private val serializationContext: SerializationContext,
+    private val preProcessor: PreProcessor<Any>,
     private val postProcessor: PostProcessor<Any>,
 
     assetTypes: List<KClass<Any>>
@@ -35,19 +37,28 @@ internal class ConditionalSerde(
         Pair(assetName.name, serdeFactory.getSerde(assetType))
     }
 
+    override fun calculateByteCount(data: Any): Long {
+        val assetName = serializationContext.peek().assetName
+        val serde = serdes[assetName]
+            ?: throw IllegalStateException("Could not find serde for '$assetName' calculating byte count for $currentElementName. Expected one of: ${serdes.keys}")
+        return serde.calculateByteCount(data)
+    }
+
     override fun serialize(outputStream: OutputStream, data: Any) {
-        TODO("Not yet implemented")
+        val assetName = serializationContext.peek().assetName
+        val serde = serdes[assetName]
+            ?: throw IllegalStateException("Could not find serde for '$assetName' writing $currentElementName. Expected one of: ${serdes.keys}")
+        preProcessor.preProcess(data, serializationContext).let {
+            serde.serialize(outputStream, it)
+        }
     }
 
     override fun deserialize(inputStream: CountingInputStream): Any {
         val assetName = serializationContext.peek().assetName
-        val serde = serdes[assetName] ?: failWithException(assetName)
+        val serde = serdes[assetName]
+            ?: throw InvalidDataException("Unexpected assetName '$assetName' reading $currentElementName. Expected one of: ${serdes.keys}")
         return serde.deserialize(inputStream).also {
             postProcessor.postProcess(it, serializationContext)
         }
-    }
-
-    private fun failWithException(assetName: String): Nothing {
-        throw InvalidDataException("Unexpected assetName '$assetName' reading $currentElementName. Expected one of: ${serdes.keys}")
     }
 }

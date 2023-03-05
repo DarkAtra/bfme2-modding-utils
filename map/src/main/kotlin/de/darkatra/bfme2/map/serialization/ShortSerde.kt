@@ -17,4 +17,7 @@ internal class ShortSerde(
     context,
     preProcessor,
     postProcessor
-)
+) {
+
+    override fun calculateByteCount(data: Short): Long = 2
+}

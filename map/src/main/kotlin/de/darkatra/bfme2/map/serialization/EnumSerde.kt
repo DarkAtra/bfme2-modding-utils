@@ -33,6 +33,10 @@ internal class EnumSerde<T : Enum<*>>(
         }
     }
 
+    override fun calculateByteCount(data: T): Long {
+        return serde.calculateByteCount(enumValueGetter.call(data)!!)
+    }
+
     override fun serialize(outputStream: OutputStream, data: T) {
         serde.serialize(
             outputStream,
