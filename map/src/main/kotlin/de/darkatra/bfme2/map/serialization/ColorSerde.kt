@@ -18,22 +18,14 @@ internal class ColorSerde(
 
     override fun serialize(outputStream: OutputStream, data: Color) {
         preProcessor.preProcess(data, context).let {
-            outputStream.writeUInt(
-                // TODO: add exception if r, g, b or a is not fitting into exactly one byte
-                (it.b.toUInt() and 0xFFu) + ((it.g.toUInt() and 0xFFu) shl 8) + ((it.r.toUInt() and 0xFFu) shl 16) + ((it.a.toUInt() and 0xFFu) shl 24)
-            )
+            outputStream.writeUInt(it.rgba)
         }
     }
 
     override fun deserialize(inputStream: CountingInputStream): Color {
-        return inputStream.readUInt().let {
-            Color(
-                r = ((it shr 16) and 0xFFu).toInt(),
-                g = ((it shr 8) and 0xFFu).toInt(),
-                b = (it and 0xFFu).toInt(),
-                a = ((it shr 24) and 0xFFu).toInt()
-            )
-        }.also {
+        return Color(
+            rgba = inputStream.readUInt()
+        ).also {
             postProcessor.postProcess(it, context)
         }
     }

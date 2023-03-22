@@ -35,7 +35,7 @@ internal class MapFileReaderTest {
         assertThat(map.environmentData.cloudTexture).isEqualTo("TSCloudMed.tga")
         assertThat(map.globalLighting.time).isEqualTo(TimeOfDay.AFTERNOON)
         assertThat(map.globalLighting.lightingConfigurations).hasSize(4)
-        assertThat(map.globalLighting.shadowColor).isEqualTo(Color(0, 0, 0, 64))
+        assertThat(map.globalLighting.shadowColor).isEqualTo(Color(0u, 0u, 0u, 64u))
         assertThat(map.globalLighting.unknown).hasSize(44)
         assertThat(map.globalLighting.noCloudFactor).isEqualTo(Vector3(1f, 1f, 1f))
         assertThat(map.heightMap.width).isEqualTo(640u)

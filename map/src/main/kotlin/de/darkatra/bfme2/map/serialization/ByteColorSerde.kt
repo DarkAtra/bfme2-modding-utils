@@ -19,24 +19,29 @@ internal class ByteColorSerde(
 
     override fun serialize(outputStream: OutputStream, data: Color) {
         preProcessor.preProcess(data, context).let {
-            outputStream.writeByte(it.r.toByte())
-            outputStream.writeByte(it.g.toByte())
-            outputStream.writeByte(it.b.toByte())
+            outputStream.writeByte(it.red.toByte())
+            outputStream.writeByte(it.green.toByte())
+            outputStream.writeByte(it.blue.toByte())
             outputStream.writeByte(0)
         }
     }
 
     override fun deserialize(inputStream: CountingInputStream): Color {
 
-        val r = inputStream.readByte().toInt()
-        val g = inputStream.readByte().toInt()
-        val b = inputStream.readByte().toInt()
+        val r = inputStream.readByte().toUInt()
+        val g = inputStream.readByte().toUInt()
+        val b = inputStream.readByte().toUInt()
+
         val unusedAlpha = inputStream.readByte()
         if (unusedAlpha != 0.toByte()) {
             throw InvalidDataException("Expected unusedAlpha to be 0 using ${ByteColorSerde::class.simpleName}.")
         }
 
-        return Color(r, g, b, 0).also {
+        return Color(
+            red = r,
+            green = g,
+            blue = b
+        ).also {
             postProcessor.postProcess(it, context)
         }
     }

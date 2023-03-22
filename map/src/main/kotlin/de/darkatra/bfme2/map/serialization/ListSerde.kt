@@ -76,12 +76,19 @@ internal class ListSerde<T>(
         preProcessor.preProcess(data, context).let { list ->
 
             val numberOfListEntries = list.size.toUInt()
-            // TODO: validate list length for all modes and sizeTypes
-            if (mode == Mode.DEFAULT) {
-                when (sizeType) {
+            when (mode) {
+                Mode.DEFAULT -> when (sizeType) {
                     SizeType.UINT -> outputStream.writeUInt(numberOfListEntries)
                     SizeType.USHORT -> outputStream.writeUShort(numberOfListEntries.toUShort())
                     SizeType.BYTE -> outputStream.writeByte(numberOfListEntries.toByte())
+                }
+
+                Mode.FIXED -> if (numberOfListEntries != size) {
+                    throw IllegalStateException("Expected '' to have size '$size'.")
+                }
+
+                Mode.SHARED_DATA -> if (numberOfListEntries != size) {
+                    throw IllegalStateException("Expected '' to have size '${context.sharedData[sharedDataKey]}'.")
                 }
             }
 
