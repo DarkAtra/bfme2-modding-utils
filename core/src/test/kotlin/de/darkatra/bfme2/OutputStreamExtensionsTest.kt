@@ -144,13 +144,119 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWrite7BitString() {
+        internal fun shouldWriteMaxIntValueAs7BitInt() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.write7BitInt(Int.MAX_VALUE)
+
+            assertThat(outputStream.toByteArray()).isEqualTo(
+                // 7 bit encoded, little endian version of Int.MAX_VALUE (0x7FFFFFFF)
+                byteArrayOf(
+                    0xFF.toByte(), // set most significant bit means: continue reading next bit
+                    0xFF.toByte(), // so only the 7 least significant bits are actual integer data
+                    0xFF.toByte(), // e.g. there are 28 set bits in the first 4 bytes
+                    0xFF.toByte(), // resulting in 0x0FFFFFFF
+                    0b00000111.toByte() // the remaining 4 bits (0b0111) are contained in the fifth bit
+                )
+            )
+        }
+
+        @Test
+        internal fun shouldWrite128As7BitInt() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.write7BitInt(128)
+
+            assertThat(outputStream.toByteArray()).isEqualTo(
+                // 7 bit encoded, little endian version of 128 (0x80)
+                byteArrayOf(
+                    0b1000_0000.toByte(), // set most significant bit means: continue reading next bit
+                    0x01.toByte(), // only the least significant bit is set resulting in 0b1000_0000 (0x80)
+                )
+            )
+        }
+
+        @Test
+        internal fun shouldWriteZeroAs7BitInt() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.write7BitInt(0)
+
+            assertThat(outputStream.toByteArray()).isEqualTo(
+                // 7 bit encoded, little endian version of 0 (0x00)
+                byteArrayOf(0x00.toByte())
+            )
+        }
+
+        @Test
+        internal fun shouldWriteNegativeOneAs7BitInt() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.write7BitInt(-1)
+
+            assertThat(outputStream.toByteArray()).isEqualTo(
+                // 7 bit encoded, little endian version of -1 (0xFFFFFFFF)
+                byteArrayOf(
+                    0xFF.toByte(), // set most significant bit means: continue reading next bit
+                    0xFF.toByte(), // so only the 7 least significant bits are actual integer data
+                    0xFF.toByte(), // e.g. there are 28 set bits in the first 4 bytes
+                    0xFF.toByte(), // resulting in 0xFFFFFFFF
+                    0x0F.toByte() // the remaining 4 bits (0b1111) are contained in the fifth bit
+                )
+            )
+        }
+
+        @Test
+        internal fun shouldWriteMinIntValueAs7BitInt() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.write7BitInt(Int.MIN_VALUE)
+
+            assertThat(outputStream.toByteArray()).isEqualTo(
+                // 7 bit encoded, little endian version of Int.MIN_VALUE (0x80000000)
+                byteArrayOf(
+                    0x80.toByte(), // set most significant bit means: continue reading next bit
+                    0x80.toByte(), // so only the 7 least significant bits are actual integer data
+                    0x80.toByte(), // e.g. there are 28 unset bits in the first 4 bytes
+                    0x80.toByte(), // resulting in 0x00000000
+                    0x08.toByte() // the remaining 4 bits (0b1000) are contained in the fifth bit
+                )
+            )
+        }
+
+        @Test
+        internal fun shouldFailToRead7BitIntWithInvalidFifthByte() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            outputStream.writeBytes(
+                byteArrayOf(
+                    0xFF.toByte(),
+                    0xFF.toByte(),
+                    0xFF.toByte(),
+                    0xFF.toByte(),
+                    0x1F.toByte() // fifth bit has 5 set bits which is invalid for 7 bit encoded ints
+                )
+            )
+
+            assertThrows<NumberFormatException> {
+                outputStream.toByteArray().inputStream().read7BitInt()
+            }
+        }
+
+        @Test
+        internal fun shouldWrite7BitIntPrefixedString() {
 
             val outputStream = ByteArrayOutputStream()
 
             val testString = (0 until 100).joinToString("") { "a" }
 
-            outputStream.write7BitString(testString)
+            outputStream.write7BitIntPrefixedString(testString)
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 byteArrayOf(
@@ -160,31 +266,54 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWrite7BitStringWithLengthOf200Characters() {
+        internal fun shouldWrite7BitIntPrefixedStringWithLengthOf128Characters() {
 
             val outputStream = ByteArrayOutputStream()
 
-            val testString = (0 until 200).joinToString("") { "a" }
+            val testString = (0 until 128).joinToString("") { "a" }
 
-            outputStream.write7BitString(testString)
+            outputStream.write7BitIntPrefixedString(testString)
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 byteArrayOf(
-                    200.toUByte().toByte(), 1, *(0 until 200).map { 97.toByte() }.toByteArray()
+                    128.toUByte().toByte(), 1, *(0 until 128).map { 97.toByte() }.toByteArray()
                 )
             )
         }
 
         @Test
-        internal fun shouldRoundtrip7BitString() {
+        internal fun shouldRoundtrip7BitIntPrefixedString() {
 
             val outputStream = ByteArrayOutputStream()
 
-            val testString = (0 until 200).joinToString("") { "a" }
+            val testString = (0 until 128).joinToString("") { "a" }
 
-            outputStream.write7BitString(testString)
+            outputStream.write7BitIntPrefixedString(testString)
 
-            assertThat(outputStream.toByteArray().inputStream().read7BitString()).isEqualTo(testString)
+            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+        }
+
+        @Test
+        internal fun shouldRoundtrip7BitIntPrefixedStringWithZeroLength() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            val testString = ""
+
+            outputStream.write7BitIntPrefixedString(testString)
+
+            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+        }
+
+        @Test
+        internal fun shouldFailToRead7BitIntPrefixedStringWithNegativeLength() {
+
+            val outputStream = ByteArrayOutputStream()
+            outputStream.write7BitInt(-1)
+
+            assertThrows<IllegalStateException> {
+                outputStream.toByteArray().inputStream().read7BitIntPrefixedString()
+            }
         }
     }
 }

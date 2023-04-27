@@ -31,7 +31,7 @@
 
     <groupId>de.darkatra.bfme2</groupId>
     <artifactId>bfme2-modding-utils</artifactId>
-    <version>0.2.9</version>
+    <version>1.0.0-next.4</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -44,16 +44,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
-        <kotlin.version>1.7.22</kotlin.version>
-        <java.version>11</java.version>
+        <kotlin.version>1.8.10</kotlin.version>
+        <java.version>17</java.version>
 
         <version.commons-io>2.11.0</version.commons-io>
-        <version.assertj>3.23.1</version.assertj>
-        <version.jmh>1.28</version.jmh>
-        <version.surefire>3.0.0-M7</version.surefire>
+        <version.guava>31.1-jre</version.guava>
+
+        <version.assertj>3.24.2</version.assertj>
+        <version.surefire>3.0.0-M8</version.surefire>
         <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
     </properties>
 
@@ -63,6 +64,11 @@
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
 
@@ -93,6 +99,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${version.commons-io}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
             </dependency>
 
             <!-- JUnit5 -->

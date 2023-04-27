@@ -7,11 +7,10 @@
     <parent>
         <groupId>de.darkatra.bfme2</groupId>
         <artifactId>bfme2-modding-utils</artifactId>
-        <version>0.2.9</version>
+        <version>1.0.0-next.4</version>
     </parent>
 
     <artifactId>big</artifactId>
-    <version>0.2.9</version>
 
     <dependencies>
         <dependency>

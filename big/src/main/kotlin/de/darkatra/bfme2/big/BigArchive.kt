@@ -4,9 +4,11 @@ import de.darkatra.bfme2.readNullTerminatedString
 import de.darkatra.bfme2.toBigEndianBytes
 import de.darkatra.bfme2.toBigEndianUInt
 import de.darkatra.bfme2.toLittleEndianBytes
+import java.io.FileNotFoundException
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
@@ -20,17 +22,17 @@ import kotlin.io.path.outputStream
  * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.Big/BigArchive.cs
  */
 class BigArchive(
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate") // public api
     val version: BigArchiveVersion,
     val path: Path
 ) {
 
     companion object {
-        const val HEADER_SIZE = 16u
+        const val HEADER_SIZE = 16u // FourCC (4Byte) + UInt (4Byte) + Int (4Byte) + UInt (4Byte)
 
         fun from(path: Path): BigArchive {
             if (!path.exists()) {
-                throw IllegalArgumentException("The specified path does not exist.")
+                throw FileNotFoundException("File '${path.absolutePathString()}' does not exist.")
             }
 
             val fourCCBytes = path.inputStream().use { it.readNBytes(4) }
@@ -50,7 +52,7 @@ class BigArchive(
 
     private val _entries: MutableList<BigArchiveEntry> = arrayListOf()
 
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate") // public api
     val entries
         get() = _entries.sortedWith(Comparator.comparing(BigArchiveEntry::name))
 
@@ -82,7 +84,7 @@ class BigArchive(
      *
      * @param name The name of the entry to delete.
      */
-    @Suppress("unused")
+    @Suppress("unused") // public api
     fun deleteEntry(name: String) {
         if (name.isBlank()) {
             throw IllegalArgumentException("Name must not be blank")
@@ -95,7 +97,7 @@ class BigArchive(
     /**
      * Reads the archive from disk.
      */
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate") // public api
     fun readFromDisk() {
         if (!path.exists()) {
             return
@@ -180,7 +182,7 @@ class BigArchive(
     }
 
     private fun calculateTableSize(): UInt {
-        // Each entry has 4 bytes for the offset + 4 for size and a null-terminated string
+        // Each entry has 4 bytes for the offset, 4 bytes for size, n+1 bytes for the null-terminated file name
         return entries.fold(0u) { acc, entry -> acc + 8u + entry.name.length.toUInt() + 1u }
     }
 
