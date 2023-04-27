@@ -1,0 +1,23 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base",
+        ":dependencyDashboard",
+        ":rebaseStalePrs",
+        ":renovatePrefix",
+        ":semanticCommits",
+        ":labels(dependencies)",
+        "group:allNonMajor",
+        "schedule:weekly"
+    ],
+    "packageRules": [
+        {
+            "matchPackagePatterns": "de.darkatra.bfme2:*",
+            "enabled": false
+        },
+        {
+            "matchPackagePatterns": "*",
+            "allowedVersions": "!/-.+\\.[0-9]+$/"
+        }
+    ]
+}
