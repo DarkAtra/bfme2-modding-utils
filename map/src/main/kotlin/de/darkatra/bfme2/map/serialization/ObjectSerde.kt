@@ -5,9 +5,11 @@ import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.isAccessible
 import de.darkatra.bfme2.map.Asset as AssetAnnotation
 
 internal class ObjectSerde<T : Any>(
@@ -18,10 +20,30 @@ internal class ObjectSerde<T : Any>(
     private val postProcessor: PostProcessor<T>
 ) : Serde<T> {
 
+    private val primaryConstructor = classOfT.primaryConstructor
+        ?: error("${classOfT.simpleName} is required to have a primary constructor.")
+
+    private val parameters = primaryConstructor.valueParameters
+
     private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
     override fun calculateByteCount(data: T): Long {
-        TODO("Not yet implemented")
+
+        return parameters.mapIndexed { index, parameter ->
+
+            val fieldForParameter = classOfT.members
+                .filter(KProperty::class::isInstance)
+                .first { field -> field.name == parameter.name }
+
+            if (fieldForParameter.isAccessible) {
+                @Suppress("UNCHECKED_CAST")
+                val serde = serdes[index] as Serde<Any>
+                val fieldData = fieldForParameter.call(data)!!
+                serde.calculateByteCount(fieldData)
+            } else {
+                0
+            }
+        }.sum()
     }
 
     override fun serialize(outputStream: OutputStream, data: T) {
@@ -30,11 +52,7 @@ internal class ObjectSerde<T : Any>(
 
     override fun deserialize(inputStream: CountingInputStream): T {
 
-        val primaryConstructor = classOfT.primaryConstructor
-            ?: error("${classOfT.simpleName} is required to have a primary constructor.")
-
         val expectedAsset = classOfT.findAnnotation<AssetAnnotation>()
-        val parameters = primaryConstructor.valueParameters
 
         if (expectedAsset != null) {
             val currentAsset = serializationContext.peek()

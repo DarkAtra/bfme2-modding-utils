@@ -14,8 +14,7 @@ internal class AssetListSerde<T>(
 
     override fun calculateByteCount(data: List<T>): Long {
         return data.sumOf {
-            // TODO: calculate byte count for asset header
-            entrySerde.calculateByteCount(it)
+            4 + 2 + 4 + entrySerde.calculateByteCount(it)
         }
     }
 
