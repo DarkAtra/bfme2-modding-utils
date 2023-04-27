@@ -23,7 +23,3 @@ mvn clean install
 ```
 
 **Thanks to the [OpenSage Team](https://github.com/OpenSAGE/OpenSAGE) for providing a reference implementation for most of these formats.**
-
-## Releases
-
-This software is still in development and may contain bugs. Pre releases are built from `next` branch.
