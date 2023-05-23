@@ -55,7 +55,7 @@
 
         <version.assertj>3.24.2</version.assertj>
         <version.surefire>3.1.0</version.surefire>
-        <version.maven-source-plugin>3.2.1</version.maven-source-plugin>
+        <version.maven-source-plugin>3.3.0</version.maven-source-plugin>
     </properties>
 
     <dependencyManagement>
