@@ -39,6 +39,7 @@
         <module>refpack</module>
         <module>big</module>
         <module>map</module>
+        <module>v-rising</module>
     </modules>
 
     <properties>
