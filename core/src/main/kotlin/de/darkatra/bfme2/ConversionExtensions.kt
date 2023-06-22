@@ -51,3 +51,5 @@ fun Byte.toBoolean(): Boolean = when (this) {
     1.toByte() -> true
     else -> throw ConversionException("Can't convert Byte '$this' to Boolean.")
 }
+
+fun ByteArray.toHexString(): String = joinToString(separator = " ") { eachByte -> "%02x".format(eachByte) }

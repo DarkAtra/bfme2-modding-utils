@@ -22,6 +22,13 @@ internal class ConversionExtensionsTest {
     }
 
     @Test
+    internal fun shouldConvertByteToHexString() {
+
+        val bytes = byteArrayOf(0xCC.toByte(), 0xFF.toByte())
+        assertThat(bytes.toHexString()).isEqualTo("cc ff")
+    }
+
+    @Test
     internal fun shouldNotConvertByteToBoolean() {
 
         byteArrayOf(

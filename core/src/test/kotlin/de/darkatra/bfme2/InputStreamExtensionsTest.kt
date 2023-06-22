@@ -75,6 +75,16 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
+        internal fun shouldReadULong() {
+
+            val bytes = byteArrayOf(0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
+
+            val inputStream = ByteArrayInputStream(bytes)
+
+            assertThat(inputStream.readULong()).isEqualTo(1uL)
+        }
+
+        @Test
         internal fun shouldReadFloat() {
 
             val bytes = byteArrayOf(0x00, 0x00, 0x80.toByte(), 0x3F)

@@ -10,6 +10,7 @@ fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
 fun InputStream.readUShort(): UShort = this.readNBytes(2).toLittleEndianUShort()
 fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
 fun InputStream.readUInt(): UInt = this.readNBytes(4).toLittleEndianUInt()
+fun InputStream.readULong(): ULong = this.readNBytes(8).toLittleEndianULong()
 fun InputStream.readFloat(): Float = this.readNBytes(4).toLittleEndianFloat()
 fun InputStream.readBoolean(): Boolean = this.readByte().toBoolean()
 fun InputStream.readUIntAsBoolean(): Boolean {
