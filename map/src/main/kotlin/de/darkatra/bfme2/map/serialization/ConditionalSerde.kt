@@ -38,6 +38,7 @@ internal class ConditionalSerde(
     }
 
     override fun calculateByteCount(data: Any): Long {
+        // TODO: validate that the serializationContext is updated during byte count calculation and peek() behaves as expected
         val assetName = serializationContext.peek().assetName
         val serde = serdes[assetName]
             ?: throw IllegalStateException("Could not find serde for '$assetName' calculating byte count for $currentElementName. Expected one of: ${serdes.keys}")

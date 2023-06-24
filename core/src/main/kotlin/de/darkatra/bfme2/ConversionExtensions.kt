@@ -43,8 +43,8 @@ fun ByteArray.toLittleEndianLong(): Long = ByteBuffer.wrap(this).order(ByteOrder
 fun ByteArray.toBigEndianULong(): ULong = toBigEndianLong().toULong()
 fun ByteArray.toLittleEndianULong(): ULong = toLittleEndianLong().toULong()
 
-fun ByteArray.toBigEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.toBigEndianInt())
-fun ByteArray.toLittleEndianFloat(): Float = java.lang.Float.intBitsToFloat(this.toLittleEndianInt())
+fun ByteArray.toBigEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.BIG_ENDIAN).getFloat()
+fun ByteArray.toLittleEndianFloat(): Float = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN).getFloat()
 
 fun Byte.toBoolean(): Boolean = when (this) {
     0.toByte() -> false

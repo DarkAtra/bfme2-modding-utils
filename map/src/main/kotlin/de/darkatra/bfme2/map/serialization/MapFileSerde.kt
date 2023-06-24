@@ -7,10 +7,10 @@ import de.darkatra.bfme2.map.toKClass
 import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 import kotlin.reflect.KProperty
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
-import kotlin.reflect.jvm.isAccessible
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -30,16 +30,16 @@ internal class MapFileSerde(
         return parameters.mapIndexed { index, parameter ->
 
             val fieldForParameter = MapFile::class.members
-                .filter(KProperty::class::isInstance)
+                .filterIsInstance<KProperty<*>>()
                 .first { field -> field.name == parameter.name }
 
-            if (fieldForParameter.isAccessible) {
+            if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
                 @Suppress("UNCHECKED_CAST")
                 val serde = serdes[index] as Serde<Any>
-                val fieldData = fieldForParameter.call(data)!!
-                serde.calculateByteCount(fieldData)
+                val fieldData = fieldForParameter.getter.call(data)!!
+                4 + 2 + 4 + serde.calculateByteCount(fieldData)
             } else {
-                0
+                throw IllegalStateException("Could not calculate byte count for parameter '${parameter.name}' because it's getter is not public or internal.")
             }
         }.sum()
     }

@@ -38,8 +38,11 @@ internal class HeightMapDependentMapSerde<V : Any>(
 
     override fun calculateByteCount(data: Table<UInt, UInt, V>): Long {
 
-        return data.rowKeySet().sumOf { x ->
-            data.columnKeySet().sumOf { y ->
+        val width = data.rowKeySet().size.toUInt()
+        val height = data.columnKeySet().size.toUInt()
+
+        return (0u until width step 1).sumOf { x ->
+            (0u until height step 1).sumOf { y ->
                 when (mode) {
                     Mode.DEFAULT -> valueSerde.calculateByteCount(data[x, y]!!)
                     else -> when (x > 0u && x % 8u == 0u) {

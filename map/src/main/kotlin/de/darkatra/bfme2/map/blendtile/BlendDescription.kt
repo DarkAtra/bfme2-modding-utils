@@ -10,7 +10,7 @@ import kotlin.experimental.or
 @PostProcess(using = BlendDescription.BlendDescriptionPostProcessor::class)
 data class BlendDescription(
     val secondaryTextureTile: UInt,
-    private val rawBlendDirection: @ListSerde.Properties(mode = ListSerde.Mode.FIXED, size = 4u) List<Byte>,
+    internal val rawBlendDirection: @ListSerde.Properties(mode = ListSerde.Mode.FIXED, size = 4u) List<Byte>,
     val flags: BlendFlags,
     val twoSided: Boolean,
     val magicValue1: UInt,

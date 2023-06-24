@@ -3,12 +3,8 @@ package de.darkatra.bfme2.map.blendtile
 import com.google.common.collect.Table
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.Asset
-import de.darkatra.bfme2.map.serialization.BlendCountSerde
-import de.darkatra.bfme2.map.serialization.HeightMapDependentMapSerde
+import de.darkatra.bfme2.map.serialization.*
 import de.darkatra.bfme2.map.serialization.HeightMapDependentMapSerde.Mode
-import de.darkatra.bfme2.map.serialization.ListSerde
-import de.darkatra.bfme2.map.serialization.SerializationContext
-import de.darkatra.bfme2.map.serialization.Serialize
 import de.darkatra.bfme2.map.serialization.argumentresolution.SerdesArgumentResolver
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
@@ -58,11 +54,11 @@ data class BlendTileData(
     @Serialize(using = HeightMapDependentMapSerde::class)
     Table<@SerdesArgumentResolver.Ignore UInt, @SerdesArgumentResolver.Ignore UInt, Boolean>,
     val textureCellCount: UInt,
-    private val blendsCount:
+    internal val blendsCount:
     @PostProcess(using = BlendCountPostProcessor::class)
     @Serialize(using = BlendCountSerde::class)
     UInt,
-    private val cliffBlendsCount:
+    internal val cliffBlendsCount:
     @PostProcess(using = CliffBlendCountPostProcessor::class)
     @Serialize(using = BlendCountSerde::class)
     UInt,
