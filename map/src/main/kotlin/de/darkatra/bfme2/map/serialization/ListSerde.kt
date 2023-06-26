@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readByte
@@ -8,7 +9,6 @@ import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.writeByte
 import de.darkatra.bfme2.writeUInt
 import de.darkatra.bfme2.writeUShort
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 
 @UseSerdeProperties(ListSerde.Properties::class)

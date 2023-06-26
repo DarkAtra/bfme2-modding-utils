@@ -1,5 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.ByteStreams
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.MapFile
@@ -7,8 +9,6 @@ import de.darkatra.bfme2.read7BitIntPrefixedString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.refpack.RefPackInputStream
-import org.apache.commons.io.IOUtils
-import org.apache.commons.io.input.CountingInputStream
 import java.io.BufferedInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -26,13 +26,10 @@ import kotlin.time.measureTime
 class MapFileReader {
 
     companion object {
-        private const val UNCOMPRESSED_FOUR_CC = "CkMp"
-        private const val REFPACK_FOUR_CC = "EAR\u0000"
-        private const val ZLIB_FOUR_CC = "ZL5\u0000"
 
         internal fun readAssets(inputStream: CountingInputStream, serializationContext: SerializationContext, callback: (assetName: String) -> Unit) {
 
-            while (inputStream.byteCount < serializationContext.currentEndPosition) {
+            while (inputStream.count < serializationContext.currentEndPosition) {
 
                 val assetIndex = inputStream.readUInt()
                 val assetName = serializationContext.getAssetName(assetIndex)
@@ -41,14 +38,14 @@ class MapFileReader {
                     assetName = assetName,
                     assetVersion = inputStream.readUShort(),
                     assetSize = inputStream.readUInt().toLong(),
-                    startPosition = inputStream.byteCount
+                    startPosition = inputStream.count
                 )
 
                 serializationContext.push(currentAsset)
                 callback(assetName)
                 serializationContext.pop()
 
-                val currentEndPosition = inputStream.byteCount
+                val currentEndPosition = inputStream.count
                 val expectedEndPosition = currentAsset.endPosition
                 if (!serializationContext.debugMode && currentEndPosition != expectedEndPosition) {
                     throw InvalidDataException("Error reading '${currentAsset.assetName}'. Expected reader to be at position $expectedEndPosition, but was at $currentEndPosition.")
@@ -75,9 +72,9 @@ class MapFileReader {
     fun read(bufferedInputStream: BufferedInputStream): MapFile {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
-        val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
 
-        return countingInputStream.use {
+        return CountingInputStream(decodeIfNecessary(bufferedInputStream)).use { countingInputStream ->
+
             readAndValidateFourCC(countingInputStream)
 
             val serializationContext = SerializationContext(true)
@@ -121,20 +118,20 @@ class MapFileReader {
         }
 
         bufferedInputStream.mark(Int.MAX_VALUE)
-        val inputStreamSize = IOUtils.consume(decodeIfNecessary(bufferedInputStream))
+        val inputStreamSize = ByteStreams.exhaust(decodeIfNecessary(bufferedInputStream))
         bufferedInputStream.reset()
 
         return inputStreamSize
     }
 
-    private fun readAssetNames(reader: CountingInputStream): Map<UInt, String> {
+    private fun readAssetNames(inputStream: CountingInputStream): Map<UInt, String> {
 
-        val numberOfAssetStrings = reader.readUInt()
+        val numberOfAssetStrings = inputStream.readUInt()
 
         val assetNames = mutableMapOf<UInt, String>()
         for (i in numberOfAssetStrings downTo 1u step 1) {
-            val assetName = reader.read7BitIntPrefixedString()
-            val assetIndex = reader.readUInt()
+            val assetName = inputStream.read7BitIntPrefixedString()
+            val assetIndex = inputStream.readUInt()
             if (assetIndex != i) {
                 throw IllegalStateException("Illegal assetIndex for '$assetName'.")
             }
@@ -150,19 +147,19 @@ class MapFileReader {
 
         return when (fourCCBytes.toString(StandardCharsets.UTF_8)) {
             // unread 4 bytes to make it possible to read them again when actually parsing the map data
-            UNCOMPRESSED_FOUR_CC -> pushbackInputStream.also { it.unread(fourCCBytes) }
+            MapFileCompression.UNCOMPRESSED.fourCC -> pushbackInputStream.also { it.unread(fourCCBytes) }
             // skip 4 size bytes, we don't need that information
-            REFPACK_FOUR_CC -> RefPackInputStream(SkippingInputStream(pushbackInputStream, 4))
+            MapFileCompression.REFPACK.fourCC -> RefPackInputStream(SkippingInputStream(pushbackInputStream, 4))
             // skip 4 size bytes, we don't need that information
-            ZLIB_FOUR_CC -> InflaterInputStream(SkippingInputStream(pushbackInputStream, 4))
+            MapFileCompression.ZLIB.fourCC -> InflaterInputStream(SkippingInputStream(pushbackInputStream, 4))
             else -> throw UnsupportedEncodingException("Encoding '$fourCCBytes' is not supported.")
         }
     }
 
     private fun readAndValidateFourCC(inputStream: InputStream) {
-        val fourCC = inputStream.readNBytes(4).toString(StandardCharsets.UTF_8)
-        if (fourCC != UNCOMPRESSED_FOUR_CC) {
-            throw InvalidDataException("Invalid four character code. Expected '$UNCOMPRESSED_FOUR_CC' but found '$fourCC'.")
+        val fourCC = inputStream.readNBytes(4).toString(StandardCharsets.US_ASCII)
+        if (fourCC != MapFileCompression.UNCOMPRESSED.fourCC) {
+            throw InvalidDataException("Invalid four character code. Expected '${MapFileCompression.UNCOMPRESSED.fourCC}' but found '$fourCC'.")
         }
     }
 }

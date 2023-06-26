@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.scripting.Script
@@ -13,7 +14,6 @@ import de.darkatra.bfme2.readBoolean
 import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.writeBoolean
 import de.darkatra.bfme2.writeUShortPrefixedString
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 import kotlin.reflect.full.findAnnotation
 

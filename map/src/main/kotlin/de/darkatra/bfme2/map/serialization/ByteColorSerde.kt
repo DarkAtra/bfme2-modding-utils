@@ -1,12 +1,12 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readByte
 import de.darkatra.bfme2.writeByte
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 
 internal class ByteColorSerde(

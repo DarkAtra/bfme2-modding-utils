@@ -1,6 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
-import org.apache.commons.io.input.CountingInputStream
+import com.google.common.io.CountingInputStream
 
 internal interface Deserializer<T> {
 

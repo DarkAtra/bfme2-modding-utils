@@ -1,9 +1,9 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 

@@ -1,11 +1,11 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.property.PropertyKey
 import de.darkatra.bfme2.map.property.PropertyType
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.toLittleEndianUInt
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 
 internal class PropertyKeySerde(

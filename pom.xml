@@ -50,7 +50,6 @@
         <kotlin.version>1.8.22</kotlin.version>
         <java.version>17</java.version>
 
-        <version.commons-io>2.13.0</version.commons-io>
         <version.guava>32.0.0-jre</version.guava>
 
         <version.assertj>3.24.2</version.assertj>
@@ -94,13 +93,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- IO Utils -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${version.commons-io}</version>
-            </dependency>
-
+            <!-- IO Utils and Data Structures -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>

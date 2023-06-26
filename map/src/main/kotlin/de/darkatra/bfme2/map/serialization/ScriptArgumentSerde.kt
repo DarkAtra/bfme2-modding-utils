@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
+import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.scripting.ScriptArgument
 import de.darkatra.bfme2.map.scripting.ScriptArgumentType
@@ -11,7 +12,6 @@ import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.writeFloat
 import de.darkatra.bfme2.writeInt
 import de.darkatra.bfme2.writeUShortPrefixedString
-import org.apache.commons.io.input.CountingInputStream
 import java.io.OutputStream
 
 internal class ScriptArgumentSerde(
