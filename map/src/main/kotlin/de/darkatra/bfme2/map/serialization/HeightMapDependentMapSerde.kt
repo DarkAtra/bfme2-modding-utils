@@ -45,7 +45,7 @@ internal class HeightMapDependentMapSerde<V : Any>(
             (0u until height step 1).sumOf { y ->
                 when (mode) {
                     Mode.DEFAULT -> valueSerde.calculateByteCount(data[x, y]!!)
-                    else -> when (x > 0u && x % 8u == 0u) {
+                    else -> when (x % 8u == 0u) {
                         true -> 1
                         else -> 0
                     }
@@ -67,6 +67,7 @@ internal class HeightMapDependentMapSerde<V : Any>(
                     when (mode) {
                         Mode.DEFAULT -> valueSerde.serialize(outputStream, map[x, y]!!)
                         else -> {
+                            // FIXME: this if statement does look weird
                             if (x > 0u && x % 8u == 0u) {
                                 outputStream.writeByte(temp)
                             }

@@ -27,7 +27,7 @@ class MapFileSerdeTest {
         // TODO: use MapFileWriter to calculate the byte count, this ensures that the assetNames are included in the calculation
         val actualMapFileSize = mapFileSerde.calculateByteCount(map)
 
-        // 1382 is the byte count of the assetNames
+        // 1382 is the byte count of the assetNames for this particular map
         assertThat(actualMapFileSize + 1382).isEqualTo(expectedMapFileSize)
     }
 
