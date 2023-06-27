@@ -29,33 +29,35 @@ internal data class DataSectionLeaf(
  * Represents multiple sections of data in a map file that somewhat belong together.
  * Think of it as a class, it's basically a container for multiple [DataSection] objects.
  */
-internal open class DataSectionHolder(
-    internal open val containingData: List<DataSection>,
-    internal open val assetName: String? = null,
-    internal open val assetVersion: UShort? = null
+internal data class DataSectionHolder(
+    internal val containingData: List<DataSection>,
+    internal val assetName: String? = null,
+    internal val assetVersion: UShort? = null
 ) : DataSection {
 
     override val size: Long
-        get() = when (isAsset) {
+        get() = when (isVersionedAsset) {
             // each asset has a header of 4 bytes for the assetIndex, 2 bytes for the assetVersion and 4 bytes for the assetSize
             true -> 4 + 2 + 4 + containingData.sumOf(DataSection::size)
             false -> containingData.sumOf(DataSection::size)
         }
 
-    internal open val isAsset: Boolean
-        get() = assetName != null && assetVersion != null
-}
+    internal val isAsset: Boolean
+        get() = assetName != null
 
-/**
- * A special [DataSectionHolder] that represents the root of a map file.
- * The only difference to a regular [DataSectionHolder] is that it's an asset but does not require the 10 byte asset header.
- */
-internal class MapFileDataSectionHolder(
-    containingData: List<DataSection>
-) : DataSectionHolder(containingData, "MapFile", 0u) {
+    internal val isVersionedAsset: Boolean
+        get() = isAsset && assetVersion != null
 
-    override val size: Long
-        get() = containingData.sumOf(DataSection::size)
+    internal fun flatten(): List<DataSectionHolder> {
+        return flatten(containingData.filterIsInstance<DataSectionHolder>())
+    }
 
-    override val isAsset: Boolean = true
+    private fun flatten(list: List<DataSectionHolder>): List<DataSectionHolder> {
+        return list.flatMap {
+            buildList {
+                add(it)
+                addAll(flatten(it.containingData.filterIsInstance<DataSectionHolder>()))
+            }
+        }
+    }
 }

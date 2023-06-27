@@ -17,7 +17,7 @@ internal class FourByteColorSerde(
     private val postProcessor: PostProcessor<Color>
 ) : Serde<Color> {
 
-    override fun collectDataSections(data: Color): DataSection = DataSectionLeaf(4)
+    override fun calculateDataSection(data: Color): DataSection = DataSectionLeaf(4)
 
     override fun serialize(outputStream: OutputStream, data: Color) {
         preProcessor.preProcess(data, context).let {

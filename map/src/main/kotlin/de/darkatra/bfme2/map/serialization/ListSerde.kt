@@ -16,6 +16,7 @@ import java.io.OutputStream
 
 @UseSerdeProperties(ListSerde.Properties::class)
 internal class ListSerde<T>(
+    annotationProcessingContext: AnnotationProcessingContext,
     private val context: SerializationContext,
     private val entrySerde: Serde<T>,
     private val preProcessor: PreProcessor<List<T>>,
@@ -26,6 +27,8 @@ internal class ListSerde<T>(
     private val size: UInt,
     private val sharedDataKey: String
 ) : Serde<List<T>> {
+
+    private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
     init {
         if (mode == Mode.FIXED && size == 0u) {
@@ -60,7 +63,7 @@ internal class ListSerde<T>(
         BYTE
     }
 
-    override fun collectDataSections(data: List<T>): DataSection {
+    override fun calculateDataSection(data: List<T>): DataSection {
         return DataSectionHolder(
             containingData = buildList {
                 if (mode == Mode.DEFAULT) {
@@ -72,7 +75,7 @@ internal class ListSerde<T>(
                         }
                     )
                 }
-                addAll(data.map { entrySerde.collectDataSections(it) })
+                addAll(data.map { entrySerde.calculateDataSection(it) })
             }
         )
     }
@@ -82,19 +85,11 @@ internal class ListSerde<T>(
         preProcessor.preProcess(data, context).let { list ->
 
             val numberOfListEntries = list.size.toUInt()
-            when (mode) {
-                Mode.DEFAULT -> when (sizeType) {
+            if (mode == Mode.DEFAULT) {
+                when (sizeType) {
                     SizeType.UINT -> outputStream.writeUInt(numberOfListEntries)
                     SizeType.USHORT -> outputStream.writeUShort(numberOfListEntries.toUShort())
                     SizeType.BYTE -> outputStream.writeByte(numberOfListEntries.toByte())
-                }
-
-                Mode.FIXED -> if (numberOfListEntries != size) {
-                    throw IllegalStateException("Expected '' to have size '$size'.")
-                }
-
-                Mode.SHARED_DATA -> if (numberOfListEntries != size) {
-                    throw IllegalStateException("Expected '' to have size '${context.sharedData[sharedDataKey]}'.")
                 }
             }
 

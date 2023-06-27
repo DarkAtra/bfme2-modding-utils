@@ -30,10 +30,10 @@ internal class PropertySerde(
 
     private val propertyKeySerde = PropertyKeySerde(serdeFactory, serializationContext, NoopPreProcessor(), NoopPostProcessor())
 
-    override fun collectDataSections(data: Property): DataSection {
+    override fun calculateDataSection(data: Property): DataSection {
         return DataSectionHolder(
             containingData = listOf(
-                propertyKeySerde.collectDataSections(data.key),
+                propertyKeySerde.calculateDataSection(data.key),
                 when (data.key.propertyType) {
                     PropertyType.BOOLEAN -> DataSectionLeaf.BOOLEAN
                     PropertyType.INTEGER -> DataSectionLeaf.INT

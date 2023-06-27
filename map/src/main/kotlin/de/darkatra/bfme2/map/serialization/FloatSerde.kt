@@ -21,5 +21,5 @@ internal class FloatSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: Float): DataSection = DataSectionLeaf.FLOAT
+    override fun calculateDataSection(data: Float): DataSection = DataSectionLeaf.FLOAT
 }

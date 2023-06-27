@@ -21,5 +21,5 @@ internal class UShortPrefixedStringSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: String): DataSection = DataSectionLeaf(2L + data.length)
+    override fun calculateDataSection(data: String): DataSection = DataSectionLeaf(2L + data.length)
 }

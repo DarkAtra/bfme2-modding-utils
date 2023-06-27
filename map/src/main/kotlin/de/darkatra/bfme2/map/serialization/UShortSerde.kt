@@ -21,5 +21,5 @@ internal class UShortSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: UShort): DataSection = DataSectionLeaf.SHORT
+    override fun calculateDataSection(data: UShort): DataSection = DataSectionLeaf.SHORT
 }

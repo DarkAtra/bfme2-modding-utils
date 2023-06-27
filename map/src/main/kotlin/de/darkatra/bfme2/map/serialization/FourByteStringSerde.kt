@@ -15,7 +15,7 @@ internal class FourByteStringSerde(
     private val postProcessor: PostProcessor<String>
 ) : Serde<String> {
 
-    override fun collectDataSections(data: String): DataSection = DataSectionLeaf(4)
+    override fun calculateDataSection(data: String): DataSection = DataSectionLeaf(4)
 
     override fun serialize(outputStream: OutputStream, data: String) {
         preProcessor.preProcess(data, context).let {

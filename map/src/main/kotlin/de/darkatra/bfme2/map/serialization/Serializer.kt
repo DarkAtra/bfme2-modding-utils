@@ -5,7 +5,7 @@ import java.io.OutputStream
 
 internal interface Serializer<T> {
 
-    fun collectDataSections(data: T): DataSection
+    fun calculateDataSection(data: T): DataSection
 
     fun serialize(outputStream: OutputStream, data: T)
 }

@@ -25,27 +25,28 @@ internal class ObjectSerde<T : Any>(
     private val primaryConstructor = classOfT.primaryConstructor
         ?: error("${classOfT.simpleName} is required to have a primary constructor.")
 
-    private val parameters = primaryConstructor.valueParameters
     private val assetAnnotation = classOfT.findAnnotation<AssetAnnotation>()
+    private val parameters = primaryConstructor.valueParameters
+    private val parameterToField = parameters.associateWith { parameter ->
+        val fieldForParameter = classOfT.members
+            .filterIsInstance<KProperty<*>>()
+            .find { field -> field.name == parameter.name }!!
+        if (fieldForParameter.getter.visibility != KVisibility.PUBLIC && fieldForParameter.getter.visibility != KVisibility.INTERNAL) {
+            throw IllegalStateException("Field for parameter '${parameter.name}' is not public or internal.")
+        }
+        fieldForParameter
+    }
 
     private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
-    override fun collectDataSections(data: T): DataSection {
+    override fun calculateDataSection(data: T): DataSection {
+
         return DataSectionHolder(
-            containingData = parameters.mapIndexed { index, parameter ->
-
-                val fieldForParameter = classOfT.members
-                    .filterIsInstance<KProperty<*>>()
-                    .first { field -> field.name == parameter.name }
-
-                if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
-                    @Suppress("UNCHECKED_CAST")
-                    val serde = serdes[index] as Serde<Any>
-                    val fieldData = fieldForParameter.getter.call(data)!!
-                    serde.collectDataSections(fieldData)
-                } else {
-                    throw IllegalStateException("Could not collect data for parameter '${parameter.name}' because it's getter is not public or internal.")
-                }
+            containingData = parameterToField.entries.mapIndexed { index, (_, fieldForParameter) ->
+                @Suppress("UNCHECKED_CAST")
+                val serde = serdes[index] as Serde<Any>
+                val fieldData = fieldForParameter.getter.call(data)!!
+                serde.calculateDataSection(fieldData)
             },
             assetName = assetAnnotation?.name,
             assetVersion = assetAnnotation?.version
@@ -53,7 +54,12 @@ internal class ObjectSerde<T : Any>(
     }
 
     override fun serialize(outputStream: OutputStream, data: T) {
-        TODO("Not yet implemented")
+        parameterToField.entries.forEachIndexed { index, (_, fieldForParameter) ->
+            @Suppress("UNCHECKED_CAST")
+            val serde = serdes[index] as Serde<Any>
+            val fieldData = fieldForParameter.getter.call(data)!!
+            serde.serialize(outputStream, fieldData)
+        }
     }
 
     override fun deserialize(inputStream: CountingInputStream): T {

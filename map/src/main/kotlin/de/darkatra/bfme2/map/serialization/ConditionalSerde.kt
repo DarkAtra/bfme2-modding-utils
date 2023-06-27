@@ -38,12 +38,12 @@ internal class ConditionalSerde(
         Pair(assetName.name, serdeFactory.getSerde(assetType))
     }
 
-    override fun collectDataSections(data: Any): DataSection {
+    override fun calculateDataSection(data: Any): DataSection {
         val asset = data::class.findAnnotation<Asset>()
             ?: throw IllegalStateException("Could not find asset annotation for $currentElementName. Expected one of: ${serdes.keys}")
         val serde = serdes[asset.name]
             ?: throw IllegalStateException("Could not find serde for '${asset.name}' calculating byte count for $currentElementName. Expected one of: ${serdes.keys}")
-        return serde.collectDataSections(data)
+        return serde.calculateDataSection(data)
     }
 
     override fun serialize(outputStream: OutputStream, data: Any) {

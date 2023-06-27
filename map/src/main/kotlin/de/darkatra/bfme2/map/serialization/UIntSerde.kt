@@ -21,5 +21,5 @@ internal class UIntSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: UInt): DataSection = DataSectionLeaf.INT
+    override fun calculateDataSection(data: UInt): DataSection = DataSectionLeaf.INT
 }

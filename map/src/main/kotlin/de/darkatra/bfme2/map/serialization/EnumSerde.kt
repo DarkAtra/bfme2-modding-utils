@@ -34,8 +34,8 @@ internal class EnumSerde<T : Enum<*>>(
         }
     }
 
-    override fun collectDataSections(data: T): DataSection {
-        return serde.collectDataSections(enumValueGetter.call(data)!!)
+    override fun calculateDataSection(data: T): DataSection {
+        return serde.calculateDataSection(enumValueGetter.call(data)!!)
     }
 
     override fun serialize(outputStream: OutputStream, data: T) {

@@ -21,5 +21,5 @@ internal class BooleanSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: Boolean): DataSection = DataSectionLeaf.BOOLEAN
+    override fun calculateDataSection(data: Boolean): DataSection = DataSectionLeaf.BOOLEAN
 }

@@ -1,10 +1,12 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingOutputStream
+import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.write7BitIntPrefixedString
 import de.darkatra.bfme2.writeUInt
+import de.darkatra.bfme2.writeUShort
 import java.io.BufferedOutputStream
 import java.io.OutputStream
 import java.io.UnsupportedEncodingException
@@ -15,10 +17,27 @@ import java.util.zip.DeflaterOutputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
+import kotlin.reflect.full.findAnnotation
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 class MapFileWriter {
+
+    companion object {
+
+        internal fun writeAsset(outputStream: OutputStream, serializationContext: SerializationContext, data: Any) {
+
+            val asset = data::class.findAnnotation<Asset>()
+                ?: throw IllegalStateException("'${data::class.qualifiedName}' must be annotated with '${Asset::class.simpleName}'.")
+
+            val assetIndex = serializationContext.getAssetIndex(asset.name)
+            val assetVersion = asset.version
+
+            outputStream.writeUInt(assetIndex)
+            outputStream.writeUShort(assetVersion)
+            outputStream.writeUInt(serializationContext.getAssetDataSection(asset.name).size.toUInt())
+        }
+    }
 
     @Suppress("unused") // public api
     fun write(file: Path, mapFile: MapFile) {
@@ -49,14 +68,22 @@ class MapFileWriter {
                 val annotationProcessingContext = AnnotationProcessingContext(false)
                 val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
-                val mapFileSerde = serdeFactory.getSerde(MapFile::class)
+                val mapFileSerde: MapFileSerde = serdeFactory.getSerde(MapFile::class) as MapFileSerde
                 annotationProcessingContext.invalidate()
 
-                // FIXME: correctly calculate asset names from data sections
-                val dataSections = mapFileSerde.collectDataSections(mapFile)
+                val assetDataSections = mapFileSerde.calculateDataSection(mapFile).flatten()
+                    .filter { it.isAsset }
+                    .distinctBy { it.assetName }
+                serializationContext.setAssetDataSections(assetDataSections.associateBy { it.assetName!! })
+
+                val assetNames = assetDataSections
+                    .reversed()
+                    .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
+                    .toMap()
+                serializationContext.setAssetNames(assetNames)
 
                 measureTime {
-                    writeAssetNames(mapOf(), countingOutputStream)
+                    writeAssetNames(assetNames, countingOutputStream)
                 }.also { elapsedTime ->
                     if (serializationContext.debugMode) {
                         println("Writing asset names took $elapsedTime.")
@@ -65,8 +92,6 @@ class MapFileWriter {
 
                 mapFileSerde.serialize(bufferedOutputStream, mapFile)
                 bufferedOutputStream.flush()
-
-                serializationContext.pop()
             }
         }
     }

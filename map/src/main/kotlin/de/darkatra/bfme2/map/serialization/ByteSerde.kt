@@ -21,5 +21,5 @@ internal class ByteSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: Byte): DataSection = DataSectionLeaf.BYTE
+    override fun calculateDataSection(data: Byte): DataSection = DataSectionLeaf.BYTE
 }

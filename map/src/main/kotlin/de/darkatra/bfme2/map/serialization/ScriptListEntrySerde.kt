@@ -34,15 +34,15 @@ internal class ScriptListEntrySerde(
     private val assetListSerde = AssetListSerde(serializationContext, this, NoopPreProcessor(), NoopPostProcessor())
     private val scriptSerde = serdeFactory.getSerde(Script::class)
 
-    override fun collectDataSections(data: ScriptListEntry): DataSection {
+    override fun calculateDataSection(data: ScriptListEntry): DataSection {
         return when (data) {
-            is Script -> scriptSerde.collectDataSections(data)
+            is Script -> scriptSerde.calculateDataSection(data)
             is ScriptFolder -> DataSectionHolder(
                 containingData = listOf(
                     DataSectionLeaf(2L + data.name.length),
                     DataSectionLeaf.BOOLEAN,
                     DataSectionLeaf.BOOLEAN,
-                    assetListSerde.collectDataSections(data.scriptListEntries)
+                    assetListSerde.calculateDataSection(data.scriptListEntries)
                 )
             )
         }

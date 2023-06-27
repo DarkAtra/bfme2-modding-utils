@@ -14,10 +14,10 @@ internal class AssetListSerde<T : Any>(
     private val postProcessor: PostProcessor<List<T>>
 ) : Serde<List<T>> {
 
-    override fun collectDataSections(data: List<T>): DataSection {
+    override fun calculateDataSection(data: List<T>): DataSection {
         return DataSectionHolder(
             containingData = data.map {
-                entrySerde.collectDataSections(it)
+                entrySerde.calculateDataSection(it)
             }
         )
     }
@@ -26,7 +26,7 @@ internal class AssetListSerde<T : Any>(
 
         preProcessor.preProcess(data, serializationContext).let { list ->
             list.forEach { entry ->
-                // TODO: serialize asset header
+                MapFileWriter.writeAsset(outputStream, serializationContext, entry)
                 entrySerde.serialize(outputStream, entry)
             }
         }

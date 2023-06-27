@@ -16,8 +16,8 @@ internal class BlendCountSerde(
 
     private val uIntSerde = UIntSerde(context, NoopPreProcessor(), NoopPostProcessor())
 
-    override fun collectDataSections(data: UInt): DataSection {
-        return uIntSerde.collectDataSections(data)
+    override fun calculateDataSection(data: UInt): DataSection {
+        return uIntSerde.calculateDataSection(data)
     }
 
     override fun serialize(outputStream: OutputStream, data: UInt) {

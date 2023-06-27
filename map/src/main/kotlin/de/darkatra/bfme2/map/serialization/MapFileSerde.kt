@@ -3,9 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
-import de.darkatra.bfme2.map.serialization.model.DataSection
-import de.darkatra.bfme2.map.serialization.model.MapFileDataSectionHolder
-import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
 import de.darkatra.bfme2.map.toKClass
 import java.io.OutputStream
 import kotlin.reflect.KProperty
@@ -18,37 +16,54 @@ import kotlin.time.measureTime
 
 internal class MapFileSerde(
     private val serializationContext: SerializationContext,
-    private val serdes: List<Serde<*>>,
-    private val postProcessor: PostProcessor<MapFile>
+    private val serdes: List<Serde<*>>
 ) : Serde<MapFile> {
 
     private val primaryConstructor = MapFile::class.primaryConstructor
         ?: error("${MapFile::class.simpleName} is required to have a primary constructor.")
 
     private val parameters = primaryConstructor.valueParameters
+    private val parameterToField = parameters.associateWith { parameter ->
+        val fieldForParameter = MapFile::class.members
+            .filterIsInstance<KProperty<*>>()
+            .find { field -> field.name == parameter.name }!!
+        if (fieldForParameter.getter.visibility != KVisibility.PUBLIC && fieldForParameter.getter.visibility != KVisibility.INTERNAL) {
+            throw IllegalStateException("Field for parameter '${parameter.name}' is not public or internal.")
+        }
+        fieldForParameter
+    }
 
-    override fun collectDataSections(data: MapFile): DataSection {
+    override fun calculateDataSection(data: MapFile): DataSectionHolder {
 
-        return MapFileDataSectionHolder(
-            containingData = parameters.mapIndexed { index, parameter ->
-                val fieldForParameter = MapFile::class.members
-                    .filterIsInstance<KProperty<*>>()
-                    .first { field -> field.name == parameter.name }
-
-                if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
-                    @Suppress("UNCHECKED_CAST")
-                    val serde = serdes[index] as Serde<Any>
-                    val fieldData = fieldForParameter.getter.call(data)!!
-                    serde.collectDataSections(fieldData)
-                } else {
-                    throw IllegalStateException("Could not collect data sections for parameter '${parameter.name}' because it's getter is not public or internal.")
-                }
-            }
+        return DataSectionHolder(
+            containingData = parameterToField.entries.mapIndexed { index, (p, fieldForParameter) ->
+                @Suppress("UNCHECKED_CAST")
+                val serde = serdes[index] as Serde<Any>
+                val fieldData = fieldForParameter.getter.call(data)!!
+                serde.calculateDataSection(fieldData)
+            },
+            assetName = "MapFile"
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun serialize(outputStream: OutputStream, data: MapFile) {
-        TODO("Not yet implemented")
+
+        // TODO: check if we need to preserve the order in which we write the data
+        parameterToField.entries.forEachIndexed { index, (parameter, fieldForParameter) ->
+            @Suppress("UNCHECKED_CAST")
+            val serde = serdes[index] as Serde<Any>
+            val fieldData = fieldForParameter.getter.call(data)!!
+
+            measureTime {
+                MapFileWriter.writeAsset(outputStream, serializationContext, fieldData)
+                serde.serialize(outputStream, fieldData)
+            }.also { elapsedTime ->
+                if (serializationContext.debugMode) {
+                    println("Deserialization of '${parameter.name}' took $elapsedTime.")
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalTime::class)
@@ -80,8 +95,6 @@ internal class MapFileSerde(
             }
         }
 
-        return primaryConstructor.call(*values).also {
-            postProcessor.postProcess(it, serializationContext)
-        }
+        return primaryConstructor.call(*values)
     }
 }

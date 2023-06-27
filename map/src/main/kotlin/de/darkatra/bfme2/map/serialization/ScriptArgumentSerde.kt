@@ -26,10 +26,10 @@ internal class ScriptArgumentSerde(
 
     private val scriptArgumentTypeSerde: Serde<ScriptArgumentType> = serdeFactory.getSerde(ScriptArgumentType::class)
 
-    override fun collectDataSections(data: ScriptArgument): DataSection {
+    override fun calculateDataSection(data: ScriptArgument): DataSection {
         return DataSectionHolder(
             containingData = listOf(
-                scriptArgumentTypeSerde.collectDataSections(data.argumentType),
+                scriptArgumentTypeSerde.calculateDataSection(data.argumentType),
                 when (data.argumentType) {
                     ScriptArgumentType.POSITION_COORDINATE -> DataSectionLeaf(4 * 3)
                     else -> DataSectionLeaf(4L + 4L + 2L + data.stringValue!!.length)

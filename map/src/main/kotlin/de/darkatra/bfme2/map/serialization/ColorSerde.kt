@@ -17,7 +17,7 @@ internal class ColorSerde(
 
     private val uIntSerde = UIntSerde(context, NoopPreProcessor(), NoopPostProcessor())
 
-    override fun collectDataSections(data: Color): DataSection = uIntSerde.collectDataSections(data.rgba)
+    override fun calculateDataSection(data: Color): DataSection = uIntSerde.calculateDataSection(data.rgba)
 
     override fun serialize(outputStream: OutputStream, data: Color) {
         preProcessor.preProcess(data, context).let {

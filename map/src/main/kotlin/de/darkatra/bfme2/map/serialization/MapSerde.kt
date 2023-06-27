@@ -48,20 +48,20 @@ internal class MapSerde<K, V>(
         VALUE_FIRST
     }
 
-    override fun collectDataSections(data: Map<K, V>): DataSection {
+    override fun calculateDataSection(data: Map<K, V>): DataSection {
         return DataSectionHolder(
             containingData = buildList {
                 add(DataSectionLeaf.INT)
                 data.entries.map { (key, value) ->
                     when (order) {
                         DeserializationOrder.KEY_FIRST -> {
-                            add(keySerde.collectDataSections(key))
-                            add(valueSerde.collectDataSections(value))
+                            add(keySerde.calculateDataSection(key))
+                            add(valueSerde.calculateDataSection(value))
                         }
 
                         DeserializationOrder.VALUE_FIRST -> {
-                            add(valueSerde.collectDataSections(value))
-                            add(keySerde.collectDataSections(key))
+                            add(valueSerde.calculateDataSection(value))
+                            add(keySerde.calculateDataSection(key))
                         }
                     }
                 }

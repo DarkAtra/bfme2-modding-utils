@@ -8,6 +8,7 @@ import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
 import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import de.darkatra.bfme2.toLittleEndianBytes
 import de.darkatra.bfme2.toLittleEndianUInt
 import java.io.OutputStream
 
@@ -20,12 +21,13 @@ internal class PropertyKeySerde(
 
     private val propertyTypeSerde: Serde<PropertyType> = serdeFactory.getSerde(PropertyType::class)
 
-    override fun collectDataSections(data: PropertyKey): DataSection {
+    override fun calculateDataSection(data: PropertyKey): DataSection {
         return DataSectionHolder(
             containingData = listOf(
                 DataSectionLeaf(3),
-                propertyTypeSerde.collectDataSections(data.propertyType)
-            )
+                propertyTypeSerde.calculateDataSection(data.propertyType)
+            ),
+            assetName = data.name
         )
     }
 
@@ -35,7 +37,8 @@ internal class PropertyKeySerde(
 
             propertyTypeSerde.serialize(outputStream, propertyKey.propertyType)
 
-            // TODO: serialize assetNameIndex
+            val assetIndex = serializationContext.getAssetIndex(data.name)
+            outputStream.write(assetIndex.toLittleEndianBytes().take(3).toByteArray())
         }
     }
 

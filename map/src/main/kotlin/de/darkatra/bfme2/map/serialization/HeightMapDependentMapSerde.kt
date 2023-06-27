@@ -39,7 +39,7 @@ internal class HeightMapDependentMapSerde<V : Any>(
         SAGE_BOOLEAN
     }
 
-    override fun collectDataSections(data: Table<UInt, UInt, V>): DataSection {
+    override fun calculateDataSection(data: Table<UInt, UInt, V>): DataSection {
 
         val width = data.rowKeySet().size.toUInt()
         val height = data.columnKeySet().size.toUInt()
@@ -50,7 +50,7 @@ internal class HeightMapDependentMapSerde<V : Any>(
                     containingData = buildList {
                         (0u until height step 1).forEach { y ->
                             when {
-                                mode == Mode.DEFAULT -> add(valueSerde.collectDataSections(data[x, y]!!))
+                                mode == Mode.DEFAULT -> add(valueSerde.calculateDataSection(data[x, y]!!))
                                 x % 8u == 0u -> add(DataSectionLeaf(1))
                             }
                         }
@@ -73,8 +73,8 @@ internal class HeightMapDependentMapSerde<V : Any>(
                     when (mode) {
                         Mode.DEFAULT -> valueSerde.serialize(outputStream, map[x, y]!!)
                         else -> {
-                            // FIXME: this if statement does look weird
-                            if (x > 0u && x % 8u == 0u) {
+                            // TODO: check if the if statement logic is correct
+                            if (x % 8u == 0u) {
                                 outputStream.writeByte(temp)
                             }
                             temp = temp or ((if (map[x, y] as Boolean) 1 else 0) shl (x % 8u).toInt()).toByte()

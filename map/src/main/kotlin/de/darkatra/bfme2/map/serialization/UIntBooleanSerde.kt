@@ -21,5 +21,5 @@ internal class UIntBooleanSerde(
     postProcessor
 ) {
 
-    override fun collectDataSections(data: Boolean): DataSection = DataSectionLeaf.INT
+    override fun calculateDataSection(data: Boolean): DataSection = DataSectionLeaf.INT
 }
