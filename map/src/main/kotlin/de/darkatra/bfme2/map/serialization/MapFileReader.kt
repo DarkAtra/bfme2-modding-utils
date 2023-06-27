@@ -34,7 +34,7 @@ class MapFileReader {
                 val assetIndex = inputStream.readUInt()
                 val assetName = serializationContext.getAssetName(assetIndex)
 
-                val currentAsset = SerializationContext.AssetEntry(
+                val currentAsset = AssetEntry(
                     assetName = assetName,
                     assetVersion = inputStream.readUShort(),
                     assetSize = inputStream.readUInt().toLong(),
@@ -91,7 +91,7 @@ class MapFileReader {
             }
 
             serializationContext.push(
-                SerializationContext.AssetEntry(
+                AssetEntry(
                     assetName = "Map",
                     assetVersion = 0u,
                     assetSize = inputStreamSize,

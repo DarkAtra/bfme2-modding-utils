@@ -61,7 +61,7 @@ class MapFileWriter {
                 }
 
                 serializationContext.push(
-                    SerializationContext.AssetEntry(
+                    AssetEntry(
                         assetName = "Map",
                         assetVersion = 0u,
                         assetSize = mapFileSerde.calculateByteCount(mapFile),
