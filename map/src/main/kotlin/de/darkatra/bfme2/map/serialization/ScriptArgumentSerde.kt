@@ -4,6 +4,9 @@ import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.scripting.ScriptArgument
 import de.darkatra.bfme2.map.scripting.ScriptArgumentType
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readFloat
@@ -23,12 +26,16 @@ internal class ScriptArgumentSerde(
 
     private val scriptArgumentTypeSerde: Serde<ScriptArgumentType> = serdeFactory.getSerde(ScriptArgumentType::class)
 
-    override fun calculateByteCount(data: ScriptArgument): Long {
-        return scriptArgumentTypeSerde.calculateByteCount(data.argumentType) +
-            when (data.argumentType) {
-                ScriptArgumentType.POSITION_COORDINATE -> 4 * 3
-                else -> 4 + 4 + 2 + data.stringValue!!.length
-            }
+    override fun collectDataSections(data: ScriptArgument): DataSection {
+        return DataSectionHolder(
+            containingData = listOf(
+                scriptArgumentTypeSerde.collectDataSections(data.argumentType),
+                when (data.argumentType) {
+                    ScriptArgumentType.POSITION_COORDINATE -> DataSectionLeaf(4 * 3)
+                    else -> DataSectionLeaf(4L + 4L + 2L + data.stringValue!!.length)
+                }
+            )
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: ScriptArgument) {

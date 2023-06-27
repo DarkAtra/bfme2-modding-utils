@@ -1,5 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readInt
@@ -19,5 +21,5 @@ internal class IntSerde(
     postProcessor
 ) {
 
-    override fun calculateByteCount(data: Int): Long = 4
+    override fun collectDataSections(data: Int): DataSection = DataSectionLeaf.INT
 }

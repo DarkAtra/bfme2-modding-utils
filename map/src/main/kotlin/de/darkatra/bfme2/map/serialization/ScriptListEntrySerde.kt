@@ -6,6 +6,9 @@ import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.scripting.Script
 import de.darkatra.bfme2.map.scripting.ScriptFolder
 import de.darkatra.bfme2.map.scripting.ScriptListEntry
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.NoopPreProcessor
@@ -31,10 +34,17 @@ internal class ScriptListEntrySerde(
     private val assetListSerde = AssetListSerde(serializationContext, this, NoopPreProcessor(), NoopPostProcessor())
     private val scriptSerde = serdeFactory.getSerde(Script::class)
 
-    override fun calculateByteCount(data: ScriptListEntry): Long {
+    override fun collectDataSections(data: ScriptListEntry): DataSection {
         return when (data) {
-            is Script -> scriptSerde.calculateByteCount(data)
-            is ScriptFolder -> 2L + data.name.length + 1 + 1 + assetListSerde.calculateByteCount(data.scriptListEntries)
+            is Script -> scriptSerde.collectDataSections(data)
+            is ScriptFolder -> DataSectionHolder(
+                containingData = listOf(
+                    DataSectionLeaf(2L + data.name.length),
+                    DataSectionLeaf.BOOLEAN,
+                    DataSectionLeaf.BOOLEAN,
+                    assetListSerde.collectDataSections(data.scriptListEntries)
+                )
+            )
         }
     }
 

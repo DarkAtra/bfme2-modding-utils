@@ -2,7 +2,7 @@ package de.darkatra.bfme2.map.riverarea
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Line2D
-import de.darkatra.bfme2.map.serialization.ByteColorSerde
+import de.darkatra.bfme2.map.serialization.FourByteColorSerde
 import de.darkatra.bfme2.map.serialization.Serialize
 
 data class RiverArea(
@@ -15,7 +15,7 @@ data class RiverArea(
     val noiseTexture: String,
     val alphaEdgeTexture: String,
     val sparkleTexture: String,
-    val color: @Serialize(using = ByteColorSerde::class) Color,
+    val color: @Serialize(using = FourByteColorSerde::class) Color,
     val alpha: Float,
     val waterHeight: UInt,
     val minimumWaterLod: String,

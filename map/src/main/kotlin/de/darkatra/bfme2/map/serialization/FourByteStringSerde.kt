@@ -2,6 +2,8 @@ package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import java.io.OutputStream
@@ -13,7 +15,7 @@ internal class FourByteStringSerde(
     private val postProcessor: PostProcessor<String>
 ) : Serde<String> {
 
-    override fun calculateByteCount(data: String): Long = 4
+    override fun collectDataSections(data: String): DataSection = DataSectionLeaf(4)
 
     override fun serialize(outputStream: OutputStream, data: String) {
         preProcessor.preProcess(data, context).let {

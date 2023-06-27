@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
+import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.NoopPreProcessor
@@ -15,7 +16,9 @@ internal class BlendCountSerde(
 
     private val uIntSerde = UIntSerde(context, NoopPreProcessor(), NoopPostProcessor())
 
-    override fun calculateByteCount(data: UInt): Long = uIntSerde.calculateByteCount(data)
+    override fun collectDataSections(data: UInt): DataSection {
+        return uIntSerde.collectDataSections(data)
+    }
 
     override fun serialize(outputStream: OutputStream, data: UInt) {
         uIntSerde.serialize(

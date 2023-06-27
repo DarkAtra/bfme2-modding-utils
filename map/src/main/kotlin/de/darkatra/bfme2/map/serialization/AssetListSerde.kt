@@ -1,21 +1,25 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import java.io.OutputStream
 
-internal class AssetListSerde<T>(
+internal class AssetListSerde<T : Any>(
     private val serializationContext: SerializationContext,
     private val entrySerde: Serde<T>,
     private val preProcessor: PreProcessor<List<T>>,
     private val postProcessor: PostProcessor<List<T>>
 ) : Serde<List<T>> {
 
-    override fun calculateByteCount(data: List<T>): Long {
-        return data.sumOf {
-            4 + 2 + 4 + entrySerde.calculateByteCount(it)
-        }
+    override fun collectDataSections(data: List<T>): DataSection {
+        return DataSectionHolder(
+            containingData = data.map {
+                entrySerde.collectDataSections(it)
+            }
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: List<T>) {

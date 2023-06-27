@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.Asset
+import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import java.io.OutputStream
@@ -37,12 +38,12 @@ internal class ConditionalSerde(
         Pair(assetName.name, serdeFactory.getSerde(assetType))
     }
 
-    override fun calculateByteCount(data: Any): Long {
-        // TODO: validate that the serializationContext is updated during byte count calculation and peek() behaves as expected
-        val assetName = serializationContext.peek().assetName
-        val serde = serdes[assetName]
-            ?: throw IllegalStateException("Could not find serde for '$assetName' calculating byte count for $currentElementName. Expected one of: ${serdes.keys}")
-        return serde.calculateByteCount(data)
+    override fun collectDataSections(data: Any): DataSection {
+        val asset = data::class.findAnnotation<Asset>()
+            ?: throw IllegalStateException("Could not find asset annotation for $currentElementName. Expected one of: ${serdes.keys}")
+        val serde = serdes[asset.name]
+            ?: throw IllegalStateException("Could not find serde for '${asset.name}' calculating byte count for $currentElementName. Expected one of: ${serdes.keys}")
+        return serde.collectDataSections(data)
     }
 
     override fun serialize(outputStream: OutputStream, data: Any) {

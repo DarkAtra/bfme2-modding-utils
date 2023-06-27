@@ -3,6 +3,9 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.property.Property
 import de.darkatra.bfme2.map.property.PropertyType
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.NoopPreProcessor
@@ -27,16 +30,20 @@ internal class PropertySerde(
 
     private val propertyKeySerde = PropertyKeySerde(serdeFactory, serializationContext, NoopPreProcessor(), NoopPostProcessor())
 
-    override fun calculateByteCount(data: Property): Long {
-        return propertyKeySerde.calculateByteCount(data.key) +
-            when (data.key.propertyType) {
-                PropertyType.BOOLEAN -> 1 // TODO: consider introducing lookup table for byte counts of primitives
-                PropertyType.INTEGER -> 4
-                PropertyType.FLOAT -> 4
-                PropertyType.ASCII_STRING -> 2L + (data.value as String).length
-                PropertyType.UNICODE_STRING -> 2L + ((data.value as String).length * 2)
-                PropertyType.UNKNOWN -> 2L + (data.value as String).length
-            }
+    override fun collectDataSections(data: Property): DataSection {
+        return DataSectionHolder(
+            containingData = listOf(
+                propertyKeySerde.collectDataSections(data.key),
+                when (data.key.propertyType) {
+                    PropertyType.BOOLEAN -> DataSectionLeaf.BOOLEAN
+                    PropertyType.INTEGER -> DataSectionLeaf.INT
+                    PropertyType.FLOAT -> DataSectionLeaf.FLOAT
+                    PropertyType.ASCII_STRING -> DataSectionLeaf(2L + (data.value as String).length)
+                    PropertyType.UNICODE_STRING -> DataSectionLeaf(2L + ((data.value as String).length * 2))
+                    PropertyType.UNKNOWN -> DataSectionLeaf(2L + (data.value as String).length)
+                }
+            )
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: Property) {

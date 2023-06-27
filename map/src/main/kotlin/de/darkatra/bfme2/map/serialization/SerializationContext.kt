@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
+import de.darkatra.bfme2.map.serialization.model.AssetEntry
 import java.util.Stack
 
 internal class SerializationContext(

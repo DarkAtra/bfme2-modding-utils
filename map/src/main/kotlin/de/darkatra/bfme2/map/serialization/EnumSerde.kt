@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.ConversionException
+import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import java.io.OutputStream
@@ -33,8 +34,8 @@ internal class EnumSerde<T : Enum<*>>(
         }
     }
 
-    override fun calculateByteCount(data: T): Long {
-        return serde.calculateByteCount(enumValueGetter.call(data)!!)
+    override fun collectDataSections(data: T): DataSection {
+        return serde.collectDataSections(enumValueGetter.call(data)!!)
     }
 
     override fun serialize(outputStream: OutputStream, data: T) {

@@ -1,5 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readBoolean
@@ -19,5 +21,5 @@ internal class BooleanSerde(
     postProcessor
 ) {
 
-    override fun calculateByteCount(data: Boolean): Long = 1
+    override fun collectDataSections(data: Boolean): DataSection = DataSectionLeaf.BOOLEAN
 }

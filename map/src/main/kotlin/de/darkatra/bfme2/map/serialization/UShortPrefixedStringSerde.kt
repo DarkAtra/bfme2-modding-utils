@@ -1,5 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readUShortPrefixedString
@@ -19,5 +21,5 @@ internal class UShortPrefixedStringSerde(
     postProcessor
 ) {
 
-    override fun calculateByteCount(data: String): Long = 2L + data.length
+    override fun collectDataSections(data: String): DataSection = DataSectionLeaf(2L + data.length)
 }

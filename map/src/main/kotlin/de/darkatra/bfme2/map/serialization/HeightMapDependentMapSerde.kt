@@ -4,6 +4,9 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.heightmap.HeightMap
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readByte
@@ -36,22 +39,25 @@ internal class HeightMapDependentMapSerde<V : Any>(
         SAGE_BOOLEAN
     }
 
-    override fun calculateByteCount(data: Table<UInt, UInt, V>): Long {
+    override fun collectDataSections(data: Table<UInt, UInt, V>): DataSection {
 
         val width = data.rowKeySet().size.toUInt()
         val height = data.columnKeySet().size.toUInt()
 
-        return (0u until width step 1).sumOf { x ->
-            (0u until height step 1).sumOf { y ->
-                when (mode) {
-                    Mode.DEFAULT -> valueSerde.calculateByteCount(data[x, y]!!)
-                    else -> when (x % 8u == 0u) {
-                        true -> 1
-                        else -> 0
+        return DataSectionHolder(
+            containingData = (0u until width step 1).map { x ->
+                DataSectionHolder(
+                    containingData = buildList {
+                        (0u until height step 1).forEach { y ->
+                            when {
+                                mode == Mode.DEFAULT -> add(valueSerde.collectDataSections(data[x, y]!!))
+                                x % 8u == 0u -> add(DataSectionLeaf(1))
+                            }
+                        }
                     }
-                }
+                )
             }
-        }
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: Table<UInt, UInt, V>) {

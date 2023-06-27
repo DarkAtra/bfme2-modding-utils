@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
+import de.darkatra.bfme2.map.MapFileCompression
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream

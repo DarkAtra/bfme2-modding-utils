@@ -2,6 +2,7 @@ package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingOutputStream
 import de.darkatra.bfme2.map.MapFile
+import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.write7BitIntPrefixedString
 import de.darkatra.bfme2.writeUInt
 import java.io.BufferedOutputStream
@@ -51,24 +52,16 @@ class MapFileWriter {
                 val mapFileSerde = serdeFactory.getSerde(MapFile::class)
                 annotationProcessingContext.invalidate()
 
+                // FIXME: correctly calculate asset names from data sections
+                val dataSections = mapFileSerde.collectDataSections(mapFile)
+
                 measureTime {
-                    // FIXME: correctly calculate asset names
                     writeAssetNames(mapOf(), countingOutputStream)
                 }.also { elapsedTime ->
                     if (serializationContext.debugMode) {
                         println("Writing asset names took $elapsedTime.")
                     }
                 }
-
-                serializationContext.push(
-                    AssetEntry(
-                        assetName = "Map",
-                        assetVersion = 0u,
-                        assetSize = mapFileSerde.calculateByteCount(mapFile),
-                        startPosition = 0
-                    )
-                )
-
 
                 mapFileSerde.serialize(bufferedOutputStream, mapFile)
                 bufferedOutputStream.flush()

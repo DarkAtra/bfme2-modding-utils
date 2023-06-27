@@ -1,4 +1,4 @@
-package de.darkatra.bfme2.map.serialization
+package de.darkatra.bfme2.map
 
 enum class MapFileCompression(
     internal val fourCC: String

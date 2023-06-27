@@ -5,6 +5,8 @@ import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.MapFile
+import de.darkatra.bfme2.map.MapFileCompression
+import de.darkatra.bfme2.map.serialization.model.AssetEntry
 import de.darkatra.bfme2.read7BitIntPrefixedString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
@@ -46,7 +48,7 @@ class MapFileReader {
                 serializationContext.pop()
 
                 val currentEndPosition = inputStream.count
-                val expectedEndPosition = currentAsset.endPosition
+                val expectedEndPosition = serializationContext.currentEndPosition
                 if (!serializationContext.debugMode && currentEndPosition != expectedEndPosition) {
                     throw InvalidDataException("Error reading '${currentAsset.assetName}'. Expected reader to be at position $expectedEndPosition, but was at $currentEndPosition.")
                 }

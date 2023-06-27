@@ -19,10 +19,10 @@ class MapFileSerdeTest {
         val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
         val mapFileSerde = serdeFactory.getSerde(MapFile::class)
 
-        val actualMapFileSize = mapFileSerde.calculateByteCount(map)
+        val actualMapFileDataSection = mapFileSerde.collectDataSections(map)
 
         // TODO: write the MapFile via MapFileWriter, then compare the file sizes (this makes it include the assetNames)
         // 1382 is the byte count of the assetNames for this particular map
-        assertThat(actualMapFileSize + 1382).isEqualTo(expectedMapFileSize)
+        assertThat(actualMapFileDataSection.size + 1382).isEqualTo(expectedMapFileSize)
     }
 }

@@ -3,6 +3,8 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.MapFileDataSectionHolder
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.toKClass
 import java.io.OutputStream
@@ -25,23 +27,24 @@ internal class MapFileSerde(
 
     private val parameters = primaryConstructor.valueParameters
 
-    override fun calculateByteCount(data: MapFile): Long {
+    override fun collectDataSections(data: MapFile): DataSection {
 
-        return parameters.mapIndexed { index, parameter ->
+        return MapFileDataSectionHolder(
+            containingData = parameters.mapIndexed { index, parameter ->
+                val fieldForParameter = MapFile::class.members
+                    .filterIsInstance<KProperty<*>>()
+                    .first { field -> field.name == parameter.name }
 
-            val fieldForParameter = MapFile::class.members
-                .filterIsInstance<KProperty<*>>()
-                .first { field -> field.name == parameter.name }
-
-            if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
-                @Suppress("UNCHECKED_CAST")
-                val serde = serdes[index] as Serde<Any>
-                val fieldData = fieldForParameter.getter.call(data)!!
-                4 + 2 + 4 + serde.calculateByteCount(fieldData)
-            } else {
-                throw IllegalStateException("Could not calculate byte count for parameter '${parameter.name}' because it's getter is not public or internal.")
+                if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
+                    @Suppress("UNCHECKED_CAST")
+                    val serde = serdes[index] as Serde<Any>
+                    val fieldData = fieldForParameter.getter.call(data)!!
+                    serde.collectDataSections(fieldData)
+                } else {
+                    throw IllegalStateException("Could not collect data sections for parameter '${parameter.name}' because it's getter is not public or internal.")
+                }
             }
-        }.sum()
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: MapFile) {

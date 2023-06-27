@@ -1,6 +1,9 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readByte
@@ -57,18 +60,21 @@ internal class ListSerde<T>(
         BYTE
     }
 
-    override fun calculateByteCount(data: List<T>): Long {
-        return when (mode) {
-            Mode.DEFAULT -> when (sizeType) {
-                SizeType.UINT -> 4
-                SizeType.USHORT -> 2
-                SizeType.BYTE -> 1
+    override fun collectDataSections(data: List<T>): DataSection {
+        return DataSectionHolder(
+            containingData = buildList {
+                if (mode == Mode.DEFAULT) {
+                    add(
+                        when (sizeType) {
+                            SizeType.UINT -> DataSectionLeaf.INT
+                            SizeType.USHORT -> DataSectionLeaf.SHORT
+                            SizeType.BYTE -> DataSectionLeaf.BYTE
+                        }
+                    )
+                }
+                addAll(data.map { entrySerde.collectDataSections(it) })
             }
-
-            else -> 0
-        } + data.sumOf {
-            entrySerde.calculateByteCount(it)
-        }
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: List<T>) {

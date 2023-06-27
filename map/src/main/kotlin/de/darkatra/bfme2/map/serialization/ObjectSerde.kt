@@ -2,6 +2,8 @@ package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.map.serialization.model.DataSection
+import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import java.io.OutputStream
 import kotlin.reflect.KClass
@@ -24,26 +26,30 @@ internal class ObjectSerde<T : Any>(
         ?: error("${classOfT.simpleName} is required to have a primary constructor.")
 
     private val parameters = primaryConstructor.valueParameters
+    private val assetAnnotation = classOfT.findAnnotation<AssetAnnotation>()
 
     private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
-    override fun calculateByteCount(data: T): Long {
+    override fun collectDataSections(data: T): DataSection {
+        return DataSectionHolder(
+            containingData = parameters.mapIndexed { index, parameter ->
 
-        return parameters.mapIndexed { index, parameter ->
+                val fieldForParameter = classOfT.members
+                    .filterIsInstance<KProperty<*>>()
+                    .first { field -> field.name == parameter.name }
 
-            val fieldForParameter = classOfT.members
-                .filterIsInstance<KProperty<*>>()
-                .first { field -> field.name == parameter.name }
-
-            if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
-                @Suppress("UNCHECKED_CAST")
-                val serde = serdes[index] as Serde<Any>
-                val fieldData = fieldForParameter.getter.call(data)!!
-                serde.calculateByteCount(fieldData)
-            } else {
-                throw IllegalStateException("Could not calculate byte count for parameter '${parameter.name}' because it's getter is not public or internal.")
-            }
-        }.sum()
+                if (fieldForParameter.getter.visibility == KVisibility.PUBLIC || fieldForParameter.getter.visibility == KVisibility.INTERNAL) {
+                    @Suppress("UNCHECKED_CAST")
+                    val serde = serdes[index] as Serde<Any>
+                    val fieldData = fieldForParameter.getter.call(data)!!
+                    serde.collectDataSections(fieldData)
+                } else {
+                    throw IllegalStateException("Could not collect data for parameter '${parameter.name}' because it's getter is not public or internal.")
+                }
+            },
+            assetName = assetAnnotation?.name,
+            assetVersion = assetAnnotation?.version
+        )
     }
 
     override fun serialize(outputStream: OutputStream, data: T) {
@@ -52,15 +58,13 @@ internal class ObjectSerde<T : Any>(
 
     override fun deserialize(inputStream: CountingInputStream): T {
 
-        val expectedAsset = classOfT.findAnnotation<AssetAnnotation>()
-
-        if (expectedAsset != null) {
+        if (assetAnnotation != null) {
             val currentAsset = serializationContext.peek()
-            if (expectedAsset.name != currentAsset.assetName) {
-                throw InvalidDataException("Unexpected assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${expectedAsset.name}'")
+            if (assetAnnotation.name != currentAsset.assetName) {
+                throw InvalidDataException("Unexpected assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${assetAnnotation.name}'")
             }
-            if (expectedAsset.version != currentAsset.assetVersion) {
-                throw InvalidDataException("Unexpected assetVersion '${currentAsset.assetVersion}' for assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${expectedAsset.version}'")
+            if (assetAnnotation.version != currentAsset.assetVersion) {
+                throw InvalidDataException("Unexpected assetVersion '${currentAsset.assetVersion}' for assetName '${currentAsset.assetName}' reading $currentElementName. Expected: '${assetAnnotation.version}'")
             }
         }
 
