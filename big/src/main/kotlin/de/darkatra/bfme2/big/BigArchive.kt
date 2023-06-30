@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.big
 
+import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.readNullTerminatedString
 import de.darkatra.bfme2.toBigEndianBytes
 import de.darkatra.bfme2.toBigEndianUInt
@@ -22,7 +23,7 @@ import kotlin.io.path.outputStream
  * Heavily inspired by https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.FileFormats.Big/BigArchive.cs
  */
 class BigArchive(
-    @Suppress("MemberVisibilityCanBePrivate") // public api
+    @PublicApi
     val version: BigArchiveVersion,
     val path: Path
 ) {
@@ -52,7 +53,7 @@ class BigArchive(
 
     private val _entries: MutableList<BigArchiveEntry> = arrayListOf()
 
-    @Suppress("MemberVisibilityCanBePrivate") // public api
+    @PublicApi
     val entries
         get() = _entries.sortedWith(Comparator.comparing(BigArchiveEntry::name))
 
@@ -84,7 +85,7 @@ class BigArchive(
      *
      * @param name The name of the entry to delete.
      */
-    @Suppress("unused") // public api
+    @PublicApi
     fun deleteEntry(name: String) {
         if (name.isBlank()) {
             throw IllegalArgumentException("Name must not be blank")
@@ -97,7 +98,7 @@ class BigArchive(
     /**
      * Reads the archive from disk.
      */
-    @Suppress("MemberVisibilityCanBePrivate") // public api
+    @PublicApi
     fun readFromDisk() {
         if (!path.exists()) {
             return

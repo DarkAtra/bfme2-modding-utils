@@ -22,6 +22,7 @@ internal data class DataSectionLeaf(
         val SHORT = DataSectionLeaf(2)
         val INT = DataSectionLeaf(4)
         val FLOAT = DataSectionLeaf(4)
+        val ASSET_HEADER = DataSectionLeaf(10)
     }
 }
 
@@ -36,17 +37,10 @@ internal data class DataSectionHolder(
 ) : DataSection {
 
     override val size: Long
-        get() = when (isVersionedAsset) {
-            // each asset has a header of 4 bytes for the assetIndex, 2 bytes for the assetVersion and 4 bytes for the assetSize
-            true -> 4 + 2 + 4 + containingData.sumOf(DataSection::size)
-            false -> containingData.sumOf(DataSection::size)
-        }
+        get() = containingData.sumOf(DataSection::size)
 
     internal val isAsset: Boolean
         get() = assetName != null
-
-    internal val isVersionedAsset: Boolean
-        get() = isAsset && assetVersion != null
 
     internal fun flatten(): List<DataSectionHolder> {
         return flatten(containingData.filterIsInstance<DataSectionHolder>())

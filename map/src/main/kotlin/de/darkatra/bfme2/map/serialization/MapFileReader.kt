@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.ByteStreams
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.SkippingInputStream
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
@@ -43,12 +44,16 @@ class MapFileReader {
                     startPosition = inputStream.count
                 )
 
+                if (serializationContext.debugMode) {
+                    println("Reading asset '${currentAsset.assetName}' with size ${currentAsset.assetSize}.")
+                }
+
                 serializationContext.push(currentAsset)
                 callback(assetName)
                 serializationContext.pop()
 
                 val currentEndPosition = inputStream.count
-                val expectedEndPosition = serializationContext.currentEndPosition
+                val expectedEndPosition = currentAsset.endPosition
                 if (!serializationContext.debugMode && currentEndPosition != expectedEndPosition) {
                     throw InvalidDataException("Error reading '${currentAsset.assetName}'. Expected reader to be at position $expectedEndPosition, but was at $currentEndPosition.")
                 }
@@ -56,14 +61,14 @@ class MapFileReader {
         }
     }
 
-    @Suppress("unused") // public api
+    @PublicApi
     fun read(file: Path): MapFile {
 
         if (!file.exists()) {
             throw FileNotFoundException("File '${file.absolutePathString()}' does not exist.")
         }
 
-        return read(file.inputStream())
+        return file.inputStream().use(this::read)
     }
 
     fun read(inputStream: InputStream): MapFile {
@@ -75,42 +80,41 @@ class MapFileReader {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
 
-        return CountingInputStream(decodeIfNecessary(bufferedInputStream)).use { countingInputStream ->
+        val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
 
-            readAndValidateFourCC(countingInputStream)
+        readAndValidateFourCC(countingInputStream)
 
-            val serializationContext = SerializationContext(true)
-            val annotationProcessingContext = AnnotationProcessingContext(false)
-            val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
+        val serializationContext = SerializationContext(false)
+        val annotationProcessingContext = AnnotationProcessingContext(false)
+        val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
-            measureTime {
-                val assetNames = readAssetNames(countingInputStream)
-                serializationContext.setAssetNames(assetNames)
-            }.also { elapsedTime ->
-                if (serializationContext.debugMode) {
-                    println("Reading asset names took $elapsedTime.")
-                }
+        measureTime {
+            val assetNames = readAssetNames(countingInputStream)
+            serializationContext.setAssetNames(assetNames)
+        }.also { elapsedTime ->
+            if (serializationContext.debugMode) {
+                println("Reading asset names took $elapsedTime.")
             }
-
-            serializationContext.push(
-                AssetEntry(
-                    assetName = "Map",
-                    assetVersion = 0u,
-                    assetSize = inputStreamSize,
-                    startPosition = 0
-                )
-            )
-
-            val mapFileSerde = serdeFactory.getSerde(MapFile::class)
-
-            annotationProcessingContext.invalidate()
-
-            val mapFile = mapFileSerde.deserialize(countingInputStream)
-
-            serializationContext.pop()
-
-            mapFile
         }
+
+        serializationContext.push(
+            AssetEntry(
+                assetName = "Map",
+                assetVersion = 0u,
+                assetSize = inputStreamSize,
+                startPosition = 0
+            )
+        )
+
+        val mapFileSerde = serdeFactory.getSerde(MapFile::class)
+
+        annotationProcessingContext.invalidate()
+
+        val mapFile = mapFileSerde.deserialize(countingInputStream)
+
+        serializationContext.pop()
+
+        return mapFile
     }
 
     private fun getInputStreamSize(bufferedInputStream: BufferedInputStream): Long {

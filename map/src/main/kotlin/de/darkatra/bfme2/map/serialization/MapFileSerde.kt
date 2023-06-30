@@ -4,6 +4,7 @@ import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.toKClass
 import java.io.OutputStream
 import kotlin.reflect.KProperty
@@ -36,34 +37,46 @@ internal class MapFileSerde(
     override fun calculateDataSection(data: MapFile): DataSectionHolder {
 
         return DataSectionHolder(
-            containingData = parameterToField.entries.mapIndexed { index, (p, fieldForParameter) ->
-                @Suppress("UNCHECKED_CAST")
-                val serde = serdes[index] as Serde<Any>
-                val fieldData = fieldForParameter.getter.call(data)!!
-                serde.calculateDataSection(fieldData)
-            },
-            assetName = "MapFile"
+            assetName = "MapFile",
+            containingData = buildList {
+                parameterToField.entries.mapIndexed { index, entry -> Pair(index, entry) }
+                    .sortedBy { (_, entry) -> entry.key.findAnnotation<SerializationOrder>()?.ordered ?: SerializationOrder.DEFAULT_ORDER }
+                    .forEach { (index, entry) ->
+                        val fieldForParameter = entry.value
+
+                        @Suppress("UNCHECKED_CAST")
+                        val serde = serdes[index] as Serde<Any>
+                        val fieldData = fieldForParameter.getter.call(data)!!
+                        add(DataSectionLeaf.ASSET_HEADER)
+                        add(serde.calculateDataSection(fieldData))
+                    }
+            }
         )
     }
 
     @OptIn(ExperimentalTime::class)
     override fun serialize(outputStream: OutputStream, data: MapFile) {
 
-        // TODO: check if we need to preserve the order in which we write the data
-        parameterToField.entries.forEachIndexed { index, (parameter, fieldForParameter) ->
-            @Suppress("UNCHECKED_CAST")
-            val serde = serdes[index] as Serde<Any>
-            val fieldData = fieldForParameter.getter.call(data)!!
+        parameterToField.entries
+            .mapIndexed { index, entry -> Pair(index, entry) }
+            .sortedBy { (_, entry) -> entry.key.findAnnotation<SerializationOrder>()?.ordered ?: SerializationOrder.DEFAULT_ORDER }
+            .forEach { (index, entry) ->
+                val parameter = entry.key
+                val fieldForParameter = entry.value
 
-            measureTime {
-                MapFileWriter.writeAsset(outputStream, serializationContext, fieldData)
-                serde.serialize(outputStream, fieldData)
-            }.also { elapsedTime ->
-                if (serializationContext.debugMode) {
-                    println("Deserialization of '${parameter.name}' took $elapsedTime.")
+                @Suppress("UNCHECKED_CAST")
+                val serde = serdes[index] as Serde<Any>
+                val fieldData = fieldForParameter.getter.call(data)!!
+
+                measureTime {
+                    MapFileWriter.writeAsset(outputStream, serializationContext, fieldData)
+                    serde.serialize(outputStream, fieldData)
+                }.also { elapsedTime ->
+                    if (serializationContext.debugMode) {
+                        println("Serialization of '${parameter.name}' took $elapsedTime.")
+                    }
                 }
             }
-        }
     }
 
     @OptIn(ExperimentalTime::class)

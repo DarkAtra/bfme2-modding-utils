@@ -25,7 +25,7 @@ data class Color constructor(
     val blue: UInt
         get() = rgba shr 0 and 0xFFu
 
-    @Suppress("MemberVisibilityCanBePrivate") // public api
+    @PublicApi
     val alpha: UInt
         get() = rgba shr 24 and 0xFFu
 

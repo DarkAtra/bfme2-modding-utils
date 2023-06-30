@@ -11,14 +11,27 @@ class MapFileWriterTest {
     @Test
     fun `should write map`() {
 
-        val expectedMapFileSize = ByteStreams.exhaust(TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH))
+        val expectedMapFileSize = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(ByteStreams::exhaust)
+        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
 
-        val inputMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH)
-        val parsedMapFile = MapFileReader().read(inputMapFile)
-        val writtenMapFile = ByteArrayOutputStream()
+        val mapFileOutputStream = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+            it
+        }
 
-        MapFileWriter().write(writtenMapFile, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+        assertThat(mapFileOutputStream.size()).isEqualTo(expectedMapFileSize)
+    }
 
-        assertThat(writtenMapFile.size()).isEqualTo(expectedMapFileSize)
+    @Test
+    fun `should produce identical map file when writing a parsed map`() {
+
+        val parsedMapFile = MapFileReader().read(TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH))
+
+        val mapFileOutputStream = ByteArrayOutputStream()
+        MapFileWriter().write(mapFileOutputStream, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+
+        val writtenMapFile = MapFileReader().read(mapFileOutputStream.toByteArray().inputStream())
+
+        assertThat(parsedMapFile.worldInfo).isEqualTo(writtenMapFile.worldInfo)
     }
 }

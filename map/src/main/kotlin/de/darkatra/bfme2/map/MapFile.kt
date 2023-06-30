@@ -15,6 +15,7 @@ import de.darkatra.bfme2.map.posteffect.PostEffects
 import de.darkatra.bfme2.map.riverarea.RiverAreas
 import de.darkatra.bfme2.map.scripting.PlayerScriptsList
 import de.darkatra.bfme2.map.serialization.MapFileSerde
+import de.darkatra.bfme2.map.serialization.SerializationOrder
 import de.darkatra.bfme2.map.serialization.Serialize
 import de.darkatra.bfme2.map.team.Teams
 import de.darkatra.bfme2.map.trigger.TriggerAreas
@@ -31,6 +32,7 @@ data class MapFile(
     val cameras: Cameras,
     val environmentData: EnvironmentData,
     val globalLighting: GlobalLighting,
+    @SerializationOrder(SerializationOrder.HIGHEST_PRECEDENCE)
     val heightMap: HeightMap,
     val libraryMapsList: LibraryMapsList,
     val multiplayerPositions: MultiplayerPositions,

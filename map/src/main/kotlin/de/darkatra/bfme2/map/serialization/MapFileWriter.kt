@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingOutputStream
+import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
@@ -39,14 +40,16 @@ class MapFileWriter {
         }
     }
 
-    @Suppress("unused") // public api
+    @PublicApi
     fun write(file: Path, mapFile: MapFile) {
 
         if (file.exists()) {
             throw FileAlreadyExistsException("File '${file.absolutePathString()}' already exist.")
         }
 
-        write(file.outputStream(), mapFile)
+        file.outputStream().use {
+            write(it, mapFile)
+        }
     }
 
     fun write(outputStream: OutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
@@ -56,49 +59,48 @@ class MapFileWriter {
     @OptIn(ExperimentalTime::class)
     fun write(bufferedOutputStream: BufferedOutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
-        return bufferedOutputStream.use {
-
+        if (compression != MapFileCompression.UNCOMPRESSED) {
             writeFourCC(bufferedOutputStream, compression)
+        }
 
-            CountingOutputStream(encodeIfNecessary(bufferedOutputStream, compression)).use { countingOutputStream ->
+        val countingOutputStream = CountingOutputStream(encodeIfNecessary(bufferedOutputStream, compression))
 
-                writeFourCC(countingOutputStream, MapFileCompression.UNCOMPRESSED)
+        writeFourCC(countingOutputStream, MapFileCompression.UNCOMPRESSED)
 
-                val serializationContext = SerializationContext(true)
-                val annotationProcessingContext = AnnotationProcessingContext(false)
-                val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
+        val serializationContext = SerializationContext(false)
+        val annotationProcessingContext = AnnotationProcessingContext(false)
+        val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
-                val mapFileSerde: MapFileSerde = serdeFactory.getSerde(MapFile::class) as MapFileSerde
-                annotationProcessingContext.invalidate()
+        val mapFileSerde: MapFileSerde = serdeFactory.getSerde(MapFile::class) as MapFileSerde
+        annotationProcessingContext.invalidate()
 
-                val assetDataSections = mapFileSerde.calculateDataSection(mapFile).flatten()
-                    .filter { it.isAsset }
-                    .distinctBy { it.assetName }
-                serializationContext.setAssetDataSections(assetDataSections.associateBy { it.assetName!! })
+        val assetDataSections = mapFileSerde.calculateDataSection(mapFile).flatten()
+            .filter { it.isAsset }
+            .distinctBy { it.assetName }
+        serializationContext.setAssetDataSections(assetDataSections.associateBy { it.assetName!! })
 
-                val assetNames = assetDataSections
-                    .reversed()
-                    .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
-                    .toMap()
-                serializationContext.setAssetNames(assetNames)
+        val assetNames = assetDataSections
+            .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
+            .toMap()
+        serializationContext.setAssetNames(assetNames)
 
-                measureTime {
-                    writeAssetNames(assetNames, countingOutputStream)
-                }.also { elapsedTime ->
-                    if (serializationContext.debugMode) {
-                        println("Writing asset names took $elapsedTime.")
-                    }
-                }
-
-                mapFileSerde.serialize(bufferedOutputStream, mapFile)
-                bufferedOutputStream.flush()
+        measureTime {
+            writeAssetNames(assetNames, countingOutputStream)
+        }.also { elapsedTime ->
+            if (serializationContext.debugMode) {
+                println("Writing asset names took $elapsedTime.")
             }
         }
+
+        mapFileSerde.serialize(bufferedOutputStream, mapFile)
+        bufferedOutputStream.flush()
     }
 
     private fun writeAssetNames(assetNames: Map<UInt, String>, outputStream: OutputStream) {
 
         val numberOfAssetStrings = assetNames.size.toUInt()
+        outputStream.writeUInt(numberOfAssetStrings)
+
         for (i in numberOfAssetStrings downTo 1u step 1) {
             outputStream.write7BitIntPrefixedString(assetNames[i]!!)
             outputStream.writeUInt(i)

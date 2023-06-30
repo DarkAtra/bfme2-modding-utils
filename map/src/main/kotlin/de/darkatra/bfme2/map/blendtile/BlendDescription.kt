@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.blendtile
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.map.serialization.ListSerde
 import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
@@ -17,7 +18,7 @@ data class BlendDescription(
     val magicValue2: UInt
 ) {
 
-    @Suppress("unused") // public api
+    @PublicApi
     val blendDirection: BlendDirection
         get() {
             val bytes = rawBlendDirection.toTypedArray()

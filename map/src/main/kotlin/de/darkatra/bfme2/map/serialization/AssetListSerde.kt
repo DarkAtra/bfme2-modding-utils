@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import java.io.OutputStream
@@ -16,8 +17,11 @@ internal class AssetListSerde<T : Any>(
 
     override fun calculateDataSection(data: List<T>): DataSection {
         return DataSectionHolder(
-            containingData = data.map {
-                entrySerde.calculateDataSection(it)
+            containingData = buildList {
+                data.forEach {
+                    add(DataSectionLeaf.ASSET_HEADER)
+                    add(entrySerde.calculateDataSection(it))
+                }
             }
         )
     }

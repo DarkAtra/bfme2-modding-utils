@@ -13,7 +13,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read map`() {
 
-        val map = MapFileReader().read(TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH))
+        val map = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
 
         assertThat(map.blendTileData.numberOfTiles).isEqualTo(640u * 640u)
         assertThat(map.blendTileData.textures).hasSize(4)
@@ -59,7 +59,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with strange road type`() {
 
-        val map = MapFileReader().read(TestUtils.getInputStream("/maps/bfme2-rotwk/map mp harlond.zlib"))
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp harlond.zlib").use(MapFileReader()::read)
 
         assertThat(map).isNotNull
         assertThat(map.objects.objects.any { it.roadType == RoadType.UNKNOWN_5 }).isTrue
@@ -68,7 +68,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with standing wave areas`() {
 
-        val map = MapFileReader().read(TestUtils.getInputStream("/maps/bfme2-rotwk/map mp midgewater.zlib"))
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp midgewater.zlib").use(MapFileReader()::read)
 
         assertThat(map).isNotNull
         assertThat(map.standingWaveAreas.areas).hasSize(2)
@@ -77,7 +77,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with scripts`() {
 
-        val map = MapFileReader().read(TestUtils.getInputStream("/maps/bfme2-rotwk/script.map"))
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/script.map").use(MapFileReader()::read)
 
         assertThat(map.playerScriptsList.scriptLists).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[0].scriptListEntries).isNotEmpty
@@ -111,7 +111,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with script that checks for active game modes`() {
 
-        val map = MapFileReader().read(TestUtils.getInputStream("/maps/bfme2-rotwk/map mp westmarch.zlib"))
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp westmarch.zlib").use(MapFileReader()::read)
 
         assertThat(map.playerScriptsList.scriptLists).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders).isNotEmpty
@@ -126,9 +126,9 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read the same map information for all compressions`() {
 
-        val plain = MapFileReader().read(TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH))
-        val refpack = MapFileReader().read(TestUtils.getInputStream(TestUtils.REFPACK_COMPRESSED_MAP_PATH))
-        val zlib = MapFileReader().read(TestUtils.getInputStream(TestUtils.ZLIB_COMPRESSED_MAP_PATH))
+        val plain = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
+        val refpack = TestUtils.getInputStream(TestUtils.REFPACK_COMPRESSED_MAP_PATH).use(MapFileReader()::read)
+        val zlib = TestUtils.getInputStream(TestUtils.ZLIB_COMPRESSED_MAP_PATH).use(MapFileReader()::read)
 
         assertThat(plain).isEqualTo(refpack)
         assertThat(plain).isEqualTo(zlib)
