@@ -33,10 +33,15 @@ class MapFileWriter {
 
             val assetIndex = serializationContext.getAssetIndex(asset.name)
             val assetVersion = asset.version
+            val assetSize = entrySerde.calculateDataSection(data).size.toUInt()
+
+            if (serializationContext.debugMode) {
+                println("Writing asset '${asset.name}' with size ${assetSize}.")
+            }
 
             outputStream.writeUInt(assetIndex)
             outputStream.writeUShort(assetVersion)
-            outputStream.writeUInt(entrySerde.calculateDataSection(data).size.toUInt())
+            outputStream.writeUInt(assetSize)
         }
     }
 
