@@ -69,7 +69,7 @@ internal class MapFileSerde(
                 val fieldData = fieldForParameter.getter.call(data)!!
 
                 measureTime {
-                    MapFileWriter.writeAsset(outputStream, serializationContext, fieldData)
+                    MapFileWriter.writeAsset(outputStream, serializationContext, fieldData, serde)
                     serde.serialize(outputStream, fieldData)
                 }.also { elapsedTime ->
                     if (serializationContext.debugMode) {

@@ -30,7 +30,7 @@ internal class AssetListSerde<T : Any>(
 
         preProcessor.preProcess(data, serializationContext).let { list ->
             list.forEach { entry ->
-                MapFileWriter.writeAsset(outputStream, serializationContext, entry)
+                MapFileWriter.writeAsset(outputStream, serializationContext, entry, entrySerde)
                 entrySerde.serialize(outputStream, entry)
             }
         }

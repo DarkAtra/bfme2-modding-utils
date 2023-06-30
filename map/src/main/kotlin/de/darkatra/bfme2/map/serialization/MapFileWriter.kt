@@ -26,7 +26,7 @@ class MapFileWriter {
 
     companion object {
 
-        internal fun writeAsset(outputStream: OutputStream, serializationContext: SerializationContext, data: Any) {
+        internal fun <T : Any> writeAsset(outputStream: OutputStream, serializationContext: SerializationContext, data: T, entrySerde: Serde<T>) {
 
             val asset = data::class.findAnnotation<Asset>()
                 ?: throw IllegalStateException("'${data::class.qualifiedName}' must be annotated with '${Asset::class.simpleName}'.")
@@ -36,7 +36,7 @@ class MapFileWriter {
 
             outputStream.writeUInt(assetIndex)
             outputStream.writeUShort(assetVersion)
-            outputStream.writeUInt(serializationContext.getAssetDataSection(asset.name).size.toUInt())
+            outputStream.writeUInt(entrySerde.calculateDataSection(data).size.toUInt())
         }
     }
 
@@ -76,10 +76,9 @@ class MapFileWriter {
 
         val assetDataSections = mapFileSerde.calculateDataSection(mapFile).flatten()
             .filter { it.isAsset }
-            .distinctBy { it.assetName }
-        serializationContext.setAssetDataSections(assetDataSections.associateBy { it.assetName!! })
 
         val assetNames = assetDataSections
+            .distinctBy { it.assetName }
             .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
             .toMap()
         serializationContext.setAssetNames(assetNames)
