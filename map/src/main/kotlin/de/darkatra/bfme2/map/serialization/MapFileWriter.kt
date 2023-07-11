@@ -19,12 +19,13 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
 import kotlin.reflect.full.findAnnotation
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-class MapFileWriter {
+class MapFileWriter(
+    private val debugMode: Boolean = false
+) {
 
-    companion object {
+    internal companion object {
 
         internal fun <T : Any> writeAsset(outputStream: OutputStream, serializationContext: SerializationContext, data: T, entrySerde: Serde<T>) {
 
@@ -57,11 +58,12 @@ class MapFileWriter {
         }
     }
 
+    @PublicApi
     fun write(outputStream: OutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
         write(outputStream.buffered(), mapFile, compression)
     }
 
-    @OptIn(ExperimentalTime::class)
+    @PublicApi
     fun write(bufferedOutputStream: BufferedOutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
         if (compression != MapFileCompression.UNCOMPRESSED) {
@@ -72,8 +74,8 @@ class MapFileWriter {
 
         writeFourCC(countingOutputStream, MapFileCompression.UNCOMPRESSED)
 
-        val serializationContext = SerializationContext(false)
-        val annotationProcessingContext = AnnotationProcessingContext(false)
+        val serializationContext = SerializationContext(debugMode)
+        val annotationProcessingContext = AnnotationProcessingContext(debugMode)
         val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
         val mapFileSerde: MapFileSerde = serdeFactory.getSerde(MapFile::class) as MapFileSerde

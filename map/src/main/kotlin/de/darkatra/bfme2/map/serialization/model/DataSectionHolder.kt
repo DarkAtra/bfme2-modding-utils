@@ -16,7 +16,7 @@ internal data class DataSectionLeaf(
     override val size: Long
 ) : DataSection {
 
-    companion object {
+    internal companion object {
         val BOOLEAN = DataSectionLeaf(1)
         val BYTE = DataSectionLeaf(1)
         val SHORT = DataSectionLeaf(2)

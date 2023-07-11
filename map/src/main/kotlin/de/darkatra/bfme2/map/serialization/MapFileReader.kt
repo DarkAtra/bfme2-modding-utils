@@ -23,12 +23,13 @@ import java.util.zip.InflaterInputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-class MapFileReader {
+class MapFileReader(
+    private val debugMode: Boolean = false
+) {
 
-    companion object {
+    internal companion object {
 
         internal fun readAssets(inputStream: CountingInputStream, serializationContext: SerializationContext, callback: (assetName: String) -> Unit) {
 
@@ -71,11 +72,12 @@ class MapFileReader {
         return file.inputStream().use(this::read)
     }
 
+    @PublicApi
     fun read(inputStream: InputStream): MapFile {
         return read(inputStream.buffered())
     }
 
-    @OptIn(ExperimentalTime::class)
+    @PublicApi
     fun read(bufferedInputStream: BufferedInputStream): MapFile {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
@@ -84,8 +86,8 @@ class MapFileReader {
 
         readAndValidateFourCC(countingInputStream)
 
-        val serializationContext = SerializationContext(false)
-        val annotationProcessingContext = AnnotationProcessingContext(false)
+        val serializationContext = SerializationContext(debugMode)
+        val annotationProcessingContext = AnnotationProcessingContext(debugMode)
         val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
 
         measureTime {

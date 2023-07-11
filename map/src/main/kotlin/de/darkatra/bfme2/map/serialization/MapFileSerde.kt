@@ -12,7 +12,6 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 internal class MapFileSerde(
@@ -54,7 +53,6 @@ internal class MapFileSerde(
         )
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun serialize(outputStream: OutputStream, data: MapFile) {
 
         parameterToField.entries
@@ -79,7 +77,6 @@ internal class MapFileSerde(
             }
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun deserialize(inputStream: CountingInputStream): MapFile {
 
         val assetNameToParameterIndexList = parameters.mapIndexed { parameterIndex, parameter ->

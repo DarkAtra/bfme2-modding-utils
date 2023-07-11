@@ -25,12 +25,14 @@ class MapFileWriterTest {
     @Test
     fun `should produce identical map file when writing a parsed map`() {
 
-        val parsedMapFile = MapFileReader().read(TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH))
+        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
 
-        val mapFileOutputStream = ByteArrayOutputStream()
-        MapFileWriter().write(mapFileOutputStream, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+        val writtenBytes = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+            it.toByteArray()
+        }
 
-        val writtenMapFile = MapFileReader().read(mapFileOutputStream.toByteArray().inputStream())
+        val writtenMapFile = MapFileReader().read(writtenBytes.inputStream())
 
         assertThat(writtenMapFile.blendTileData).isEqualTo(parsedMapFile.blendTileData)
         assertThat(writtenMapFile.buildLists).isEqualTo(parsedMapFile.buildLists)

@@ -14,7 +14,7 @@ class RefPackInputStream(
     inputStream: InputStream
 ) : BufferedInputStream(inputStream) {
 
-    companion object {
+    internal companion object {
         private const val MAX_REFERENCED_DATA_DISTANCE = 131072
         private const val MAX_BYTES_READ_COUNT = MAX_REFERENCED_DATA_DISTANCE * 300
         private const val WINDOW_SIZE = MAX_REFERENCED_DATA_DISTANCE * 600
