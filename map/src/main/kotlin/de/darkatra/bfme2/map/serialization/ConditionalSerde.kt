@@ -47,9 +47,10 @@ internal class ConditionalSerde(
     }
 
     override fun serialize(outputStream: OutputStream, data: Any) {
-        val assetName = serializationContext.peek().assetName
-        val serde = serdes[assetName]
-            ?: throw IllegalStateException("Could not find serde for '$assetName' writing $currentElementName. Expected one of: ${serdes.keys}")
+        val asset = data::class.findAnnotation<Asset>()
+            ?: throw IllegalStateException("Could not find asset annotation for $currentElementName. Expected one of: ${serdes.keys}")
+        val serde = serdes[asset.name]
+            ?: throw IllegalStateException("Could not find serde for '${asset.name}' writing $currentElementName. Expected one of: ${serdes.keys}")
         preProcessor.preProcess(data, serializationContext).let {
             serde.serialize(outputStream, it)
         }
