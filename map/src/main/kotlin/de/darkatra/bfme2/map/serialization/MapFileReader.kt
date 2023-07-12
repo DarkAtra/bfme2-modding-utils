@@ -82,7 +82,12 @@ class MapFileReader(
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)
 
-        val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream))
+        val countingInputStream = CountingInputStream(decodeIfNecessary(bufferedInputStream).let {
+            when (debugMode) {
+                true -> RollingWindowInputStream(it, 8 * 4)
+                false -> it
+            }
+        })
 
         readAndValidateFourCC(countingInputStream)
 
