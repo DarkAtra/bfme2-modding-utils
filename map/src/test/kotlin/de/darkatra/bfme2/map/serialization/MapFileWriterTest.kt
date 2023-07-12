@@ -3,19 +3,37 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.ByteStreams
 import de.darkatra.bfme2.map.MapFileCompression
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
 class MapFileWriterTest {
 
     @Test
-    fun `should write map`() {
+    fun `should have the same byte size when writing uncompressed maps`() {
 
-        val expectedMapFileSize = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(ByteStreams::exhaust)
-        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
+        val mapFilePath = TestUtils.UNCOMPRESSED_MAP_PATH
+        val expectedMapFileSize = TestUtils.getInputStream(mapFilePath).use(ByteStreams::exhaust)
+        val parsedMapFile = TestUtils.getInputStream(mapFilePath).use(MapFileReader()::read)
 
         val mapFileOutputStream = ByteArrayOutputStream().use {
             MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+            it
+        }
+
+        assertThat(mapFileOutputStream.size()).isEqualTo(expectedMapFileSize)
+    }
+
+    @Test
+    @Disabled // FIXME: writing zlib compressed maps still does not work
+    fun `should have the same byte size when writing zlib compressed maps`() {
+
+        val mapFilePath = "/maps/bfme2-rotwk/Legendary War.zlib"
+        val expectedMapFileSize = TestUtils.getInputStream(mapFilePath).use(ByteStreams::exhaust)
+        val parsedMapFile = TestUtils.getInputStream(mapFilePath).use(MapFileReader()::read)
+
+        val mapFileOutputStream = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.ZLIB)
             it
         }
 

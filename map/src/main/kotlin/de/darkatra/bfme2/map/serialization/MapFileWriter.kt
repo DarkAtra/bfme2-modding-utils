@@ -1,11 +1,11 @@
 package de.darkatra.bfme2.map.serialization
 
-import com.google.common.io.CountingOutputStream
 import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.write7BitIntPrefixedString
+import de.darkatra.bfme2.writeInt
 import de.darkatra.bfme2.writeUInt
 import de.darkatra.bfme2.writeUShort
 import java.io.BufferedOutputStream
@@ -66,14 +66,6 @@ class MapFileWriter(
     @PublicApi
     fun write(bufferedOutputStream: BufferedOutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
-        if (compression != MapFileCompression.UNCOMPRESSED) {
-            writeFourCC(bufferedOutputStream, compression)
-        }
-
-        val countingOutputStream = CountingOutputStream(encodeIfNecessary(bufferedOutputStream, compression))
-
-        writeFourCC(countingOutputStream, MapFileCompression.UNCOMPRESSED)
-
         val serializationContext = SerializationContext(debugMode)
         val annotationProcessingContext = AnnotationProcessingContext(debugMode)
         val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
@@ -81,25 +73,34 @@ class MapFileWriter(
         val mapFileSerde: MapFileSerde = serdeFactory.getSerde(MapFile::class) as MapFileSerde
         annotationProcessingContext.invalidate()
 
-        val assetDataSections = mapFileSerde.calculateDataSection(mapFile).flatten()
+        val mapFileDataSection = mapFileSerde.calculateDataSection(mapFile)
+        val mapFileSize = mapFileDataSection.size.toInt()
+        val assetNames = mapFileDataSection
+            .flatten()
             .filter { it.isAsset }
-
-        val assetNames = assetDataSections
             .distinctBy { it.assetName }
             .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
             .toMap()
         serializationContext.setAssetNames(assetNames)
 
+        if (compression != MapFileCompression.UNCOMPRESSED) {
+            writeFourCC(bufferedOutputStream, compression, mapFileSize)
+        }
+
+        val encodedOutputStream = encodeIfNecessary(bufferedOutputStream, compression)
+
+        writeFourCC(encodedOutputStream, MapFileCompression.UNCOMPRESSED, mapFileSize)
+
         measureTime {
-            writeAssetNames(assetNames, countingOutputStream)
+            writeAssetNames(assetNames, encodedOutputStream)
         }.also { elapsedTime ->
             if (serializationContext.debugMode) {
                 println("Writing asset names took $elapsedTime.")
             }
         }
 
-        mapFileSerde.serialize(bufferedOutputStream, mapFile)
-        bufferedOutputStream.flush()
+        mapFileSerde.serialize(encodedOutputStream, mapFile)
+        encodedOutputStream.flush()
     }
 
     private fun writeAssetNames(assetNames: Map<UInt, String>, outputStream: OutputStream) {
@@ -122,11 +123,18 @@ class MapFileWriter(
         }
     }
 
-    private fun writeFourCC(outputStream: OutputStream, compression: MapFileCompression) {
+    private fun writeFourCC(outputStream: OutputStream, compression: MapFileCompression, fileSize: Int) {
         when (compression) {
             MapFileCompression.UNCOMPRESSED -> outputStream.write(MapFileCompression.UNCOMPRESSED.fourCC.toByteArray(StandardCharsets.US_ASCII))
-            MapFileCompression.REFPACK -> outputStream.write(MapFileCompression.REFPACK.fourCC.toByteArray(StandardCharsets.US_ASCII))
-            MapFileCompression.ZLIB -> outputStream.write(MapFileCompression.ZLIB.fourCC.toByteArray(StandardCharsets.US_ASCII))
+            MapFileCompression.REFPACK -> {
+                outputStream.write(MapFileCompression.REFPACK.fourCC.toByteArray(StandardCharsets.US_ASCII))
+                outputStream.writeInt(fileSize)
+            }
+
+            MapFileCompression.ZLIB -> {
+                outputStream.write(MapFileCompression.ZLIB.fourCC.toByteArray(StandardCharsets.US_ASCII))
+                outputStream.writeInt(fileSize)
+            }
         }
     }
 }
