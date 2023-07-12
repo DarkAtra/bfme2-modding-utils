@@ -2,7 +2,7 @@ package de.darkatra.bfme2.map.serialization
 
 import de.darkatra.bfme2.Color
 import de.darkatra.bfme2.Vector3
-import de.darkatra.bfme2.map.camera.CameraAnimationType
+import de.darkatra.bfme2.map.camera.LookAtCameraAnimation
 import de.darkatra.bfme2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.map.`object`.RoadType
 import de.darkatra.bfme2.map.scripting.ScriptConditionType
@@ -141,10 +141,11 @@ internal class MapFileReaderTest {
         val map = TestUtils.getInputStream("/maps/bfme2-rotwk/cin fornost - witchking fire.map").use(MapFileReader()::read)
 
         assertThat(map.cameraAnimations.animations).isNotEmpty
-        assertThat(map.cameraAnimations.animations[0].animationType).isEqualTo(CameraAnimationType.LOOK)
+        assertThat(map.cameraAnimations.animations[0]).isInstanceOf(LookAtCameraAnimation::class.java)
         assertThat(map.cameraAnimations.animations[0].name).isEqualTo("Look-at Animation")
         assertThat(map.cameraAnimations.animations[0].numberOfFrames).isEqualTo(1000u)
         assertThat(map.cameraAnimations.animations[0].startOffset).isEqualTo(0u)
-        assertThat(map.cameraAnimations.animations[0].cameraFrames).hasSize(5)
+        assertThat((map.cameraAnimations.animations[0] as LookAtCameraAnimation).lookAtCameraFrames).hasSize(4)
+        assertThat((map.cameraAnimations.animations[0] as LookAtCameraAnimation).lookAtTargetFrames).hasSize(1)
     }
 }
