@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.CountingInputStream
-import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.*
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.scripting.Script
 import de.darkatra.bfme2.map.scripting.ScriptFolder
@@ -13,10 +13,6 @@ import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.NoopPreProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
-import de.darkatra.bfme2.readBoolean
-import de.darkatra.bfme2.readUShortPrefixedString
-import de.darkatra.bfme2.writeBoolean
-import de.darkatra.bfme2.writeUShortPrefixedString
 import java.io.OutputStream
 import kotlin.reflect.full.findAnnotation
 
@@ -38,6 +34,8 @@ internal class ScriptListEntrySerde(
         return when (data) {
             is Script -> scriptSerde.calculateDataSection(data)
             is ScriptFolder -> DataSectionHolder(
+                assetName = "ScriptGroup",
+                assetVersion = 3u,
                 containingData = listOf(
                     DataSectionLeaf(2L + data.name.length),
                     DataSectionLeaf.BOOLEAN,
