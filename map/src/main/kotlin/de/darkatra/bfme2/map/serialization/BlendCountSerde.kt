@@ -29,8 +29,11 @@ internal class BlendCountSerde(
     }
 
     override fun deserialize(inputStream: CountingInputStream): UInt {
-        // the game subtracts 1 from blendsCount and cliffBlendsCount if the deserialized value is greater than 0 for some weird reason
-        return (uIntSerde.deserialize(inputStream) - 1u).coerceAtLeast(0u).also {
+        val value = uIntSerde.deserialize(inputStream)
+        return when {
+            value > 0u -> value - 1u
+            else -> value
+        }.also {
             postProcessor.postProcess(it, context)
         }
     }

@@ -148,4 +148,15 @@ internal class MapFileReaderTest {
         assertThat((map.cameraAnimations.animations[0] as LookAtCameraAnimation).lookAtCameraFrames).hasSize(4)
         assertThat((map.cameraAnimations.animations[0] as LookAtCameraAnimation).lookAtTargetFrames).hasSize(1)
     }
+
+    @Test
+    internal fun `should read map with cliffBlendsCount equal to zero`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map wor osgiliath.map").use(MapFileReader(true)::read)
+
+        assertThat(map.blendTileData.blendsCount).isEqualTo(18299u)
+        // when there aren't any cliff blends, some maps have cliffBlendsCount=0 and some have cliffBlendsCount=1
+        // the game treats these values the same, we should too
+        assertThat(map.blendTileData.cliffBlendsCount).isEqualTo(0u)
+    }
 }
