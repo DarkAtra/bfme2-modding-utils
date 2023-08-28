@@ -29,11 +29,7 @@ internal class BlendCountSerde(
     }
 
     override fun deserialize(inputStream: CountingInputStream): UInt {
-        val value = uIntSerde.deserialize(inputStream)
-        return when {
-            value > 0u -> value - 1u
-            else -> value
-        }.also {
+        return (uIntSerde.deserialize(inputStream).coerceAtLeast(1u) - 1u).also {
             postProcessor.postProcess(it, context)
         }
     }
