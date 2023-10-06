@@ -100,6 +100,11 @@ class MapFileWriter(
         }
 
         mapFileSerde.serialize(encodedOutputStream, mapFile)
+
+        if (compression == MapFileCompression.ZLIB) {
+            (encodedOutputStream as DeflaterOutputStream).finish()
+        }
+
         encodedOutputStream.flush()
     }
 
