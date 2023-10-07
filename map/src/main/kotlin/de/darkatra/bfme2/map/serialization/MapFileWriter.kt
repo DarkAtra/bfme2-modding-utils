@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption.CREATE_NEW
+import java.nio.file.StandardOpenOption.WRITE
 import java.util.zip.DeflaterOutputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
@@ -53,7 +55,7 @@ class MapFileWriter(
             throw FileAlreadyExistsException("File '${file.absolutePathString()}' already exist.")
         }
 
-        file.outputStream().use {
+        file.outputStream(CREATE_NEW, WRITE).use {
             write(it, mapFile)
         }
     }
@@ -101,8 +103,8 @@ class MapFileWriter(
 
         mapFileSerde.serialize(encodedOutputStream, mapFile)
 
-        if (compression == MapFileCompression.ZLIB) {
-            (encodedOutputStream as DeflaterOutputStream).finish()
+        if (encodedOutputStream is DeflaterOutputStream) {
+            encodedOutputStream.finish()
         }
 
         encodedOutputStream.flush()
