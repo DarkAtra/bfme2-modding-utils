@@ -32,17 +32,18 @@ class MapFileWriterTest {
     @Test
     fun `should have the same byte size when writing zlib compressed maps`() {
 
-        val mapFilePath = "/maps/bfme2-rotwk/Legendary War.zlib"
+        // fileSize in file (after the initial fourCC) - original map/correct: 10059841
+        val mapFilePath = TestUtils.ZLIB_COMPRESSED_MAP_PATH
+        val expectedMapFileSize = TestUtils.getInputStream(mapFilePath).use(ByteStreams::exhaust)
         val parsedMapFile = TestUtils.getInputStream(mapFilePath).use(MapFileReader()::read)
 
-        val writtenBytes = ByteArrayOutputStream().use {
+        // fileSize in file (after the initial fourCC) - edited map/incorrect: 10059841
+        val mapFileOutputStream = ByteArrayOutputStream().use {
             MapFileWriter().write(it, parsedMapFile, MapFileCompression.ZLIB)
-            it.toByteArray()
+            it
         }
 
-        val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
-
-        assertMapsAreEqual(writtenMapFile, parsedMapFile)
+        assertThat(mapFileOutputStream.size()).isEqualTo(expectedMapFileSize)
     }
 
     @ParameterizedTest
