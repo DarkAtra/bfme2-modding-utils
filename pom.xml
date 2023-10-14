@@ -53,6 +53,7 @@
         <guava.version>32.1.2-jre</guava.version>
 
         <assertj.version>3.24.2</assertj.version>
+        <junit-params.version>5.6.3</junit-params.version>
         <surefire.version>3.1.2</surefire.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     </properties>
@@ -111,6 +112,12 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-test-junit5</artifactId>
                 <version>${kotlin.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-params.version}</version>
                 <scope>test</scope>
             </dependency>
 

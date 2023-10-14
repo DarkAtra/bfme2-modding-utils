@@ -4,7 +4,10 @@ import com.google.common.io.ByteStreams
 import de.darkatra.bfme2.map.MapFileCompression
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.ByteArrayOutputStream
+import java.util.stream.Stream
 
 class MapFileWriterTest {
 
@@ -56,10 +59,11 @@ class MapFileWriterTest {
         assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
     }
 
-    @Test
-    fun `should produce identical map file when writing a parsed map`() {
+    @ParameterizedTest
+    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    fun `should produce identical map file when writing a parsed map`(mapPath: String) {
 
-        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
+        val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
 
         val writtenBytes = ByteArrayOutputStream().use {
             MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
@@ -87,4 +91,15 @@ class MapFileWriterTest {
         assertThat(writtenMapFile.triggerAreas).isEqualTo(parsedMapFile.triggerAreas)
         assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
     }
+}
+
+fun mapsToRoundtrip(): Stream<String> {
+    return Stream.of(
+        TestUtils.UNCOMPRESSED_MAP_PATH,
+        "/maps/bfme2-rotwk/map mp harlindon.refpack",
+        "/maps/bfme2-rotwk/map mp harlond.zlib",
+        "/maps/bfme2-rotwk/map mp midgewater.zlib",
+        "/maps/bfme2-rotwk/map mp westmarch.zlib",
+        "/maps/bfme2-rotwk/map wor osgiliath.zlib"
+    )
 }

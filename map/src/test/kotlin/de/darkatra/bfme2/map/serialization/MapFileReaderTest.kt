@@ -78,7 +78,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with scripts`() {
 
-        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/script.map").use(MapFileReader()::read)
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/script.refpack").use(MapFileReader()::read)
 
         assertThat(map.playerScriptsList.scriptLists).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[0].scriptListEntries).isNotEmpty
@@ -138,7 +138,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read map with look-at camera animation frames`() {
 
-        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/cin fornost - witchking fire.map").use(MapFileReader()::read)
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/cin fornost - witchking fire.refpack").use(MapFileReader()::read)
 
         assertThat(map.cameraAnimations.animations).isNotEmpty
         assertThat(map.cameraAnimations.animations[0]).isInstanceOf(LookAtCameraAnimation::class.java)
@@ -152,7 +152,7 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read map with cliffBlendsCount equal to zero`() {
 
-        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map wor osgiliath.map").use(MapFileReader()::read)
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map wor osgiliath.zlib").use(MapFileReader()::read)
 
         assertThat(map.blendTileData.blendsCount).isEqualTo(18299u)
         // when there aren't any cliff blends, some maps have cliffBlendsCount=0 and some have cliffBlendsCount=1
