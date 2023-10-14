@@ -61,12 +61,45 @@ class MapFileWriterTest {
 
     @ParameterizedTest
     @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
-    fun `should produce identical map file when writing a parsed map`(mapPath: String) {
+    fun `should produce identical map file when writing a parsed map without compression`(mapPath: String) {
 
         val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
 
         val writtenBytes = ByteArrayOutputStream().use {
             MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+            it.toByteArray()
+        }
+
+        val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
+
+        assertThat(writtenMapFile.blendTileData).isEqualTo(parsedMapFile.blendTileData)
+        assertThat(writtenMapFile.buildLists).isEqualTo(parsedMapFile.buildLists)
+        assertThat(writtenMapFile.cameraAnimations).isEqualTo(parsedMapFile.cameraAnimations)
+        assertThat(writtenMapFile.cameras).isEqualTo(parsedMapFile.cameras)
+        assertThat(writtenMapFile.environmentData).isEqualTo(parsedMapFile.environmentData)
+        assertThat(writtenMapFile.globalLighting).isEqualTo(parsedMapFile.globalLighting)
+        assertThat(writtenMapFile.heightMap).isEqualTo(parsedMapFile.heightMap)
+        assertThat(writtenMapFile.libraryMapsList).isEqualTo(parsedMapFile.libraryMapsList)
+        assertThat(writtenMapFile.multiplayerPositions).isEqualTo(parsedMapFile.multiplayerPositions)
+        assertThat(writtenMapFile.objects).isEqualTo(parsedMapFile.objects)
+        assertThat(writtenMapFile.playerScriptsList).isEqualTo(parsedMapFile.playerScriptsList)
+        assertThat(writtenMapFile.postEffects).isEqualTo(parsedMapFile.postEffects)
+        assertThat(writtenMapFile.riverAreas).isEqualTo(parsedMapFile.riverAreas)
+        assertThat(writtenMapFile.sides).isEqualTo(parsedMapFile.sides)
+        assertThat(writtenMapFile.standingWaterAreas).isEqualTo(parsedMapFile.standingWaterAreas)
+        assertThat(writtenMapFile.teams).isEqualTo(parsedMapFile.teams)
+        assertThat(writtenMapFile.triggerAreas).isEqualTo(parsedMapFile.triggerAreas)
+        assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
+    }
+
+    @ParameterizedTest
+    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    fun `should produce identical map file when writing a parsed map with zlib compression`(mapPath: String) {
+
+        val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
+
+        val writtenBytes = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.ZLIB)
             it.toByteArray()
         }
 
