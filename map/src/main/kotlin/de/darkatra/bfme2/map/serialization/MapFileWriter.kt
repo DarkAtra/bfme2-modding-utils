@@ -68,6 +68,10 @@ class MapFileWriter(
     @PublicApi
     fun write(bufferedOutputStream: BufferedOutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
+        if (compression == MapFileCompression.REFPACK) {
+            throw UnsupportedEncodingException("Encoding '$compression' is not supported.")
+        }
+
         val serializationContext = SerializationContext(debugMode)
         val annotationProcessingContext = AnnotationProcessingContext(debugMode)
         val serdeFactory = SerdeFactory(annotationProcessingContext, serializationContext)
@@ -125,8 +129,8 @@ class MapFileWriter(
 
         return when (compression) {
             MapFileCompression.UNCOMPRESSED -> outputStream
+            MapFileCompression.REFPACK -> TODO("Requires RefPackOutputStream which is not implemented yet.")
             MapFileCompression.ZLIB -> DeflaterOutputStream(outputStream)
-            else -> throw UnsupportedEncodingException("Encoding '$compression' is not supported.")
         }
     }
 

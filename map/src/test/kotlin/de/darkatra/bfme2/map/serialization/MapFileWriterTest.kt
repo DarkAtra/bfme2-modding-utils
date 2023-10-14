@@ -5,9 +5,11 @@ import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.ByteArrayOutputStream
+import java.io.UnsupportedEncodingException
 import java.util.stream.Stream
 
 class MapFileWriterTest {
@@ -73,6 +75,18 @@ class MapFileWriterTest {
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
         assertMapsAreEqual(writtenMapFile, parsedMapFile)
+    }
+
+    @Test
+    fun `should fail to write map with refpack compression`() {
+
+        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
+
+        ByteArrayOutputStream().use {
+            assertThrows<UnsupportedEncodingException> {
+                MapFileWriter().write(it, parsedMapFile, MapFileCompression.REFPACK)
+            }
+        }
     }
 
     private fun assertMapsAreEqual(actual: MapFile, expected: MapFile) {
