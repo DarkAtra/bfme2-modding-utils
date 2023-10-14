@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.ByteStreams
+import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -39,24 +40,7 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertThat(writtenMapFile.blendTileData).isEqualTo(parsedMapFile.blendTileData)
-        assertThat(writtenMapFile.buildLists).isEqualTo(parsedMapFile.buildLists)
-        assertThat(writtenMapFile.cameraAnimations).isEqualTo(parsedMapFile.cameraAnimations)
-        assertThat(writtenMapFile.cameras).isEqualTo(parsedMapFile.cameras)
-        assertThat(writtenMapFile.environmentData).isEqualTo(parsedMapFile.environmentData)
-        assertThat(writtenMapFile.globalLighting).isEqualTo(parsedMapFile.globalLighting)
-        assertThat(writtenMapFile.heightMap).isEqualTo(parsedMapFile.heightMap)
-        assertThat(writtenMapFile.libraryMapsList).isEqualTo(parsedMapFile.libraryMapsList)
-        assertThat(writtenMapFile.multiplayerPositions).isEqualTo(parsedMapFile.multiplayerPositions)
-        assertThat(writtenMapFile.objects).isEqualTo(parsedMapFile.objects)
-        assertThat(writtenMapFile.playerScriptsList).isEqualTo(parsedMapFile.playerScriptsList)
-        assertThat(writtenMapFile.postEffects).isEqualTo(parsedMapFile.postEffects)
-        assertThat(writtenMapFile.riverAreas).isEqualTo(parsedMapFile.riverAreas)
-        assertThat(writtenMapFile.sides).isEqualTo(parsedMapFile.sides)
-        assertThat(writtenMapFile.standingWaterAreas).isEqualTo(parsedMapFile.standingWaterAreas)
-        assertThat(writtenMapFile.teams).isEqualTo(parsedMapFile.teams)
-        assertThat(writtenMapFile.triggerAreas).isEqualTo(parsedMapFile.triggerAreas)
-        assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
+        assertMapsAreEqual(writtenMapFile, parsedMapFile)
     }
 
     @ParameterizedTest
@@ -72,24 +56,7 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertThat(writtenMapFile.blendTileData).isEqualTo(parsedMapFile.blendTileData)
-        assertThat(writtenMapFile.buildLists).isEqualTo(parsedMapFile.buildLists)
-        assertThat(writtenMapFile.cameraAnimations).isEqualTo(parsedMapFile.cameraAnimations)
-        assertThat(writtenMapFile.cameras).isEqualTo(parsedMapFile.cameras)
-        assertThat(writtenMapFile.environmentData).isEqualTo(parsedMapFile.environmentData)
-        assertThat(writtenMapFile.globalLighting).isEqualTo(parsedMapFile.globalLighting)
-        assertThat(writtenMapFile.heightMap).isEqualTo(parsedMapFile.heightMap)
-        assertThat(writtenMapFile.libraryMapsList).isEqualTo(parsedMapFile.libraryMapsList)
-        assertThat(writtenMapFile.multiplayerPositions).isEqualTo(parsedMapFile.multiplayerPositions)
-        assertThat(writtenMapFile.objects).isEqualTo(parsedMapFile.objects)
-        assertThat(writtenMapFile.playerScriptsList).isEqualTo(parsedMapFile.playerScriptsList)
-        assertThat(writtenMapFile.postEffects).isEqualTo(parsedMapFile.postEffects)
-        assertThat(writtenMapFile.riverAreas).isEqualTo(parsedMapFile.riverAreas)
-        assertThat(writtenMapFile.sides).isEqualTo(parsedMapFile.sides)
-        assertThat(writtenMapFile.standingWaterAreas).isEqualTo(parsedMapFile.standingWaterAreas)
-        assertThat(writtenMapFile.teams).isEqualTo(parsedMapFile.teams)
-        assertThat(writtenMapFile.triggerAreas).isEqualTo(parsedMapFile.triggerAreas)
-        assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
+        assertMapsAreEqual(writtenMapFile, parsedMapFile)
     }
 
     @ParameterizedTest
@@ -105,24 +72,29 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertThat(writtenMapFile.blendTileData).isEqualTo(parsedMapFile.blendTileData)
-        assertThat(writtenMapFile.buildLists).isEqualTo(parsedMapFile.buildLists)
-        assertThat(writtenMapFile.cameraAnimations).isEqualTo(parsedMapFile.cameraAnimations)
-        assertThat(writtenMapFile.cameras).isEqualTo(parsedMapFile.cameras)
-        assertThat(writtenMapFile.environmentData).isEqualTo(parsedMapFile.environmentData)
-        assertThat(writtenMapFile.globalLighting).isEqualTo(parsedMapFile.globalLighting)
-        assertThat(writtenMapFile.heightMap).isEqualTo(parsedMapFile.heightMap)
-        assertThat(writtenMapFile.libraryMapsList).isEqualTo(parsedMapFile.libraryMapsList)
-        assertThat(writtenMapFile.multiplayerPositions).isEqualTo(parsedMapFile.multiplayerPositions)
-        assertThat(writtenMapFile.objects).isEqualTo(parsedMapFile.objects)
-        assertThat(writtenMapFile.playerScriptsList).isEqualTo(parsedMapFile.playerScriptsList)
-        assertThat(writtenMapFile.postEffects).isEqualTo(parsedMapFile.postEffects)
-        assertThat(writtenMapFile.riverAreas).isEqualTo(parsedMapFile.riverAreas)
-        assertThat(writtenMapFile.sides).isEqualTo(parsedMapFile.sides)
-        assertThat(writtenMapFile.standingWaterAreas).isEqualTo(parsedMapFile.standingWaterAreas)
-        assertThat(writtenMapFile.teams).isEqualTo(parsedMapFile.teams)
-        assertThat(writtenMapFile.triggerAreas).isEqualTo(parsedMapFile.triggerAreas)
-        assertThat(writtenMapFile.worldInfo).isEqualTo(parsedMapFile.worldInfo)
+        assertMapsAreEqual(writtenMapFile, parsedMapFile)
+    }
+
+    private fun assertMapsAreEqual(actual: MapFile, expected: MapFile) {
+
+        assertThat(actual.blendTileData).isEqualTo(expected.blendTileData)
+        assertThat(actual.buildLists).isEqualTo(expected.buildLists)
+        assertThat(actual.cameraAnimations).isEqualTo(expected.cameraAnimations)
+        assertThat(actual.cameras).isEqualTo(expected.cameras)
+        assertThat(actual.environmentData).isEqualTo(expected.environmentData)
+        assertThat(actual.globalLighting).isEqualTo(expected.globalLighting)
+        assertThat(actual.heightMap).isEqualTo(expected.heightMap)
+        assertThat(actual.libraryMapsList).isEqualTo(expected.libraryMapsList)
+        assertThat(actual.multiplayerPositions).isEqualTo(expected.multiplayerPositions)
+        assertThat(actual.objects).isEqualTo(expected.objects)
+        assertThat(actual.playerScriptsList).isEqualTo(expected.playerScriptsList)
+        assertThat(actual.postEffects).isEqualTo(expected.postEffects)
+        assertThat(actual.riverAreas).isEqualTo(expected.riverAreas)
+        assertThat(actual.sides).isEqualTo(expected.sides)
+        assertThat(actual.standingWaterAreas).isEqualTo(expected.standingWaterAreas)
+        assertThat(actual.teams).isEqualTo(expected.teams)
+        assertThat(actual.triggerAreas).isEqualTo(expected.triggerAreas)
+        assertThat(actual.worldInfo).isEqualTo(expected.worldInfo)
     }
 }
 
