@@ -31,7 +31,7 @@
 
     <groupId>de.darkatra.bfme2</groupId>
     <artifactId>bfme2-modding-utils</artifactId>
-    <version>1.0.11-next.1</version>
+    <version>1.0.11</version>
     <packaging>pom</packaging>
 
     <modules>
