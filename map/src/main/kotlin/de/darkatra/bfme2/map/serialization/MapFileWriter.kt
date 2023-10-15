@@ -4,6 +4,7 @@ import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
+import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.write7BitIntPrefixedString
 import de.darkatra.bfme2.writeInt
 import de.darkatra.bfme2.writeUInt
@@ -29,6 +30,14 @@ class MapFileWriter(
 
     internal companion object {
 
+        internal val sevenBitIntSizeMap = mapOf(
+            0..127 to 1,
+            128..16383 to 2,
+            16384..2097151 to 3,
+            2097152..268435455 to 4,
+            268435456..Int.MAX_VALUE to 5
+        )
+
         internal fun <T : Any> writeAsset(outputStream: OutputStream, serializationContext: SerializationContext, data: T, entrySerde: Serde<T>) {
 
             val asset = data::class.findAnnotation<Asset>()
@@ -49,14 +58,14 @@ class MapFileWriter(
     }
 
     @PublicApi
-    fun write(file: Path, mapFile: MapFile) {
+    fun write(file: Path, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
         if (file.exists()) {
             throw FileAlreadyExistsException("File '${file.absolutePathString()}' already exist.")
         }
 
         file.outputStream(CREATE_NEW, WRITE).use {
-            write(it, mapFile)
+            write(it, mapFile, compression)
         }
     }
 
@@ -80,7 +89,6 @@ class MapFileWriter(
         annotationProcessingContext.invalidate()
 
         val mapFileDataSection = mapFileSerde.calculateDataSection(mapFile)
-        val mapFileSize = mapFileDataSection.size.toInt()
         val assetNames = mapFileDataSection
             .flatten()
             .filter { it.isAsset }
@@ -88,6 +96,15 @@ class MapFileWriter(
             .mapIndexed { index, dataSectionHolder -> Pair(index.toUInt() + 1u, dataSectionHolder.assetName!!) }
             .toMap()
         serializationContext.setAssetNames(assetNames)
+
+        // mapFileSize = fourCC + assetNames + dataSections
+        val mapFileSize = MapFileCompression.UNCOMPRESSED.fourCC.length
+            .plus(DataSectionLeaf.INT.size + assetNames.map { assetName ->
+                // FIXME: probably breaks if an assetName contains a two byte character
+                DataSectionLeaf.INT.size + sevenBitIntSizeMap.entries.find { it.key.contains(assetName.value.length) }!!.value + assetName.value.length
+            }.sum())
+            .plus(mapFileDataSection.size)
+            .toInt()
 
         if (compression != MapFileCompression.UNCOMPRESSED) {
             writeFourCC(bufferedOutputStream, compression, mapFileSize)

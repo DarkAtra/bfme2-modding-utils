@@ -3,6 +3,7 @@ package de.darkatra.bfme2.map.serialization
 import com.google.common.io.ByteStreams
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
+import de.darkatra.bfme2.toLittleEndianInt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -30,20 +31,21 @@ class MapFileWriterTest {
     }
 
     @Test
-    fun `should have the same byte size when writing zlib compressed maps`() {
+    fun `should have the same file size after fourCC when writing zlib compressed maps`() {
 
-        // fileSize in file (after the initial fourCC) - original map/correct: 10059841
         val mapFilePath = TestUtils.ZLIB_COMPRESSED_MAP_PATH
-        val expectedMapFileSize = TestUtils.getInputStream(mapFilePath).use(ByteStreams::exhaust)
-        val parsedMapFile = TestUtils.getInputStream(mapFilePath).use(MapFileReader()::read)
 
-        // fileSize in file (after the initial fourCC) - edited map/incorrect: 10059841
-        val mapFileOutputStream = ByteArrayOutputStream().use {
-            MapFileWriter().write(it, parsedMapFile, MapFileCompression.ZLIB)
-            it
-        }
+        // fileSize in file (after the initial fourCC) - original map
+        val expectedFileSizeAfterFourCC = TestUtils.getInputStream(mapFilePath).readBytes().drop(4).take(4).toByteArray().toLittleEndianInt()
 
-        assertThat(mapFileOutputStream.size()).isEqualTo(expectedMapFileSize)
+        // fileSize in file (after the initial fourCC) - edited map
+        val actualFileSizeAfterFourCC = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, TestUtils.getInputStream(mapFilePath).use(MapFileReader()::read), MapFileCompression.ZLIB)
+            it.toByteArray()
+        }.drop(4).take(4).toByteArray().toLittleEndianInt()
+
+        assertThat(actualFileSizeAfterFourCC).isEqualTo(expectedFileSizeAfterFourCC)
+        assertThat(actualFileSizeAfterFourCC).isEqualTo(10059841)
     }
 
     @ParameterizedTest
