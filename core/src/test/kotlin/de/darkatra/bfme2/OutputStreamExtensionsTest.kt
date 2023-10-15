@@ -294,6 +294,18 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
+        internal fun shouldRoundtrip7BitIntPrefixedStringWithTwoByteCharacter() {
+
+            val outputStream = ByteArrayOutputStream()
+
+            val testString = "ü"
+
+            outputStream.write7BitIntPrefixedString(testString)
+
+            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+        }
+
+        @Test
         internal fun shouldRoundtrip7BitIntPrefixedStringWithZeroLength() {
 
             val outputStream = ByteArrayOutputStream()
