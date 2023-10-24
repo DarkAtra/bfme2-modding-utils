@@ -1,25 +1,17 @@
-name: Build
+name: Verify Pull Request
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  pull_request:
     paths:
       - '**/src/**'
       - '**/pom.xml'
       - 'pom.xml'
 
 permissions:
-  # used by semantic release
-  contents: write
-  issues: write
-  pull-requests: write
-  # used to publish the jar to github packages
-  packages: write
+  contents: read
 
 jobs:
-  build:
-    name: Build
+  verify:
+    name: Verify Pull Request
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,12 +27,3 @@ jobs:
 
       - name: Run Tests
         run: mvn -B -ntp clean install
-
-      - name: Create new release
-        uses: cycjimmy/semantic-release-action@v3
-        with:
-          extra_plugins: |
-            @semantic-release/git
-            @semantic-release/exec
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
