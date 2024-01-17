@@ -47,14 +47,14 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <kotlin.version>1.9.21</kotlin.version>
+        <kotlin.version>1.9.22</kotlin.version>
         <java.version>17</java.version>
 
         <guava.version>33.0.0-jre</guava.version>
 
-        <assertj.version>3.24.2</assertj.version>
+        <assertj.version>3.25.1</assertj.version>
         <junit.version>5.10.1</junit.version>
-        <surefire.version>3.2.3</surefire.version>
+        <surefire.version>3.2.5</surefire.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     </properties>
 
