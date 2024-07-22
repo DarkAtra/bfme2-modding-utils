@@ -32,4 +32,33 @@ println(mapFile.worldSettings["cameraMaxHeight"])
 
 ### Writing a `MapFile`
 
-TBD
+The `MapFileWriter` implementation supports writing uncompressed maps (`CkMp`) and zlib compressed maps (`ZL5`).
+
+Here's how you can modify the max camera height of an existing map:
+
+```kotlin
+import de.darkatra.bfme2.map.serialization.MapFileReader
+import de.darkatra.bfme2.map.serialization.MapFileWriter
+import java.nio.file.Path
+
+val mapFilePath: Path = Path.of("/path/to/the/map/file.map")
+
+val mapFile: MapFile = MapFileReader().read(mapFilePath)
+
+// set the max camera height to 700
+val editedMap = mapFile.copy(
+  worldInfo = mapFile.worldInfo.copy(
+    properties = mapFile.worldInfo.properties.filter { property -> property.key.name != "cameraMaxHeight" }
+      + mapFile.worldInfo["cameraMaxHeight"]!!.copy(value = 700f)
+  )
+)
+
+println(editedMap.worldSettings["cameraMaxHeight"])
+
+// results in:
+// Property(key=PropertyKey(propertyType=FLOAT, name=cameraMaxHeight), value=700.0)
+
+val editedMapFilePath: Path = Path.of("/path/to/the/map/edited.map")
+
+MapFileWriter().write(editedMapFilePath, editedMap, MapFileCompression.ZLIB)
+```
