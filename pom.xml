@@ -34,6 +34,10 @@
     <version>1.0.20</version>
     <packaging>pom</packaging>
 
+    <name>${artifactId}</name>
+    <description>A library that provides functions to read and write some of the EA file formats.</description>
+    <url>https://github.com/DarkAtra/bfme2-modding-utils</url>
+
     <modules>
         <module>core</module>
         <module>refpack</module>
