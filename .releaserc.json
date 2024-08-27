@@ -13,7 +13,7 @@
             "@semantic-release/exec",
             {
                 "prepareCmd": "mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}",
-                "publishCmd": "mvn -B -ntp clean deploy -DskipTests"
+                "publishCmd": "mvn -B -ntp -Psign-with-gpg clean deploy -DskipTests -Dgpg.passphrase=$OSSRH_GPG_SECRET_KEY_PASSWORD"
             }
         ],
         [
@@ -31,7 +31,9 @@
             "@semantic-release/github",
             {
                 "successComment": false,
-                "releasedLabels": false
+                "releasedLabels": false,
+                "failComment": false,
+                "failTitle": false
             }
         ]
     ]
