@@ -1,12 +1,52 @@
-[![Maven Package](https://github.com/DarkAtra/bfme2-modding-utils/workflows/Maven%20Package/badge.svg)](https://github.com/DarkAtra/bfme2-modding-utils/releases)
+[![Build & Release](https://github.com/DarkAtra/bfme2-modding-utils/actions/workflows/build.yml/badge.svg)](https://github.com/DarkAtra/bfme2-modding-utils/actions/workflows/build.yml)
 
-# About
+# bfme2-modding-utils
+
+## About
 
 This project provides functions to read and write some of EA's file formats, such as:
 
 - [BIG](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
 - [RefPack](http://wiki.niotso.org/RefPack#Bitstream_specification)
 - Map
+
+## Usage
+
+Add the following dependencies to your `pom.xml` according to your needs:
+
+[//]: # (@formatter:off)
+```xml
+<dependency>
+  <groupId>de.darkatra.bfme2</groupId>
+  <artifactId>big</artifactId>
+  <version>1.0.19</version> <!-- please check if this is the current version -->
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>de.darkatra.bfme2</groupId>
+  <artifactId>core</artifactId>
+  <version>1.0.19</version> <!-- please check if this is the current version -->
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>de.darkatra.bfme2</groupId>
+  <artifactId>map</artifactId>
+  <version>1.0.19</version> <!-- please check if this is the current version -->
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>de.darkatra.bfme2</groupId>
+  <artifactId>refpack</artifactId>
+  <version>1.0.19</version> <!-- please check if this is the current version -->
+</dependency>
+```
+[//]: # (@formatter:on)
 
 ## Build
 
