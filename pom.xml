@@ -16,6 +16,14 @@
         </developer>
     </developers>
 
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <scm>
         <connection>scm:git:git@github.com:DarkAtra/bfme2-modding-utils.git</connection>
         <url>https://github.com/DarkAtra/bfme2-modding-utils</url>
