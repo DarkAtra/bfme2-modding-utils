@@ -60,10 +60,15 @@ internal class MapFileReaderTest {
     @Test
     internal fun `should read bfme2 map with strange road type`() {
 
-        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp harlond.zlib").use(MapFileReader()::read)
+        val map1 = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp harlond.zlib").use(MapFileReader()::read)
 
-        assertThat(map).isNotNull
-        assertThat(map.objects.objects.any { it.roadType == RoadType.UNKNOWN_5 }).isTrue
+        assertThat(map1).isNotNull
+        assertThat(map1.objects.objects.any { it.roadType == RoadType.UNKNOWN_5 }).isTrue
+
+        val map2 = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp stockbrook.map").use(MapFileReader()::read)
+
+        assertThat(map2).isNotNull
+        assertThat(map2.objects.objects.any { it.roadType == RoadType.UNKNOWN_13 }).isTrue
     }
 
     @Test

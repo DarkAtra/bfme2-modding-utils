@@ -23,5 +23,6 @@ enum class RoadType(
     UNKNOWN_10(196u),
     UNKNOWN_11(256u),
     UNKNOWN_12(512u),
+    UNKNOWN_13(24u),
     PRIMARY_TYPE(START.uInt or END.uInt or BRIDGE_START.uInt or BRIDGE_END.uInt)
 }
