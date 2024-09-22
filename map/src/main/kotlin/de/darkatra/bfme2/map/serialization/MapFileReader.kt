@@ -46,7 +46,7 @@ class MapFileReader(
                 )
 
                 if (serializationContext.debugMode) {
-                    println("Reading asset '${currentAsset.assetName}' with size ${currentAsset.assetSize}.")
+                    println("Reading asset '${currentAsset.assetName}' with version ${currentAsset.assetVersion} and size ${currentAsset.assetSize}.")
                 }
 
                 serializationContext.push(currentAsset)
