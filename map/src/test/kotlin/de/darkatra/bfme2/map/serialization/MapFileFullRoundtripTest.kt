@@ -33,12 +33,33 @@ class MapFileFullRoundtripTest {
         assertThat(writtenMapFile).isEqualTo(parsedMapFile)
     }
 
+    @ParameterizedTest
+    @MethodSource("patch202Maps")
+    fun `should roundtrip 202 map`(mapInputStream: InputStream) {
+
+        val parsedMapFile = mapInputStream.use(MapFileReader()::read)
+
+        val writtenBytes = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.UNCOMPRESSED)
+            it.toByteArray()
+        }
+
+        val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
+
+        assertThat(writtenMapFile).isEqualTo(parsedMapFile)
+    }
+
     companion object {
 
         private const val EXPANSION_REGISTRY_KEY = "SOFTWARE\\Wow6432Node\\Electronic Arts\\Electronic Arts\\The Lord of the Rings, The Rise of the Witch-king"
 
         @JvmStatic
-        fun originalGameMaps(): Stream<Arguments> {
+        fun originalGameMaps(): Stream<Arguments> = mapsFromBigArchive("Maps.big")
+
+        @JvmStatic
+        fun patch202Maps(): Stream<Arguments> = mapsFromBigArchive("!maps.big")
+
+        private fun mapsFromBigArchive(bigArchiveName: String): Stream<Arguments> {
 
             // hacky: lazily loads classes for JNA and BigArchive to avoid errors when compiling without the "fullVerification" profile
             val advapi32UtilClass = Class.forName("com.sun.jna.platform.win32.Advapi32Util")
@@ -55,9 +76,9 @@ class MapFileFullRoundtripTest {
                 throw IllegalStateException("Profile 'fullVerification' is enabled but the directory '${rotwkHomeDir.absolutePathString()}' does not exist.")
             }
 
-            val mapsBig = rotwkHomeDir.resolve("Maps.big")
+            val mapsBig = rotwkHomeDir.resolve(bigArchiveName)
             if (!mapsBig.exists()) {
-                throw IllegalStateException("Profile 'fullVerification' is enabled but 'Maps.big' does not exist in directory '${rotwkHomeDir.absolutePathString()}'.")
+                throw IllegalStateException("Profile 'fullVerification' is enabled but '$bigArchiveName' does not exist in directory '${rotwkHomeDir.absolutePathString()}'.")
             }
 
             val bigArchiveClass = Class.forName("de.darkatra.bfme2.big.BigArchive")

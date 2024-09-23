@@ -167,14 +167,22 @@ internal class MapFileReaderTest {
     }
 
     @Test
-    internal fun `should read map with unknown script action 473`() {
+    internal fun `should read map with triggerAreas`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map ang fornost.refpack").use(MapFileReader()::read)
+
+        assertThat(map.triggerAreas.areas).hasSize(20)
+    }
+
+    @Test
+    internal fun `should read map with MUSIC_PUSH_TRACK_FINITE_TIMES script action`() {
 
         val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp the invasion of sauron.map").use(MapFileReader()::read)
 
         assertThat(
             map.playerScriptsList.scriptLists.any { scriptList ->
                 scriptList.scripts.any { script ->
-                    script.actions.any { action -> action.type == ScriptActionType.UNKNOWN_473 }
+                    script.actions.any { action -> action.type == ScriptActionType.MUSIC_PUSH_TRACK_FINITE_TIMES }
                 }
             }
         ).isNotNull()
