@@ -130,6 +130,40 @@ internal class MapFileReaderTest {
     }
 
     @Test
+    fun `should map all ScriptActionTypes correctly`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/all scripts.map").use(MapFileReader()::read)
+
+        val testScripts = map.playerScriptsList.scriptLists.first().scriptFolders.first().scripts
+
+        // the first script in the test folder contains multiple actions - check if all of them are correctly mapped to an enum value
+        val firstScript = testScripts.first()
+        firstScript.actions.forEach { action ->
+            if (action.type.name != action.internalName.name) {
+                println("ScriptActionType ${action.type.id}u in Script ${firstScript.name}: ${action.internalName.name}")
+            }
+        }
+
+        println("---")
+
+        // the rest of the test folder contains scripts with exactly one action - these are the ones we want to keep for assertion later
+        testScripts.drop(1).forEach { script ->
+            val action = script.actions.first()
+            if (script.name != action.type.name || script.name != action.internalName.name) {
+                println("ScriptActionType ${action.type.id}u in Script ${script.name}: ${action.internalName.name}")
+            }
+        }
+
+        // FIXME: enable assertions once all ScriptActionTypes are identified
+        // testScripts.forEach { script ->
+        //     val action = script.actions.first()
+        //     assertThat(script.name)
+        //         .isEqualTo(action.type.name)
+        //         .isEqualTo(action.internalName.name)
+        // }
+    }
+
+    @Test
     internal fun `should read the same map information for all compressions`() {
 
         val plain = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)

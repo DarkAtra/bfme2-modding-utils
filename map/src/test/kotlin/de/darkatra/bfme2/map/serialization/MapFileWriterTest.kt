@@ -16,28 +16,6 @@ import java.util.stream.Stream
 class MapFileWriterTest {
 
     @Test
-    fun `should map all ScriptActionTypes correctly`() {
-
-        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/all scripts.map").use(MapFileReader()::read)
-
-        val testScripts = map.playerScriptsList.scriptLists.first().scriptFolders.first().scripts
-        testScripts.forEach { script ->
-            val action = script.actions.first()
-            if (script.name != action.type.name || script.name != action.internalName.name) {
-                println("ScriptActionType ${action.type.id} in Script ${script.name}: ${action.internalName.name}")
-            }
-        }
-
-        // FIXME: enable assertions once all ScriptActionTypes are identified
-        // testScripts.forEach { script ->
-        //     val action = script.actions.first()
-        //     assertThat(script.name)
-        //         .isEqualTo(action.type.name)
-        //         .isEqualTo(action.internalName.name)
-        // }
-    }
-
-    @Test
     fun `should have the same byte size when writing uncompressed maps`() {
 
         val mapFilePath = TestUtils.UNCOMPRESSED_MAP_PATH
