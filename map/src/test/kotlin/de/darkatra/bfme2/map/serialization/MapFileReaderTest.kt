@@ -5,6 +5,7 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.camera.LookAtCameraAnimation
 import de.darkatra.bfme2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.map.`object`.RoadType
+import de.darkatra.bfme2.map.scripting.ScriptActionType
 import de.darkatra.bfme2.map.scripting.ScriptConditionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -137,9 +138,17 @@ internal class MapFileReaderTest {
         val testScripts = map.playerScriptsList.scriptLists.first().scriptFolders.first().scripts
 
         // the first script in the test folder contains multiple actions - check if all of them are correctly mapped to an enum value
+        // TODO: take all actions from the first script, sorts them and write them to a new script in the script folder (once)
         val firstScript = testScripts.first()
+        // placeholder actions do not have an internalName - skip these in the assertions
+        val placeholders = setOf(
+            ScriptActionType.UNUSED_PLACEHOLDER_227,
+            ScriptActionType.UNUSED_PLACEHOLDER_343,
+            ScriptActionType.UNUSED_PLACEHOLDER_382,
+            ScriptActionType.UNUSED_PLACEHOLDER_480
+        )
         firstScript.actions.forEach { action ->
-            if (action.type.name != action.internalName.name) {
+            if (action.type.name != action.internalName.name && !placeholders.contains(action.type)) {
                 println("ScriptActionType ${action.type.id}u in Script ${firstScript.name}: ${action.internalName.name}")
             }
         }
@@ -155,12 +164,16 @@ internal class MapFileReaderTest {
         }
 
         // FIXME: enable assertions once all ScriptActionTypes are identified
-        // testScripts.forEach { script ->
-        //     val action = script.actions.first()
-        //     assertThat(script.name)
-        //         .isEqualTo(action.type.name)
-        //         .isEqualTo(action.internalName.name)
-        // }
+        //testScripts.forEach { script ->
+        //    val action = script.actions.first()
+        //    if (placeholders.contains(action.type)) {
+        //        assertThat(action.internalName.name).isEqualTo("")
+        //    } else {
+        //        assertThat(script.name)
+        //            .isEqualTo(action.type.name)
+        //            .isEqualTo(action.internalName.name)
+        //    }
+        //}
     }
 
     @Test
