@@ -5,6 +5,7 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.camera.LookAtCameraAnimation
 import de.darkatra.bfme2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.map.`object`.RoadType
+import de.darkatra.bfme2.map.scripting.ScriptActionType
 import de.darkatra.bfme2.map.scripting.ScriptConditionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -127,6 +128,52 @@ internal class MapFileReaderTest {
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions[0].conditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[2].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.IS_GAME_MODE_ACTIVE)
+    }
+
+    @Test
+    fun `should map all ScriptActionTypes correctly`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/all scripts.map").use(MapFileReader()::read)
+
+        val testScripts = map.playerScriptsList.scriptLists.first().scriptFolders.first().scripts
+
+        // the first script in the test folder contains multiple actions - check if all of them are correctly mapped to an enum value
+        // TODO: take all actions from the first script, sorts them and write them to a new script in the script folder (once)
+        val firstScript = testScripts.first()
+        // placeholder actions do not have an internalName - skip these in the assertions
+        val placeholders = setOf(
+            ScriptActionType.UNUSED_PLACEHOLDER_227,
+            ScriptActionType.UNUSED_PLACEHOLDER_343,
+            ScriptActionType.UNUSED_PLACEHOLDER_382,
+            ScriptActionType.UNUSED_PLACEHOLDER_480
+        )
+        firstScript.actions.forEach { action ->
+            if (action.type.name != action.internalName.name && !placeholders.contains(action.type)) {
+                println("ScriptActionType ${action.type.id}u in Script ${firstScript.name}: ${action.internalName.name}")
+            }
+        }
+
+        println("---")
+
+        // the rest of the test folder contains scripts with exactly one action - these are the ones we want to keep for assertion later
+        testScripts.drop(1).forEach { script ->
+            val action = script.actions.first()
+            if (script.name != action.type.name || script.name != action.internalName.name) {
+                println("ScriptActionType ${action.type.id}u in Script ${script.name}: ${action.internalName.name}")
+            }
+        }
+
+        // FIXME: enable assertions once all ScriptActionTypes are identified
+        //testScripts.forEach { script ->
+        //    val action = script.actions.first()
+        //    if (placeholders.contains(action.type)) {
+        //        assertThat(action.internalName.name).isEqualTo("")
+        //    } else {
+        //        assertThat(script.name)
+        //            .isEqualTo(action.type.name)
+        //            .isEqualTo(action.internalName.name)
+        //    }
+        //}
     }
 
     @Test
