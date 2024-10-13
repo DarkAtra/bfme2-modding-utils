@@ -148,7 +148,7 @@ internal class MapFileReaderTest {
             ScriptActionType.UNUSED_PLACEHOLDER_480
         )
         firstScript.actions.forEach { action ->
-            if (action.type.name != action.internalName.name && !placeholders.contains(action.type)) {
+            if (action.type.internalName != action.internalName.name && !placeholders.contains(action.type)) {
                 println("ScriptActionType ${action.type.id}u in Script ${firstScript.name}: ${action.internalName.name}")
             }
         }
