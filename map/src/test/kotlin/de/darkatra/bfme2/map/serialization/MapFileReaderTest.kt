@@ -211,4 +211,12 @@ internal class MapFileReaderTest {
         // the game treats these values the same, we should too
         assertThat(map.blendTileData.cliffBlendsCount).isEqualTo(0u)
     }
+
+    @Test
+    internal fun `should read map with triggerAreas`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map ang fornost.refpack").use(MapFileReader()::read)
+
+        assertThat(map.triggerAreas.areas).hasSize(20)
+    }
 }
