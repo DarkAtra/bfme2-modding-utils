@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>refpack</artifactId>
+    <name>${artifactId}</name>
 
     <dependencies>
         <dependency>
