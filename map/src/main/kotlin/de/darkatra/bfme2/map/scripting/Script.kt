@@ -1,5 +1,6 @@
 package de.darkatra.bfme2.map.scripting
 
+import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.serialization.AssetListSerde
 import de.darkatra.bfme2.map.serialization.Serialize
@@ -26,8 +27,15 @@ data class Script(
     val statements: @Serialize(using = AssetListSerde::class) List<Statement>
 ) : ScriptListEntry {
 
+    @PublicApi
     val actions = statements.filterIsInstance<Action>()
+
+    @PublicApi
     val falseActions = statements.filterIsInstance<ActionFalse>()
+
+    @PublicApi
     val conditions = statements.filterIsInstance<Condition>()
+
+    @PublicApi
     val orConditions = statements.filterIsInstance<OrCondition>()
 }
