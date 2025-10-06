@@ -68,7 +68,7 @@
         <guava.version>33.5.0-jre</guava.version>
 
         <assertj.version>3.27.6</assertj.version>
-        <junit.version>5.14.0</junit.version>
+        <junit.version>6.0.0</junit.version>
 
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
