@@ -5,6 +5,7 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.camera.LookAtCameraAnimation
 import de.darkatra.bfme2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.map.`object`.RoadType
+import de.darkatra.bfme2.map.scripting.ScriptActionType
 import de.darkatra.bfme2.map.scripting.ScriptConditionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -130,6 +131,52 @@ internal class MapFileReaderTest {
     }
 
     @Test
+    fun `should map all ScriptActionTypes correctly`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/all scripts.map").use(MapFileReader()::read)
+
+        val testScripts = map.playerScriptsList.scriptLists.first().scriptFolders.first().scripts
+
+        // the first script in the test folder contains multiple actions - check if all of them are correctly mapped to an enum value
+        // TODO: take all actions from the first script, sorts them and write them to a new script in the script folder (once)
+        val firstScript = testScripts.first()
+        // placeholder actions do not have an internalName - skip these in the assertions
+        val placeholders = setOf(
+            ScriptActionType.UNUSED_PLACEHOLDER_227,
+            ScriptActionType.UNUSED_PLACEHOLDER_343,
+            ScriptActionType.UNUSED_PLACEHOLDER_382,
+            ScriptActionType.UNUSED_PLACEHOLDER_480
+        )
+        firstScript.actions.forEach { action ->
+            if (action.type.internalName != action.internalName.name && !placeholders.contains(action.type)) {
+                println("ScriptActionType ${action.type.id}u in Script ${firstScript.name}: ${action.internalName.name}")
+            }
+        }
+
+        println("---")
+
+        // the rest of the test folder contains scripts with exactly one action - these are the ones we want to keep for assertion later
+        testScripts.drop(1).forEach { script ->
+            val action = script.actions.first()
+            if (script.name != action.type.name || script.name != action.internalName.name) {
+                println("ScriptActionType ${action.type.id}u in Script ${script.name}: ${action.internalName.name}")
+            }
+        }
+
+        // FIXME: enable assertions once all ScriptActionTypes are identified
+        //testScripts.forEach { script ->
+        //    val action = script.actions.first()
+        //    if (placeholders.contains(action.type)) {
+        //        assertThat(action.internalName.name).isEqualTo("")
+        //    } else {
+        //        assertThat(script.name)
+        //            .isEqualTo(action.type.name)
+        //            .isEqualTo(action.internalName.name)
+        //    }
+        //}
+    }
+
+    @Test
     internal fun `should read the same map information for all compressions`() {
 
         val plain = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
@@ -163,5 +210,13 @@ internal class MapFileReaderTest {
         // when there aren't any cliff blends, some maps have cliffBlendsCount=0 and some have cliffBlendsCount=1
         // the game treats these values the same, we should too
         assertThat(map.blendTileData.cliffBlendsCount).isEqualTo(0u)
+    }
+
+    @Test
+    internal fun `should read map with triggerAreas`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map ang fornost.refpack").use(MapFileReader()::read)
+
+        assertThat(map.triggerAreas.areas).hasSize(20)
     }
 }
