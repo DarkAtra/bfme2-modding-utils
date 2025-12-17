@@ -68,13 +68,17 @@
         <guava.version>33.5.0-jre</guava.version>
 
         <assertj.version>3.27.6</assertj.version>
-        <junit.version>6.0.1</junit.version>
+        <!-- Currently using an older version of JUnit 5 since GraalVM does not play nicely with the latest 5.x or 6.x releases -->
+        <!-- * https://github.com/graalvm/native-build-tools/issues/695-->
+        <!-- * https://github.com/graalvm/native-build-tools/issues/305-->
+        <junit.version>5.12.2</junit.version>
 
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <dokka-maven-plugin.version>2.1.0</dokka-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+        <native-build-tools-plugin.version>0.10.3</native-build-tools-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -257,6 +261,42 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>nativeTest</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-launcher</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native-build-tools-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                            <buildArgs combine.children="append">
+                                <!-- Workaround for https://github.com/oracle/graal/issues/6957 -->
+                                <arg>--strict-image-heap</arg>
+                            </buildArgs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>native-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

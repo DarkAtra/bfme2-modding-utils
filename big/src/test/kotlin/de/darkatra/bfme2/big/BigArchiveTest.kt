@@ -3,15 +3,16 @@ package de.darkatra.bfme2.big
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.inputStream
-import kotlin.io.path.toPath
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.outputStream
 
 internal class BigArchiveTest {
 
-    private val helloFile: Path = javaClass.getResource("/test/hello.txt")!!.toURI().toPath()
-    private val worldFile: Path = javaClass.getResource("/test/world.txt")!!.toURI().toPath()
-    private val testArchive: Path = javaClass.getResource("/test/multiple-files.big")!!.toURI().toPath()
+    private val helloFile by lazy { javaClass.getResource("/test/hello.txt")!! }
+    private val worldFile by lazy { javaClass.getResource("/test/world.txt")!! }
+    private val testArchive by lazy { javaClass.getResource("/test/multiple-files.big")!! }
 
     @Test
     internal fun shouldWriteBigArchiveWithFilesToDisk(@TempDir tempDir: Path) {
@@ -31,8 +32,8 @@ internal class BigArchiveTest {
         assertThat(bigArchive.entries[0].pendingOutputStream).isNotNull
 
         // write to the entry
-        helloFile.inputStream().use { input ->
-            entry.outputStream().use { output ->
+        helloFile.openStream().buffered().use { input ->
+            entry.outputStream().buffered().use { output ->
                 input.transferTo(output)
             }
         }
@@ -41,8 +42,8 @@ internal class BigArchiveTest {
         assertThatExpectedEntryForTestFileExists(bigArchive)
 
         // write to the entry again (should override and produce the same result)
-        helloFile.inputStream().use { input ->
-            entry.outputStream().use { output ->
+        helloFile.openStream().buffered().use { input ->
+            entry.outputStream().buffered().use { output ->
                 input.transferTo(output)
             }
         }
@@ -54,7 +55,14 @@ internal class BigArchiveTest {
     @Test
     internal fun shouldReadBigArchiveWithFiles() {
 
-        val bigArchive = BigArchive.from(testArchive)
+        val tempFile = Files.createTempFile("archive", ".big").also { it.deleteIfExists() }
+        testArchive.openStream().buffered().use { input ->
+            tempFile.outputStream().buffered().use { output ->
+                input.transferTo(output)
+            }
+        }
+
+        val bigArchive = BigArchive.from(tempFile)
 
         assertThat(bigArchive.entries).hasSize(2)
         assertThat(bigArchive.entries[0]).isNotNull
@@ -66,7 +74,7 @@ internal class BigArchiveTest {
         assertThat(bigArchive.entries[0].pendingOutputStream).isNotNull
 
         val firstFileBytes = bigArchive.entries[0].inputStream().use { it.readAllBytes() }
-        assertThat(firstFileBytes).isEqualTo(helloFile.inputStream().use { it.readAllBytes() })
+        assertThat(firstFileBytes).isEqualTo(helloFile.openStream().buffered().use { it.readAllBytes() })
 
         assertThat(bigArchive.entries[1]).isNotNull
         assertThat(bigArchive.entries[1].name).isEqualTo("/test/world.txt")
@@ -77,7 +85,7 @@ internal class BigArchiveTest {
         assertThat(bigArchive.entries[1].pendingOutputStream).isNotNull
 
         val secondFileBytes = bigArchive.entries[1].inputStream().use { it.readAllBytes() }
-        assertThat(secondFileBytes).isEqualTo(worldFile.inputStream().use { it.readAllBytes() })
+        assertThat(secondFileBytes).isEqualTo(worldFile.openStream().buffered().use { it.readAllBytes() })
     }
 
     private fun assertThatExpectedEntryForTestFileExists(bigArchive: BigArchive) {
