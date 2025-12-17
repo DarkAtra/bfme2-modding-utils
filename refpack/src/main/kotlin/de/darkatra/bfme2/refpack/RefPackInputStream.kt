@@ -213,7 +213,10 @@ class RefPackInputStream(
     }
 
     private fun readBigEndianSize(largeFilesFlagPresent: Boolean): Int {
-        val count = if (largeFilesFlagPresent) 4 else 3
+        val count = when {
+            largeFilesFlagPresent -> 4
+            else -> 3
+        }
         return `in`.readNBytes(count).map { it.toInt() and 0xFF }.reduce { acc, byte -> acc shl 8 or byte }
     }
 }

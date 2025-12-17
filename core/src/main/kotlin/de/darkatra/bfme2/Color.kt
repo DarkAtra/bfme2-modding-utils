@@ -1,7 +1,7 @@
 package de.darkatra.bfme2
 
-data class Color constructor(
-    val rgba: UInt
+data class Color(
+    private val rgba: UInt
 ) {
 
     constructor(
@@ -30,17 +30,17 @@ data class Color constructor(
         get() = rgba shr 24 and 0xFFu
 
     init {
-        if (red > 255u) {
-            throw IllegalArgumentException("red outside of expected range: $red")
+        require(red <= 255u) {
+            "red outside of expected range: $red"
         }
-        if (green > 255u) {
-            throw IllegalArgumentException("green outside of expected range: $green")
+        require(green <= 255u) {
+            "green outside of expected range: $green"
         }
-        if (blue > 255u) {
-            throw IllegalArgumentException("blue outside of expected range: $blue")
+        require(blue <= 255u) {
+            "blue outside of expected range: $blue"
         }
-        if (alpha > 255u) {
-            throw IllegalArgumentException("alpha outside of expected range: $alpha")
+        require(alpha <= 255u) {
+            "alpha outside of expected range: $alpha"
         }
     }
 }
