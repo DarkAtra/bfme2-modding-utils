@@ -6,5 +6,5 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 internal annotation class PreProcess(
-    val using: KClass<out PreProcessor<*>> = NoopPreProcessor::class
+    val using: KClass<out PreProcessor<*>>
 )
