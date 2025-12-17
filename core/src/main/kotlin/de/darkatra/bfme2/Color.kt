@@ -1,7 +1,7 @@
 package de.darkatra.bfme2
 
 data class Color(
-    private val rgba: UInt
+    val rgba: UInt
 ) {
 
     constructor(
