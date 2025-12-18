@@ -15,8 +15,10 @@ import de.darkatra.bfme2.readUShortPrefixedString
 import de.darkatra.bfme2.writeFloat
 import de.darkatra.bfme2.writeInt
 import de.darkatra.bfme2.writeUShortPrefixedString
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class ScriptArgumentSerde(
     serdeFactory: SerdeFactory,
     private val serializationContext: SerializationContext,

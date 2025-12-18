@@ -8,10 +8,12 @@ import de.darkatra.bfme2.map.serialization.model.ConstructorParameter
 import de.darkatra.bfme2.map.serialization.model.Generic
 import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import de.darkatra.bfme2.map.toKClass
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class SerdesArgumentResolver(
     private val annotationProcessingContext: AnnotationProcessingContext,
     private val serdeFactory: SerdeFactory

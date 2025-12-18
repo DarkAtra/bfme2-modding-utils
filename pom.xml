@@ -42,7 +42,7 @@
     <version>1.0.39</version>
     <packaging>pom</packaging>
 
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>A library that provides functions to read and write some of the EA file formats.</description>
     <url>https://github.com/DarkAtra/bfme2-modding-utils</url>
 
@@ -66,6 +66,7 @@
         <java.version>17</java.version>
 
         <guava.version>33.5.0-jre</guava.version>
+        <graalvm-hint.version>1.2.0</graalvm-hint.version>
 
         <assertj.version>3.27.6</assertj.version>
         <!-- Currently using an older version of JUnit 5 since GraalVM does not play nicely with the latest 5.x or 6.x releases -->
@@ -149,6 +150,23 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <!-- GraalVM Runtime Hint Annotations -->
+        <dependency>
+            <groupId>io.goodforgod</groupId>
+            <artifactId>graalvm-hint-annotations</artifactId>
+            <version>${graalvm-hint.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.goodforgod</groupId>
+            <artifactId>graalvm-hint-processor</artifactId>
+            <version>${graalvm-hint.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
@@ -158,6 +176,25 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <executions>
+                    <execution>
+                        <id>kapt</id>
+                        <goals>
+                            <goal>kapt</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                                <sourceDir>src/test/java</sourceDir>
+                            </sourceDirs>
+                            <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>io.goodforgod</groupId>
+                                    <artifactId>graalvm-hint-processor</artifactId>
+                                    <version>${graalvm-hint.version}</version>
+                                </annotationProcessorPath>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>compile</id>
                         <goals>

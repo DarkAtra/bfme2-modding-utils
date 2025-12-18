@@ -6,10 +6,12 @@ import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @UseSerdeProperties(ConditionalSerde.Properties::class)
 internal class ConditionalSerde(
     serdeFactory: SerdeFactory,
@@ -25,7 +27,7 @@ internal class ConditionalSerde(
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
     @SerdeProperties
-    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
+    @Suppress("unused") // properties are used via SerdePropertiesArgumentResolver
     internal annotation class Properties(
         val assetTypes: Array<KClass<out Any>> = []
     )

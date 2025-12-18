@@ -1,5 +1,8 @@
 package de.darkatra.bfme2.map.scripting
 
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
+
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 enum class ScriptArgumentType(
     internal val id: UInt
 ) {

@@ -1,5 +1,8 @@
 package de.darkatra.bfme2.map.`object`
 
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
+
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 enum class RoadType(
     internal val uInt: UInt
 ) {

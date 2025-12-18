@@ -4,7 +4,9 @@ import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @PostProcess(using = BlendTileTexture.BlendTileTexturePostProcessor::class)
 data class BlendTileTexture(
     val cellStart: UInt,
@@ -14,6 +16,7 @@ data class BlendTileTexture(
     val name: String
 ) {
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class BlendTileTexturePostProcessor : PostProcessor<BlendTileTexture> {
         override fun postProcess(data: BlendTileTexture, context: SerializationContext) {
             if (data.cellSize * data.cellSize != data.cellCount) {

@@ -5,12 +5,14 @@ import de.darkatra.bfme2.ConversionException
 import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class EnumSerde<T : Enum<*>>(
     private val classOfT: KClass<T>,
     private val context: SerializationContext,

@@ -7,12 +7,14 @@ import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.typeOf
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class DefaultArgumentResolver(
     private val serdeFactory: SerdeFactory,
     private val serdeClass: KClass<Serde<*>>,

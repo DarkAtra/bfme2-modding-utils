@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
+      - next
     paths:
+      - '.github/workflows/**'
       - '**/src/**'
       - '**/pom.xml'
       - 'pom.xml'
@@ -16,23 +18,15 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    permissions:
-      # used by semantic release
-      contents: write
-      # used to publish the jar to github packages
-      packages: write
-    outputs:
-      new-release-published: ${{ steps.semantic-release.outputs.new_release_published }}
-      new-release-version: ${{ steps.semantic-release.outputs.new_release_version }}
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v5.1.0
         with:
           java-version: '17'
@@ -40,7 +34,55 @@ jobs:
           cache: maven
 
       - name: Run Tests
-        run: mvn -B -ntp clean install
+        run: mvn -B -ntp verify
+
+  verify-native:
+    name: Verify Native
+    strategy:
+      matrix:
+        os:
+          - ubuntu-24.04
+          - windows-2025
+          - macos-14
+          - macos-15
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1.4.4
+        with:
+          java-version: '21'
+          distribution: 'graalvm-community'
+
+      - name: Run Tests
+        run: mvn -B -ntp -PnativeTest verify
+
+  release:
+    name: Build and Release
+    runs-on: ubuntu-24.04
+    permissions:
+      # used by semantic release
+      contents: write
+      # used to publish the jar to github packages
+      packages: write
+    needs:
+      - verify
+      - verify-native
+    outputs:
+      new-release-published: ${{ steps.semantic-release.outputs.new_release_published }}
+      new-release-version: ${{ steps.semantic-release.outputs.new_release_version }}
+    steps:
+      - uses: actions/checkout@v6.0.1
+
+      - name: Setup Java
+        uses: actions/setup-java@v5.1.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6.3.0
@@ -61,13 +103,13 @@ jobs:
 
   publish-maven-central:
     name: Publish to Maven Central
-    runs-on: ubuntu-latest
-    needs: build
+    runs-on: ubuntu-24.04
+    needs: release
     if: needs.build.outputs.new-release-published == 'true'
     steps:
       - uses: actions/checkout@v6.0.1
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v5.1.0
         with:
           java-version: '17'

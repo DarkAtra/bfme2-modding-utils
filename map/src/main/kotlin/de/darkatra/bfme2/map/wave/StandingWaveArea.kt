@@ -3,7 +3,9 @@ package de.darkatra.bfme2.map.wave
 import de.darkatra.bfme2.Vector2
 import de.darkatra.bfme2.map.serialization.Serialize
 import de.darkatra.bfme2.map.serialization.UIntBooleanSerde
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 data class StandingWaveArea(
     val id: UInt,
     val name: String,

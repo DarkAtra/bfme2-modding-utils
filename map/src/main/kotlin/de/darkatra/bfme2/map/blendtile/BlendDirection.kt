@@ -12,7 +12,7 @@ enum class BlendDirection(
 
     internal companion object {
         fun ofByte(byte: Byte): BlendDirection {
-            return values().find { it.byte == byte } ?: throw ConversionException("Unknown BlendDirection for byte '$byte'.")
+            return entries.find { it.byte == byte } ?: throw ConversionException("Unknown BlendDirection for byte '$byte'.")
         }
     }
 }

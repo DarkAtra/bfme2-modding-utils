@@ -5,6 +5,7 @@ import de.darkatra.bfme2.map.serialization.SerdeProperties
 import de.darkatra.bfme2.map.serialization.UseSerdeProperties
 import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import de.darkatra.bfme2.map.toKClass
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -15,6 +16,7 @@ import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.typeOf
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class SerdePropertiesArgumentResolver(
     private val serdeClass: KClass<Serde<*>>,
     private val serdeParameter: KParameter

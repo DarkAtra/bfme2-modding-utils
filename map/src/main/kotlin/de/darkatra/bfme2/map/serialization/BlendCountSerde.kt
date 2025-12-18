@@ -6,8 +6,10 @@ import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.NoopPreProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class BlendCountSerde(
     private val context: SerializationContext,
     private val preProcessor: PreProcessor<UInt>,

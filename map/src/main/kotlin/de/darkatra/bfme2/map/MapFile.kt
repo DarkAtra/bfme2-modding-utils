@@ -23,7 +23,9 @@ import de.darkatra.bfme2.map.water.StandingWaterAreas
 import de.darkatra.bfme2.map.wave.StandingWaveAreas
 import de.darkatra.bfme2.map.waypoint.WaypointList
 import de.darkatra.bfme2.map.worldinfo.WorldInfo
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @Serialize(using = MapFileSerde::class)
 data class MapFile(
     @SerializationOrder(SerializationOrder.HIGHEST_PRECEDENCE + 1)

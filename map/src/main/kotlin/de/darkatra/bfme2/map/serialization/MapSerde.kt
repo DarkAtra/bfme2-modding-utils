@@ -8,8 +8,10 @@ import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.writeUInt
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @UseSerdeProperties(MapSerde.Properties::class)
 internal class MapSerde<K, V>(
     private val context: SerializationContext,
@@ -38,7 +40,7 @@ internal class MapSerde<K, V>(
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
     @SerdeProperties
-    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
+    @Suppress("unused") // properties are used via SerdePropertiesArgumentResolver
     internal annotation class Properties(
         val deserializationOrder: DeserializationOrder = DeserializationOrder.KEY_FIRST
     )

@@ -12,11 +12,12 @@ import de.darkatra.bfme2.readUShort
 import de.darkatra.bfme2.writeByte
 import de.darkatra.bfme2.writeUInt
 import de.darkatra.bfme2.writeUShort
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @UseSerdeProperties(ListSerde.Properties::class)
 internal class ListSerde<T>(
-    annotationProcessingContext: AnnotationProcessingContext,
     private val context: SerializationContext,
     private val entrySerde: Serde<T>,
     private val preProcessor: PreProcessor<List<T>>,
@@ -27,8 +28,6 @@ internal class ListSerde<T>(
     private val size: UInt,
     private val sharedDataKey: String
 ) : Serde<List<T>> {
-
-    private val currentElementName = annotationProcessingContext.getCurrentElement().getName()
 
     init {
         if (mode == Mode.FIXED && size == 0u) {
@@ -43,7 +42,7 @@ internal class ListSerde<T>(
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
     @SerdeProperties
-    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
+    @Suppress("unused") // properties are used via SerdePropertiesArgumentResolver
     internal annotation class Properties(
         val mode: Mode = Mode.DEFAULT,
         val sizeType: SizeType = SizeType.UINT,

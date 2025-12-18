@@ -2,12 +2,14 @@ package de.darkatra.bfme2.map.camera
 
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.Vector4
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
 sealed interface CameraAnimationFrame {
     val frameIndex: UInt
     val interpolationType: CameraAnimationFrameInterpolationType
 }
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 data class FreeCameraAnimationFrame(
     override val frameIndex: UInt,
     override val interpolationType: CameraAnimationFrameInterpolationType,
@@ -16,6 +18,7 @@ data class FreeCameraAnimationFrame(
     val fieldOfView: Float
 ) : CameraAnimationFrame
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 data class LookAtCameraAnimationFrame(
     override val frameIndex: UInt,
     override val interpolationType: CameraAnimationFrameInterpolationType,
@@ -24,6 +27,7 @@ data class LookAtCameraAnimationFrame(
     val fieldOfView: Float
 ) : CameraAnimationFrame
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 data class LookAtTargetCameraAnimationFrame(
     override val frameIndex: UInt,
     override val interpolationType: CameraAnimationFrameInterpolationType,

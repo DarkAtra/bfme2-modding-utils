@@ -6,6 +6,7 @@ import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.serialization.model.DataSectionHolder
 import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.toKClass
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
@@ -14,6 +15,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.time.measureTime
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class MapFileSerde(
     private val serializationContext: SerializationContext,
     private val serdes: List<Serde<*>>

@@ -5,11 +5,13 @@ import de.darkatra.bfme2.map.serialization.postprocessing.NoopPostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.toKClass
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class PostProcessorArgumentResolver : ArgumentResolver<PostProcessor<*>> {
 
     override fun resolve(currentElement: ProcessableElement): PostProcessor<*> {

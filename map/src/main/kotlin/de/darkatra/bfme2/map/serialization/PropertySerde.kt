@@ -18,9 +18,11 @@ import de.darkatra.bfme2.writeBoolean
 import de.darkatra.bfme2.writeFloat
 import de.darkatra.bfme2.writeUInt
 import de.darkatra.bfme2.writeUShortPrefixedString
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class PropertySerde(
     serdeFactory: SerdeFactory,
     private val serializationContext: SerializationContext,

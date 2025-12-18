@@ -11,10 +11,12 @@ import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
 import de.darkatra.bfme2.readByte
 import de.darkatra.bfme2.writeByte
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import kotlin.experimental.and
 import kotlin.experimental.or
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @UseSerdeProperties(HeightMapDependentMapSerde.Properties::class)
 internal class HeightMapDependentMapSerde<V : Any>(
     private val context: SerializationContext,
@@ -29,7 +31,7 @@ internal class HeightMapDependentMapSerde<V : Any>(
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.TYPE)
     @SerdeProperties
-    @Suppress("unused") // properties are used via AnnotationParameterArgumentResolver
+    @Suppress("unused") // properties are used via SerdePropertiesArgumentResolver
     internal annotation class Properties(
         val mode: Mode = Mode.DEFAULT
     )

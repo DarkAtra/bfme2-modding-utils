@@ -13,7 +13,9 @@ import de.darkatra.bfme2.map.serialization.argumentresolution.SerdesArgumentReso
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.SharedDataProvidingPostProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @Asset(name = "BlendTileData", version = 18u)
 @PostProcess(using = BlendTileData.BlendTileDataPostProcessor::class)
 data class BlendTileData(
@@ -82,6 +84,7 @@ data class BlendTileData(
         const val CLIFF_BLEND_COUNT = "cliff-blend-count"
     }
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class BlendTileDataPostProcessor : PostProcessor<BlendTileData> {
         override fun postProcess(data: BlendTileData, context: SerializationContext) {
             if (data.magicValue2 != 0u) {
@@ -90,6 +93,9 @@ data class BlendTileData(
         }
     }
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class BlendCountPostProcessor : SharedDataProvidingPostProcessor<UInt>(BLEND_COUNT)
+
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class CliffBlendCountPostProcessor : SharedDataProvidingPostProcessor<UInt>(CLIFF_BLEND_COUNT)
 }

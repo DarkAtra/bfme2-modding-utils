@@ -9,6 +9,6 @@ object TestUtils {
     const val ZLIB_COMPRESSED_MAP_PATH = "/maps/bfme2-rotwk/Legendary War.zlib"
 
     fun getInputStream(name: String): InputStream {
-        return TestUtils::class.java.getResourceAsStream(name)!!
+        return TestUtils::class.java.getResource(name)!!.openStream().buffered()
     }
 }

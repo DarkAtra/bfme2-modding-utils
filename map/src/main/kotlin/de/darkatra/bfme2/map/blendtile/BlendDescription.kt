@@ -6,8 +6,10 @@ import de.darkatra.bfme2.map.serialization.ListSerde
 import de.darkatra.bfme2.map.serialization.SerializationContext
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.experimental.or
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @PostProcess(using = BlendDescription.BlendDescriptionPostProcessor::class)
 data class BlendDescription(
     val secondaryTextureTile: UInt,
@@ -34,6 +36,7 @@ data class BlendDescription(
             return BlendDirection.ofByte(result)
         }
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class BlendDescriptionPostProcessor : PostProcessor<BlendDescription> {
         override fun postProcess(data: BlendDescription, context: SerializationContext) {
             if (data.magicValue1 != 0xffffffffu) {

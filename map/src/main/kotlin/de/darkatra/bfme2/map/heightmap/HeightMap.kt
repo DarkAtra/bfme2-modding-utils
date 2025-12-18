@@ -10,7 +10,9 @@ import de.darkatra.bfme2.map.serialization.argumentresolution.SerdesArgumentReso
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcess
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.postprocessing.SharedDataProvidingPostProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @Asset(name = "HeightMapData", version = 5u)
 @PostProcess(using = HeightMap.HeightMapPostProcessor::class)
 data class HeightMap(
@@ -31,6 +33,7 @@ data class HeightMap(
         const val HEIGHT_MAP_BORDER_WIDTH = "height-map-border-width"
     }
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class HeightMapPostProcessor : PostProcessor<HeightMap> {
         override fun postProcess(data: HeightMap, context: SerializationContext) {
             if (data.width * data.height != data.area) {
@@ -39,8 +42,15 @@ data class HeightMap(
         }
     }
 
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class HeightMapWidthPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_WIDTH)
+
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class HeightMapHeightPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_HEIGHT)
+
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class HeightMapAreaPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_AREA)
+
+    @ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
     internal class HeightMapBorderWidthPostProcessor : SharedDataProvidingPostProcessor<UInt>(HEIGHT_MAP_BORDER_WIDTH)
 }

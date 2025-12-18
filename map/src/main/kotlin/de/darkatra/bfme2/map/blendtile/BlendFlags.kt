@@ -1,7 +1,9 @@
 package de.darkatra.bfme2.map.blendtile
 
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import kotlin.experimental.or
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 enum class BlendFlags(
     internal val byte: Byte
 ) {

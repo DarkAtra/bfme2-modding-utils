@@ -5,7 +5,9 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.serialization.ListSerde
 import de.darkatra.bfme2.map.serialization.ListSerde.Mode
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 @Asset(name = "GlobalLighting", version = 8u)
 data class GlobalLighting(
     val time: TimeOfDay,

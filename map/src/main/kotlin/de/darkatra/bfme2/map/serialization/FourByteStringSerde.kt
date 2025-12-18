@@ -6,9 +6,11 @@ import de.darkatra.bfme2.map.serialization.model.DataSection
 import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
 import de.darkatra.bfme2.map.serialization.postprocessing.PostProcessor
 import de.darkatra.bfme2.map.serialization.preprocessing.PreProcessor
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_CONSTRUCTORS, ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 internal class FourByteStringSerde(
     private val context: SerializationContext,
     private val preProcessor: PreProcessor<String>,

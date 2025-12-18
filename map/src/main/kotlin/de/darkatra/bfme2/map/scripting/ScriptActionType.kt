@@ -1,6 +1,9 @@
 package de.darkatra.bfme2.map.scripting
 
+import io.goodforgod.graalvm.hint.annotation.ReflectionHint
+
 // FIXME: double check enum values and change them to be specific to BfME 2 and RotWK
+@ReflectionHint(ReflectionHint.AccessType.ALL_DECLARED_METHODS)
 enum class ScriptActionType(
     internal val id: UInt
 ) {

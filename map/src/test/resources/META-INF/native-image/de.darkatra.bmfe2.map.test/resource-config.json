@@ -1,0 +1,18 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": "maps\/.*\\Q.map\\E$"
+            },
+            {
+                "pattern": "maps\/.*\\Q.refpack\\E$"
+            },
+            {
+                "pattern": "maps\/.*\\Q.txt\\E$"
+            },
+            {
+                "pattern": "maps\/.*\\Q.zlib\\E$"
+            }
+        ]
+    }
+}
