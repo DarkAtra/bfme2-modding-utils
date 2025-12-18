@@ -27,7 +27,7 @@ jobs:
           cache: maven
 
       - name: Run Tests
-        run: mvn -B -ntp verify
+        run: mvn -B -ntp clean install
 
   verify-native:
     name: Verify Native
@@ -51,4 +51,4 @@ jobs:
           distribution: 'graalvm-community'
 
       - name: Run Tests
-        run: mvn -B -ntp -PnativeTest verify
+        run: mvn -B -ntp -PnativeTest clean install
