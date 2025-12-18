@@ -105,7 +105,7 @@ jobs:
     name: Publish to Maven Central
     runs-on: ubuntu-24.04
     needs: release
-    if: needs.build.outputs.new-release-published == 'true'
+    if: needs.release.outputs.new-release-published == 'true'
     steps:
       - uses: actions/checkout@v6.0.1
 
@@ -127,7 +127,7 @@ jobs:
 
       - name: Publish Package
         run: |
-          mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${{ needs.build.outputs.new-release-version }}
+          mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${{ needs.release.outputs.new-release-version }}
           mvn -B -ntp -Psign-with-gpg -Ppublish-central-portal clean deploy -DskipTests -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
