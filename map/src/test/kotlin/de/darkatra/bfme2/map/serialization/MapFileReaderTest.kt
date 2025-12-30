@@ -5,6 +5,7 @@ import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.map.camera.LookAtCameraAnimation
 import de.darkatra.bfme2.map.globallighting.TimeOfDay
 import de.darkatra.bfme2.map.`object`.RoadType
+import de.darkatra.bfme2.map.scripting.ScriptActionType
 import de.darkatra.bfme2.map.scripting.ScriptConditionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -163,5 +164,19 @@ internal class MapFileReaderTest {
         // when there aren't any cliff blends, some maps have cliffBlendsCount=0 and some have cliffBlendsCount=1
         // the game treats these values the same, we should too
         assertThat(map.blendTileData.cliffBlendsCount).isEqualTo(0u)
+    }
+
+    @Test
+    internal fun `should read map with unknown script action 473`() {
+
+        val map = TestUtils.getInputStream("/maps/bfme2-rotwk/map mp the invasion of sauron.map").use(MapFileReader()::read)
+
+        assertThat(
+            map.playerScriptsList.scriptLists.any { scriptList ->
+                scriptList.scripts.any { script ->
+                    script.actions.any { action -> action.type == ScriptActionType.UNKNOWN_473 }
+                }
+            }
+        ).isNotNull()
     }
 }

@@ -519,6 +519,7 @@ enum class ScriptActionType(
     UNKNOWN_36(594u),
     UNKNOWN_37(599u),
     UNKNOWN_470(470u),
+    UNKNOWN_473(473u),
     UNKNOWN_578(578u),
     UNKNOWN_581(581u),
     TERRAIN_RENDER_DISABLE(UInt.MAX_VALUE)
