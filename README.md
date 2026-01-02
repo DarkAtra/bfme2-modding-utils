@@ -64,7 +64,7 @@ Build the project using the following command:
 
 [//]: # (@formatter:off)
 ```bash
-mvn clean install
+./mvnw clean install
 ```
 [//]: # (@formatter:on)
 
