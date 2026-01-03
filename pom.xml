@@ -70,8 +70,8 @@
 
         <assertj.version>3.27.6</assertj.version>
         <!-- Currently using an older version of JUnit 5 since GraalVM does not play nicely with the latest 5.x or 6.x releases -->
-        <!-- * https://github.com/graalvm/native-build-tools/issues/695-->
-        <!-- * https://github.com/graalvm/native-build-tools/issues/305-->
+        <!-- * https://github.com/graalvm/native-build-tools/issues/695 -->
+        <!-- * https://github.com/graalvm/native-build-tools/issues/305 -->
         <junit.version>5.12.2</junit.version>
 
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
