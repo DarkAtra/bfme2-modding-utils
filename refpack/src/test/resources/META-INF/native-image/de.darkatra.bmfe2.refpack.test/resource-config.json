@@ -1,0 +1,12 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": ".*\\Q.refpack\\E$"
+            },
+            {
+                "pattern": ".*\\Q.txt\\E$"
+            }
+        ]
+    }
+}

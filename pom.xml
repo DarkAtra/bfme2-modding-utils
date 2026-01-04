@@ -47,10 +47,10 @@
     <url>https://github.com/DarkAtra/bfme2-modding-utils</url>
 
     <modules>
-        <module>core</module>
-        <module>refpack</module>
         <module>big</module>
+        <module>core</module>
         <module>map</module>
+        <module>refpack</module>
     </modules>
 
     <properties>

@@ -7,7 +7,7 @@
 This project provides functions to read and write some of EA's file formats, such as:
 
 - [BIG](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
-- [RefPack](http://wiki.niotso.org/RefPack#Bitstream_specification)
+- RefPack [[1]][RefPackQFSResources] [[2]][NiotsoRefPack] [[3]][StuntsCompression]
 - Map
 
 It also comes with support for GraalVM Native Image as of version `1.1.1`.
@@ -77,3 +77,9 @@ Build the project using the following command:
 * [Editing camera settings for all maps](https://github.com/DarkAtra/bfme2-patcher/blob/main/map-builder/src/main/kotlin/de/darkatra/patcher/mapbuilder/MapBuilderApplication.kt)
 * [Extracting files from a big archive](https://github.com/DarkAtra/bfme2-patcher/blob/main/mod-builder/src/main/kotlin/de/darkatra/patcher/modbuilder/ModBaselineExtractorApplication.kt)
 * [Creating new big archives](https://github.com/DarkAtra/bfme2-patcher/blob/main/mod-builder/src/main/kotlin/de/darkatra/patcher/modbuilder/ModBuilderApplication.kt)
+
+[RefPackQFSResources]: https://github.com/lingeringwillx/RefPack-QFS-Resources/blob/main/FORMATS.md
+
+[NiotsoRefPack]: http://wiki.niotso.org/RefPack#Bitstream_specification
+
+[StuntsCompression]: https://wiki.stunts.hu/wiki/Compression#EAC_packing
