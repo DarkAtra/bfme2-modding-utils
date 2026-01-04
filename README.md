@@ -7,7 +7,7 @@
 This project provides functions to read and write some of EA's file formats, such as:
 
 - [BIG](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
-- [RefPack](http://wiki.niotso.org/RefPack#Bitstream_specification)
+- RefPack [[1]](https://github.com/lingeringwillx/RefPack-QFS-Resources/blob/main/FORMATS.md) [[2]](http://wiki.niotso.org/RefPack#Bitstream_specification)
 - Map
 
 It also comes with support for GraalVM Native Image as of version `1.1.1`.

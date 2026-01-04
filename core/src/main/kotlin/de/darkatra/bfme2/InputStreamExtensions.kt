@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets
 import kotlin.experimental.or
 
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
+fun InputStream.readUByte(): UByte = this.readByte().toUByte()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
 fun InputStream.readUShort(): UShort = this.readNBytes(2).toLittleEndianUShort()
 fun InputStream.readInt(): Int = this.readNBytes(4).toLittleEndianInt()
@@ -57,7 +58,7 @@ fun InputStream.read7BitInt(): Int {
     val maxBytesWithoutOverflow = 4
 
     for (shift in 0 until maxBytesWithoutOverflow * 7 step 7) {
-        val byte = this.readByte().toUByte()
+        val byte = this.readUByte()
         result = result or ((byte and 0b01111111.toUByte()).toInt() shl shift)
 
         // exit early if the most significant bit is not set
@@ -67,7 +68,7 @@ fun InputStream.read7BitInt(): Int {
     }
 
     // read the 5th byte. Since we already read 28 bits, the value of this byte must fit within the next least significant 4 bits
-    val byte = this.readByte().toUByte()
+    val byte = this.readUByte()
     if (byte > 0b1111.toUByte()) {
         throw NumberFormatException("Could not read 7bit encoded Int. 5th byte had more than 4 least significant bits set.")
     }

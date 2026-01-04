@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.refpack
 
 import de.darkatra.bfme2.InvalidDataException
+import de.darkatra.bfme2.readUByte
 import java.io.BufferedInputStream
 import java.io.InputStream
 import kotlin.math.min
@@ -24,19 +25,24 @@ class RefPackInputStream(
     private var currentPosition: Int = 0
     private var nextPosition: Int = 0
     private var reachedEndOfFile: Boolean = false
+    private val readBuffer = ByteArray(1)
 
     init {
-
         // read uncompressed size
-        val firstByte = `in`.read()
-        if (firstByte and 0b00111110 != 0b00010000) {
-            throw InvalidDataException("First byte contained invalid data.")
+        val flags = `in`.readUByte()
+        if (flags and 0b00111110u.toUByte() != Flags.DEFAULT.uByte) {
+            throw InvalidDataException("Invalid flags: 0x${flags.toHexString()}")
         }
 
-        val largeFilesFlagPresent = firstByte and 0b10000000 != 0
-        val compressedSizePresent = firstByte and 0b00000001 != 0
+        val unknownSporeFlagIsPresent = Flags.UNKNOWN.isPresent(flags)
+        val largeFilesFlagPresent = Flags.USE_32BIT_SIZE_HEADER.isPresent(flags)
+        val compressedSizePresent = Flags.STORES_COMPRESSED_SIZE.isPresent(flags)
 
-        // check header byte
+        if (!largeFilesFlagPresent && unknownSporeFlagIsPresent) {
+            throw InvalidDataException("The UNKNOWN (Spore) flag is only supported in RefPack version 3.")
+        }
+
+        // check magic header byte
         val secondByte = `in`.read()
         if (secondByte != 0xFB) {
             throw InvalidDataException("Second byte is not equal to the expected header byte (0xFB).")
@@ -49,6 +55,13 @@ class RefPackInputStream(
 
         decompressedSize = readBigEndianSize(largeFilesFlagPresent)
         buf = ByteArray(decompressedSize)
+    }
+
+    override fun read(): Int {
+        // Read a single byte of compressed data
+        val len = read(readBuffer, 0, 1)
+        if (len <= 0) return -1
+        return (readBuffer[0].toInt() and 0xFF)
     }
 
     override fun read(output: ByteArray, offset: Int, count: Int): Int {
@@ -65,7 +78,10 @@ class RefPackInputStream(
         copyTo(currentPosition, output, offset, actualCount)
         currentPosition += actualCount
 
-        return if (actualCount == 0) -1 else actualCount
+        return when {
+            actualCount == 0 -> -1
+            else -> actualCount
+        }
     }
 
     private fun executeCommand() {
