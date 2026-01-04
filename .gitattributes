@@ -2,4 +2,5 @@
 
 # Ensure the byte count is consistent on all operating systems. We rely on this for tests.
 hello.txt text eol=lf
+loremipsum.txt text eol=lf
 world.txt text eol=lf
