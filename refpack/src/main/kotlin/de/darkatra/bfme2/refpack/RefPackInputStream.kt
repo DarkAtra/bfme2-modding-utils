@@ -2,6 +2,10 @@ package de.darkatra.bfme2.refpack
 
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readUByte
+import de.darkatra.bfme2.refpack.RefPackConstants.MAGIC_HEADER_BYTE
+import de.darkatra.bfme2.refpack.RefPackConstants.MAX_BYTES_READ_COUNT
+import de.darkatra.bfme2.refpack.RefPackConstants.MAX_REFERENCED_DATA_DISTANCE
+import de.darkatra.bfme2.refpack.RefPackConstants.WINDOW_SIZE
 import java.io.BufferedInputStream
 import java.io.InputStream
 import kotlin.math.min
@@ -15,12 +19,6 @@ class RefPackInputStream(
     inputStream: InputStream
 ) : BufferedInputStream(inputStream) {
 
-    internal companion object {
-        private const val MAX_REFERENCED_DATA_DISTANCE = 131072
-        private const val MAX_BYTES_READ_COUNT = MAX_REFERENCED_DATA_DISTANCE * 300
-        private const val WINDOW_SIZE = MAX_REFERENCED_DATA_DISTANCE * 600
-    }
-
     private val decompressedSize: Int
     private var currentPosition: Int = 0
     private var nextPosition: Int = 0
@@ -28,7 +26,7 @@ class RefPackInputStream(
     private val readBuffer = ByteArray(1)
 
     init {
-        // read uncompressed size
+        // read flags
         val flags = `in`.readUByte()
         if (flags and 0b00111110u.toUByte() != Flags.DEFAULT.uByte) {
             throw InvalidDataException("Invalid flags: 0x${flags.toHexString()}")
@@ -39,12 +37,12 @@ class RefPackInputStream(
         val compressedSizePresent = Flags.STORES_COMPRESSED_SIZE.isPresent(flags)
 
         if (!largeFilesFlagPresent && unknownSporeFlagIsPresent) {
-            throw InvalidDataException("The UNKNOWN (Spore) flag is only supported in RefPack version 3.")
+            throw InvalidDataException("The UNKNOWN (Spore) flag is only supported if the USE_32BIT_SIZE_HEADER flag is set.")
         }
 
         // check magic header byte
-        val secondByte = `in`.read()
-        if (secondByte != 0xFB) {
+        val secondByte = `in`.readUByte()
+        if (secondByte != MAGIC_HEADER_BYTE) {
             throw InvalidDataException("Second byte is not equal to the expected header byte (0xFB).")
         }
 
@@ -53,6 +51,7 @@ class RefPackInputStream(
             `in`.skip(if (largeFilesFlagPresent) 4 else 3)
         }
 
+        // read uncompressed size
         decompressedSize = readBigEndianSize(largeFilesFlagPresent)
         buf = ByteArray(decompressedSize)
     }
@@ -198,7 +197,7 @@ class RefPackInputStream(
 
         // use a simple loop when referencedDataDistance is small and the referenced data overlaps with the current position.
         if (referencedDataDistance < 3 && referencedDataDistance < count) {
-            for (i in 0 until count step 1) {
+            repeat(count) {
                 buf[nextPosition++ % WINDOW_SIZE] = buf[referencedDataIndex++ % WINDOW_SIZE]
             }
             return

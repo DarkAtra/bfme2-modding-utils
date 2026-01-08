@@ -29,6 +29,19 @@ internal class OutputStreamExtensionsTest {
         assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0xF1.toByte()))
     }
 
+    @Test
+    internal fun shouldWriteUByte() {
+
+        val outputStream = ByteArrayOutputStream(1)
+
+        outputStream.writeUByte(0u)
+        outputStream.writeUByte(127u)
+        outputStream.writeUByte(128u)
+        outputStream.writeUByte(255u)
+
+        assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0, 127.toByte(), (-128).toByte(), -1))
+    }
+
     @Nested
     inner class WriteLittleEndian {
 
@@ -245,7 +258,7 @@ internal class OutputStreamExtensionsTest {
             )
 
             assertThrows<NumberFormatException> {
-                outputStream.toByteArray().inputStream().read7BitInt()
+                outputStream.toByteArray().inputStream().use { it.read7BitInt() }
             }
         }
 
@@ -290,7 +303,7 @@ internal class OutputStreamExtensionsTest {
 
             outputStream.write7BitIntPrefixedString(testString)
 
-            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+            assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
 
         @Test
@@ -302,7 +315,7 @@ internal class OutputStreamExtensionsTest {
 
             outputStream.write7BitIntPrefixedString(testString)
 
-            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+            assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
 
         @Test
@@ -314,7 +327,7 @@ internal class OutputStreamExtensionsTest {
 
             outputStream.write7BitIntPrefixedString(testString)
 
-            assertThat(outputStream.toByteArray().inputStream().read7BitIntPrefixedString()).isEqualTo(testString)
+            assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
 
         @Test
@@ -324,7 +337,7 @@ internal class OutputStreamExtensionsTest {
             outputStream.write7BitInt(-1)
 
             assertThrows<IllegalStateException> {
-                outputStream.toByteArray().inputStream().read7BitIntPrefixedString()
+                outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }
             }
         }
     }

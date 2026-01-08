@@ -39,7 +39,7 @@
 
     <groupId>de.darkatra.bfme2</groupId>
     <artifactId>bfme2-modding-utils</artifactId>
-    <version>1.1.3</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>

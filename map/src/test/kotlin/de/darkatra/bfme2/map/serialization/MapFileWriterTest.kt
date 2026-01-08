@@ -6,11 +6,9 @@ import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.toLittleEndianInt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.ByteArrayOutputStream
-import java.io.UnsupportedEncodingException
 import java.util.stream.Stream
 
 class MapFileWriterTest {
@@ -80,16 +78,20 @@ class MapFileWriterTest {
         assertMapsAreEqual(writtenMapFile, parsedMapFile)
     }
 
-    @Test
-    fun `should fail to write map with refpack compression`() {
+    @ParameterizedTest
+    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    fun `should produce identical map file when writing a parsed map with refpack compression`(mapPath: String) {
 
-        val parsedMapFile = TestUtils.getInputStream(TestUtils.UNCOMPRESSED_MAP_PATH).use(MapFileReader()::read)
+        val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
 
-        ByteArrayOutputStream().use {
-            assertThrows<UnsupportedEncodingException> {
-                MapFileWriter().write(it, parsedMapFile, MapFileCompression.REFPACK)
-            }
+        val writtenBytes = ByteArrayOutputStream().use {
+            MapFileWriter().write(it, parsedMapFile, MapFileCompression.REFPACK)
+            it.toByteArray()
         }
+
+        val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
+
+        assertMapsAreEqual(writtenMapFile, parsedMapFile)
     }
 
     private fun assertMapsAreEqual(actual: MapFile, expected: MapFile) {

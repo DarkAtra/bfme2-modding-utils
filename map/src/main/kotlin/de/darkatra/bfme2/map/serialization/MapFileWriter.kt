@@ -5,13 +5,13 @@ import de.darkatra.bfme2.map.Asset
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.map.serialization.model.DataSectionLeaf
+import de.darkatra.bfme2.refpack.RefPackOutputStream
 import de.darkatra.bfme2.write7BitIntPrefixedString
 import de.darkatra.bfme2.writeInt
 import de.darkatra.bfme2.writeUInt
 import de.darkatra.bfme2.writeUShort
 import java.io.BufferedOutputStream
 import java.io.OutputStream
-import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Path
@@ -57,6 +57,13 @@ class MapFileWriter(
         }
     }
 
+    /**
+     * Writes the given [mapFile] to the specified [file] using the provided [compression] method.
+     *
+     * @param file the path to the file where the map will be written
+     * @param mapFile the map file data to write
+     * @param compression the compression method to use (default is [MapFileCompression.UNCOMPRESSED])
+     */
     @PublicApi
     fun write(file: Path, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
@@ -69,17 +76,29 @@ class MapFileWriter(
         }
     }
 
+    /**
+     * Writes the given [mapFile] to the specified [outputStream] using the provided [compression] method.
+     * The caller is responsible for closing the provided [outputStream] after use.
+     *
+     * @param outputStream the output stream to write the map file to
+     * @param mapFile the map file data to write
+     * @param compression the compression method to use (default is [MapFileCompression.UNCOMPRESSED])
+     */
     @PublicApi
     fun write(outputStream: OutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
         write(outputStream.buffered(), mapFile, compression)
     }
 
+    /**
+     * Writes the given [mapFile] to the specified [bufferedOutputStream] using the provided [compression] method.
+     * The caller is responsible for closing the provided [bufferedOutputStream] after use.
+     *
+     * @param bufferedOutputStream the buffered output stream to write the map file to
+     * @param mapFile the map file data to write
+     * @param compression the compression method to use (default is [MapFileCompression.UNCOMPRESSED])
+     */
     @PublicApi
     fun write(bufferedOutputStream: BufferedOutputStream, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
-
-        if (compression == MapFileCompression.REFPACK) {
-            throw UnsupportedEncodingException("Encoding '$compression' is not supported.")
-        }
 
         val serializationContext = SerializationContext(debugMode)
         val annotationProcessingContext = AnnotationProcessingContext(debugMode)
@@ -126,6 +145,8 @@ class MapFileWriter(
 
         if (encodedOutputStream is DeflaterOutputStream) {
             encodedOutputStream.finish()
+        } else if (encodedOutputStream is RefPackOutputStream) {
+            encodedOutputStream.finish()
         }
 
         encodedOutputStream.flush()
@@ -146,7 +167,7 @@ class MapFileWriter(
 
         return when (compression) {
             MapFileCompression.UNCOMPRESSED -> outputStream
-            MapFileCompression.REFPACK -> TODO("Requires RefPackOutputStream which is not implemented yet.")
+            MapFileCompression.REFPACK -> RefPackOutputStream(outputStream)
             MapFileCompression.ZLIB -> DeflaterOutputStream(outputStream)
         }
     }
