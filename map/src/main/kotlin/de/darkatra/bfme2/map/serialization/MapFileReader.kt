@@ -62,6 +62,12 @@ class MapFileReader(
         }
     }
 
+    /**
+     * Reads a map file from the specified [file] and deserializes it into a [MapFile].
+     *
+     * @param file the [Path] to the map file to read
+     * @return the deserialized [MapFile]
+     */
     @PublicApi
     fun read(file: Path): MapFile {
 
@@ -72,11 +78,25 @@ class MapFileReader(
         return file.inputStream().use(this::read)
     }
 
+    /**
+     * Reads a map file from the provided [inputStream] and deserializes it into a [MapFile].
+     * The caller is responsible for closing the provided [inputStream] after use.
+     *
+     * @param inputStream the [InputStream] to read the map file from
+     * @return the deserialized [MapFile]
+     */
     @PublicApi
     fun read(inputStream: InputStream): MapFile {
         return read(inputStream.buffered())
     }
 
+    /**
+     * Reads a map file from the provided [bufferedInputStream] and deserializes it into a [MapFile].
+     * The caller is responsible for closing the provided [bufferedInputStream] after use.
+     *
+     * @param bufferedInputStream the [BufferedInputStream] to read the map file from
+     * @return the deserialized [MapFile]
+     */
     @PublicApi
     fun read(bufferedInputStream: BufferedInputStream): MapFile {
 
@@ -158,7 +178,7 @@ class MapFileReader(
         val pushbackInputStream = PushbackInputStream(inputStream, 4)
         val fourCCBytes = pushbackInputStream.readNBytes(4)
 
-        return when (fourCCBytes.toString(StandardCharsets.UTF_8)) {
+        return when (fourCCBytes.toString(StandardCharsets.US_ASCII)) {
             // unread 4 bytes to make it possible to read them again when actually parsing the map data
             MapFileCompression.UNCOMPRESSED.fourCC -> pushbackInputStream.also { it.unread(fourCCBytes) }
             // skip 4 size bytes, we don't need that information

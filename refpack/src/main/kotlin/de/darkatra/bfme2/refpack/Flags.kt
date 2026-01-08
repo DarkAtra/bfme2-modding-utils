@@ -12,4 +12,3 @@ internal enum class Flags(
         return uByte and this.uByte != UByte.MIN_VALUE
     }
 }
-

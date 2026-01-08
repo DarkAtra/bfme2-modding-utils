@@ -5,6 +5,7 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 fun OutputStream.writeByte(byte: Byte) = this.write(byte.toInt())
+fun OutputStream.writeUByte(uByte: UByte) = this.write(uByte.toInt())
 fun OutputStream.writeShort(short: Short) = this.write(short.toLittleEndianBytes())
 fun OutputStream.writeUShort(uShort: UShort) = this.write(uShort.toLittleEndianBytes())
 fun OutputStream.writeInt(int: Int) = this.write(int.toLittleEndianBytes())
