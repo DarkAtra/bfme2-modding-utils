@@ -69,9 +69,6 @@
         <graalvm-hint.version>1.2.0</graalvm-hint.version>
 
         <assertj.version>3.27.6</assertj.version>
-        <!-- Currently using an older version of JUnit 5 since GraalVM does not play nicely with the latest 5.x or 6.x releases -->
-        <!-- * https://github.com/graalvm/native-build-tools/issues/695 -->
-        <!-- * https://github.com/graalvm/native-build-tools/issues/305 -->
         <junit.version>6.0.2</junit.version>
 
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
@@ -321,10 +318,6 @@
                         <extensions>true</extensions>
                         <configuration>
                             <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                            <buildArgs combine.children="append">
-                                <!-- Workaround for https://github.com/oracle/graal/issues/6957 -->
-                                <arg>--strict-image-heap</arg>
-                            </buildArgs>
                         </configuration>
                         <executions>
                             <execution>

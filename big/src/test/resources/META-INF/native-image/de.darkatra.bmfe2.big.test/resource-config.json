@@ -1,12 +1,10 @@
 {
-    "resources": {
-        "includes": [
-            {
-                "pattern": "test\/.*\\Q.big\\E$"
-            },
-            {
-                "pattern": "test\/.*\\Q.txt\\E$"
-            }
-        ]
-    }
+    "globs": [
+        {
+            "glob": "test/*.big"
+        },
+        {
+            "glob": "test/*.txt"
+        }
+    ]
 }

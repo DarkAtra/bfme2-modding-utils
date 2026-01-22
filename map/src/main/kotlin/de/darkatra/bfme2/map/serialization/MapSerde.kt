@@ -54,7 +54,7 @@ internal class MapSerde<K, V>(
         return DataSectionHolder(
             containingData = buildList {
                 add(DataSectionLeaf.INT)
-                data.entries.map { (key, value) ->
+                data.entries.forEach { (key, value) ->
                     when (order) {
                         DeserializationOrder.KEY_FIRST -> {
                             add(keySerde.calculateDataSection(key))

@@ -1,18 +1,16 @@
 {
-    "resources": {
-        "includes": [
-            {
-                "pattern": "maps\/.*\\Q.map\\E$"
-            },
-            {
-                "pattern": "maps\/.*\\Q.refpack\\E$"
-            },
-            {
-                "pattern": "maps\/.*\\Q.txt\\E$"
-            },
-            {
-                "pattern": "maps\/.*\\Q.zlib\\E$"
-            }
-        ]
-    }
+    "globs": [
+        {
+            "glob": "maps/**/*.map"
+        },
+        {
+            "glob": "maps/**/*.refpack"
+        },
+        {
+            "glob": "maps/**/*.txt"
+        },
+        {
+            "glob": "maps/**/*.zlib"
+        }
+    ]
 }

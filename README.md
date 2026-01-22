@@ -10,7 +10,7 @@ This project provides functions to read and write some of EA's file formats, suc
 - RefPack [[1]][RefPackQFSResources] [[2]][NiotsoRefPack] [[3]][StuntsCompression]
 - Map
 
-It also comes with support for GraalVM Native Image as of version `1.1.1`.
+It also comes with support for GraalVM Native Image as of version `1.1.1` (tested against GraalVM 25).
 
 ## Usage
 

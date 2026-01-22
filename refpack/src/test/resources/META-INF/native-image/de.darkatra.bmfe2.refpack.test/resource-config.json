@@ -1,12 +1,10 @@
 {
-    "resources": {
-        "includes": [
-            {
-                "pattern": ".*\\Q.refpack\\E$"
-            },
-            {
-                "pattern": ".*\\Q.txt\\E$"
-            }
-        ]
-    }
+    "globs": [
+        {
+            "glob": "*.refpack"
+        },
+        {
+            "glob": "*.txt"
+        }
+    ]
 }
