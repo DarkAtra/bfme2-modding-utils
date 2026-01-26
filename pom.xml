@@ -68,7 +68,7 @@
         <guava.version>33.5.0-jre</guava.version>
         <graalvm-hint.version>1.2.0</graalvm-hint.version>
 
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <junit.version>6.0.2</junit.version>
 
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
