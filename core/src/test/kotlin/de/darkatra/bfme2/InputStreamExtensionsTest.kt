@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 internal class InputStreamExtensionsTest {
 
     @Test
-    internal fun shouldReadBoolean() {
+    internal fun `should read boolean`() {
 
         val bytes = byteArrayOf(0x01)
 
@@ -20,7 +20,7 @@ internal class InputStreamExtensionsTest {
     }
 
     @Test
-    internal fun shouldReadByte() {
+    internal fun `should read byte`() {
 
         val bytes = byteArrayOf(
             0xF1.toByte()
@@ -32,7 +32,7 @@ internal class InputStreamExtensionsTest {
     }
 
     @Test
-    internal fun shouldReadUByte() {
+    internal fun `should read UByte`() {
 
         val bytes = byteArrayOf(
             0xF1.toByte()
@@ -47,7 +47,7 @@ internal class InputStreamExtensionsTest {
     inner class ReadLittleEndian {
 
         @Test
-        internal fun shouldReadShort() {
+        internal fun `should read short`() {
 
             val bytes = byteArrayOf(0x01, 0x00)
 
@@ -57,7 +57,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadUShort() {
+        internal fun `should read UShort`() {
 
             val bytes = byteArrayOf(0x01, 0x00)
 
@@ -67,7 +67,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadInt() {
+        internal fun `should read Int`() {
 
             val bytes = byteArrayOf(0x01, 0x00, 0x00, 0x00)
 
@@ -77,7 +77,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadUInt() {
+        internal fun `should read UInt`() {
 
             val bytes = byteArrayOf(0x01, 0x00, 0x00, 0x00)
 
@@ -87,7 +87,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadULong() {
+        internal fun `should read ULong`() {
 
             val bytes = byteArrayOf(0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
 
@@ -97,7 +97,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadFloat() {
+        internal fun `should read float`() {
 
             val bytes = byteArrayOf(0x00, 0x00, 0x80.toByte(), 0x3F)
 
@@ -107,7 +107,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadNullTerminatedString() {
+        internal fun `should read null terminated string`() {
 
             val bytes = "Hello".toByteArray() + 0.toByte()
 
@@ -117,7 +117,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldFailToReadStringWithoutNullTerminator() {
+        internal fun `should fail to read string without null terminator`() {
 
             val bytes = "Hello".toByteArray()
 
@@ -129,7 +129,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadUShortPrefixedStringWithUS_ASCIIEncoding() {
+        internal fun `should read UShort prefixed string with US_ASCII encoding`() {
 
             // byte representation of "LothlorienGrass05" in US_ASCII with the length (17) prefixed as UShort
             // 17, 0 is the UShort 17
@@ -142,7 +142,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadUShortPrefixedStringWithUTF_16Encoding() {
+        internal fun `should read UShort prefixed string with UTF_16 encoding`() {
 
             // byte representation of "Neutral" in UTF_16LE with the length (7) prefixed as UShort
             // 7, 0 is the UShort 7
@@ -155,7 +155,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadMaxIntValueFrom7BitInt() {
+        internal fun `should read max Int value from 7 bit Int`() {
 
             // 7 bit encoded, little endian version of Int.MAX_VALUE (0x7FFFFFFF)
             val bytes = byteArrayOf(
@@ -172,7 +172,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldRead128From7BitInt() {
+        internal fun `should read 128 from 7 bit Int`() {
 
             // 7 bit encoded, little endian version of 128 (0x80)
             val bytes = byteArrayOf(
@@ -186,7 +186,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadZeroFrom7BitInt() {
+        internal fun `should read zero from 7 bit Int`() {
 
             // 7 bit encoded, little endian version of 0 (0x00)
             val bytes = byteArrayOf(0x00.toByte())
@@ -197,7 +197,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadNegativeOneFrom7BitInt() {
+        internal fun `should read negative one from 7 bit Int`() {
 
             // 7 bit encoded, little endian version of -1 (0xFFFFFFFF)
             val bytes = byteArrayOf(
@@ -214,7 +214,7 @@ internal class InputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldReadMinIntValueFrom7BitInt() {
+        internal fun `should read min Int value from 7 bit Int`() {
 
             // 7 bit encoded, little endian version of Int.MIN_VALUE (0x80000000)
             val bytes = byteArrayOf(

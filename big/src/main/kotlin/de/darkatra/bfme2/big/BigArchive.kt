@@ -71,6 +71,10 @@ class BigArchive(
             throw IllegalArgumentException("Name must not be blank")
         }
 
+        if (_entries.any { entry -> entry.name == name }) {
+            throw IllegalStateException("Archive already contains an entry with name '$name'")
+        }
+
         val entry = BigArchiveEntry(
             name = name,
             archive = this,
@@ -81,18 +85,35 @@ class BigArchive(
     }
 
     /**
+     * Get an existing entry by name.
+     *
+     * @param name The name of the entry to get.
+     */
+    @PublicApi
+    fun getEntry(name: String): BigArchiveEntry? {
+        if (name.isBlank()) {
+            throw IllegalArgumentException("Name must not be blank")
+        }
+
+        return _entries.find { entry -> entry.name == name }
+    }
+
+    /**
      * Deletes an entry from the archive and writes changes to disk.
      *
      * @param name The name of the entry to delete.
      */
     @PublicApi
-    fun deleteEntry(name: String) {
+    fun deleteEntry(name: String, writeToDisk: Boolean = true) {
         if (name.isBlank()) {
             throw IllegalArgumentException("Name must not be blank")
         }
 
         _entries.removeIf { it.name == name }
-        writeToDisk()
+
+        if (writeToDisk) {
+            writeToDisk()
+        }
     }
 
     /**

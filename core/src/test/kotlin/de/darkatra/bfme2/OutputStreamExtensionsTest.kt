@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets
 internal class OutputStreamExtensionsTest {
 
     @Test
-    internal fun shouldWriteBoolean() {
+    internal fun `should write boolean`() {
 
         val outputStream = ByteArrayOutputStream(1)
 
@@ -20,7 +20,7 @@ internal class OutputStreamExtensionsTest {
     }
 
     @Test
-    internal fun shouldWriteByte() {
+    internal fun `should write byte`() {
 
         val outputStream = ByteArrayOutputStream(1)
 
@@ -30,7 +30,7 @@ internal class OutputStreamExtensionsTest {
     }
 
     @Test
-    internal fun shouldWriteUByte() {
+    internal fun `should write UByte`() {
 
         val outputStream = ByteArrayOutputStream(1)
 
@@ -46,7 +46,7 @@ internal class OutputStreamExtensionsTest {
     inner class WriteLittleEndian {
 
         @Test
-        internal fun shouldWriteShort() {
+        internal fun `should write short`() {
 
             val outputStream = ByteArrayOutputStream(2)
 
@@ -56,7 +56,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteUShort() {
+        internal fun `should write UShort`() {
 
             val outputStream = ByteArrayOutputStream(2)
 
@@ -66,7 +66,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteInt() {
+        internal fun `should write Int`() {
 
             val outputStream = ByteArrayOutputStream(4)
 
@@ -76,7 +76,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteUInt() {
+        internal fun `should write UInt`() {
 
             val outputStream = ByteArrayOutputStream(4)
 
@@ -86,7 +86,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteFloat() {
+        internal fun `should write float`() {
 
             val outputStream = ByteArrayOutputStream(4)
 
@@ -96,7 +96,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteUShortPrefixedStringWithUS_ASCIIEncoding() {
+        internal fun `should write UShort prefixed string with US_ASCII encoding`() {
 
             // byte representation of "LothlorienGrass05" with the length (17) prefixed as UShort
             // 17, 0 is the UShort 17
@@ -111,7 +111,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteUShortPrefixedStringWithUTF_16Encoding() {
+        internal fun `should write UShort prefixed string with UTF_16 encoding`() {
 
             // byte representation of "Neutral" with the length (7) prefixed as UShort
             // 7, 0 is the UShort 7
@@ -126,7 +126,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteUShortPrefixedStringThatHasTheMaxAllowedLength() {
+        internal fun `should write UShort prefixed string that has the max allowed length`() {
 
             val outputStream = ByteArrayOutputStream(UShort.MAX_VALUE.toInt())
 
@@ -144,7 +144,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldNotWriteUShortPrefixedStringThatIsTooLong() {
+        internal fun `should not write UShort prefixed string that is too long`() {
 
             val outputStream = ByteArrayOutputStream(0)
 
@@ -157,7 +157,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteMaxIntValueAs7BitInt() {
+        internal fun `should write max Int value as 7 bit Int`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -176,7 +176,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWrite128As7BitInt() {
+        internal fun `should write 128 as 7 bit Int`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -192,7 +192,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteZeroAs7BitInt() {
+        internal fun `should write zero as 7 bit Int`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -205,7 +205,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteNegativeOneAs7BitInt() {
+        internal fun `should write negative one as 7 bit Int`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -224,7 +224,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWriteMinIntValueAs7BitInt() {
+        internal fun `should write min Int value as 7 bit Int`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -243,7 +243,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldFailToRead7BitIntWithInvalidFifthByte() {
+        internal fun `should fail to read 7 bit Int with invalid fifth byte`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -263,7 +263,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWrite7BitIntPrefixedString() {
+        internal fun `should write 7 bit Int prefixed string`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -279,7 +279,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldWrite7BitIntPrefixedStringWithLengthOf128Characters() {
+        internal fun `should write 7 bit Int prefixed string with length of 128 characters`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -295,7 +295,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldRoundtrip7BitIntPrefixedString() {
+        internal fun `should roundtrip 7 bit Int prefixed string`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -307,7 +307,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldRoundtrip7BitIntPrefixedStringWithTwoByteCharacter() {
+        internal fun `should roundtrip 7 bit Int prefixed string with two byte character`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -319,7 +319,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldRoundtrip7BitIntPrefixedStringWithZeroLength() {
+        internal fun `should roundtrip 7 bit Int prefixed string with zero length`() {
 
             val outputStream = ByteArrayOutputStream()
 
@@ -331,7 +331,7 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun shouldFailToRead7BitIntPrefixedStringWithNegativeLength() {
+        internal fun `should fail to read 7 bit Int prefixed string with negative length`() {
 
             val outputStream = ByteArrayOutputStream()
             outputStream.write7BitInt(-1)

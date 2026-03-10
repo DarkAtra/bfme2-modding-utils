@@ -2,6 +2,7 @@ package de.darkatra.bfme2.big
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
@@ -15,7 +16,7 @@ internal class BigArchiveTest {
     private val testArchive by lazy { javaClass.getResource("/test/multiple-files.big")!! }
 
     @Test
-    internal fun shouldWriteBigArchiveWithFilesToDisk(@TempDir tempDir: Path) {
+    internal fun `should write big archive with files to disk`(@TempDir tempDir: Path) {
 
         val tempFile = tempDir.resolve("out.big")
         val bigArchive = BigArchive(BigArchiveVersion.BIG_F, tempFile)
@@ -53,7 +54,40 @@ internal class BigArchiveTest {
     }
 
     @Test
-    internal fun shouldReadBigArchiveWithFiles() {
+    internal fun `should fail to create the same big archive entry twice`(@TempDir tempDir: Path) {
+
+        val tempFile = tempDir.resolve("out.big")
+        val bigArchive = BigArchive(BigArchiveVersion.BIG_F, tempFile)
+
+        bigArchive.createEntry("/test/hello.txt")
+
+        assertThrows<IllegalStateException> {
+            bigArchive.createEntry("/test/hello.txt")
+        }
+    }
+
+    @Test
+    internal fun `should fail to get big archive entry if it does not exist`(@TempDir tempDir: Path) {
+
+        val tempFile = tempDir.resolve("out.big")
+        val bigArchive = BigArchive(BigArchiveVersion.BIG_F, tempFile)
+
+        assertThat(bigArchive.getEntry("/test/hello.txt")).isNull()
+    }
+
+    @Test
+    internal fun `should get big archive entry`(@TempDir tempDir: Path) {
+
+        val tempFile = tempDir.resolve("out.big")
+        val bigArchive = BigArchive(BigArchiveVersion.BIG_F, tempFile)
+
+        bigArchive.createEntry("/test/hello.txt")
+
+        assertThat(bigArchive.getEntry("/test/hello.txt")).isNotNull()
+    }
+
+    @Test
+    internal fun `should read big archive with files`() {
 
         val tempFile = Files.createTempFile("archive", ".big").also { it.deleteIfExists() }
         testArchive.openStream().buffered().use { input ->

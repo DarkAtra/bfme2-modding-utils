@@ -8,21 +8,21 @@ import org.junit.jupiter.api.assertThrows
 internal class ConversionExtensionsTest {
 
     @Test
-    internal fun shouldConvertBooleanToByte() {
+    internal fun `should convert boolean to byte`() {
 
         assertThat(false.toByte()).isEqualTo(0x00.toByte())
         assertThat(true.toByte()).isEqualTo(0x01.toByte())
     }
 
     @Test
-    internal fun shouldConvertByteToBoolean() {
+    internal fun `should convert byte to boolean`() {
 
         assertThat(0x00.toByte().toBoolean()).isEqualTo(false)
         assertThat(0x01.toByte().toBoolean()).isEqualTo(true)
     }
 
     @Test
-    internal fun shouldNotConvertByteToBoolean() {
+    internal fun `should not convert byte to boolean`() {
 
         byteArrayOf(
             0x02,
@@ -37,7 +37,7 @@ internal class ConversionExtensionsTest {
     inner class ByteArrayToNumbers {
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToUShort() {
+        internal fun `should convert big endian byte array to UShort`() {
 
             val expected = listOf(
                 0u,
@@ -59,7 +59,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToUShort() {
+        internal fun `should convert little endian byte array to UShort`() {
 
             val expected = listOf(
                 0u,
@@ -81,7 +81,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToShort() {
+        internal fun `should convert big endian byte array to Short`() {
 
             val expected = listOf(
                 0,
@@ -103,7 +103,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToShort() {
+        internal fun `should convert little endian byte array to Short`() {
 
             val expected = listOf(
                 0,
@@ -125,7 +125,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToUInt() {
+        internal fun `should convert big endian byte array to UInt`() {
 
             val expected = listOf(
                 0u,
@@ -147,7 +147,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToUInt() {
+        internal fun `should convert little endian byte array to UInt`() {
 
             val expected = listOf(
                 0u,
@@ -169,7 +169,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToInt() {
+        internal fun `should convert big endian byte array to Int`() {
 
             val expected = listOf(
                 0,
@@ -191,7 +191,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToInt() {
+        internal fun `should convert little endian byte array to Int`() {
 
             val expected = listOf(
                 0,
@@ -213,7 +213,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToULong() {
+        internal fun `should convert big endian byte array to ULong`() {
 
             val expected = listOf(
                 0u,
@@ -235,7 +235,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToULong() {
+        internal fun `should convert little endian byte array to ULong`() {
 
             val expected = listOf(
                 0u,
@@ -257,7 +257,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToLong() {
+        internal fun `should convert big endian byte array to Long`() {
 
             val expected = listOf(
                 0L,
@@ -279,7 +279,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToLong() {
+        internal fun `should convert little endian byte array to Long`() {
 
             val expected = listOf(
                 0L,
@@ -301,7 +301,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertBigEndianByteArrayToFloat() {
+        internal fun `should convert big endian byte array to Float`() {
 
             val expected = listOf(
                 0f,
@@ -323,7 +323,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLittleEndianByteArrayToFloat() {
+        internal fun `should convert little endian byte array to Float`() {
 
             val expected = listOf(
                 0f,
@@ -349,7 +349,7 @@ internal class ConversionExtensionsTest {
     inner class NumbersToByteArray {
 
         @Test
-        internal fun shouldConvertUShortToBigEndianByteArray() {
+        internal fun `should convert UShort to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00),
@@ -371,7 +371,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertUShortToLittleEndianByteArray() {
+        internal fun `should convert UShort to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00),
@@ -393,7 +393,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertShortToBigEndianByteArray() {
+        internal fun `should convert Short to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00),
@@ -415,7 +415,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertShortToLittleEndianByteArray() {
+        internal fun `should convert Short to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00),
@@ -437,7 +437,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertUIntToBigEndianByteArray() {
+        internal fun `should convert UInt to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),
@@ -459,7 +459,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertUIntToLittleEndianByteArray() {
+        internal fun `should convert UInt to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),
@@ -481,7 +481,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertIntToBigEndianByteArray() {
+        internal fun `should convert Int to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),
@@ -503,7 +503,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertIntToLittleEndianByteArray() {
+        internal fun `should convert Int to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),
@@ -525,7 +525,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertULongToBigEndianByteArray() {
+        internal fun `should convert ULong to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
@@ -547,7 +547,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertULongToLittleEndianByteArray() {
+        internal fun `should convert ULong to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
@@ -569,7 +569,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLongToBigEndianByteArray() {
+        internal fun `should convert Long to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
@@ -591,7 +591,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertLongToLittleEndianByteArray() {
+        internal fun `should convert Long to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
@@ -613,7 +613,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertFloatToBigEndianByteArray() {
+        internal fun `should convert Float to big endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),
@@ -635,7 +635,7 @@ internal class ConversionExtensionsTest {
         }
 
         @Test
-        internal fun shouldConvertFloatToLittleEndianByteArray() {
+        internal fun `should convert Float to little endian byte array`() {
 
             val expected = listOf(
                 byteArrayOf(0x00, 0x00, 0x00, 0x00),

@@ -1,7 +1,6 @@
 package de.darkatra.bfme2.map.serialization
 
 import com.google.common.io.ByteStreams
-import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.toLittleEndianInt
 import org.assertj.core.api.Assertions.assertThat
@@ -59,7 +58,7 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertMapsAreEqual(writtenMapFile, parsedMapFile)
+        assertThat(writtenMapFile).isEqualTo(parsedMapFile)
     }
 
     @ParameterizedTest
@@ -75,7 +74,7 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertMapsAreEqual(writtenMapFile, parsedMapFile)
+        assertThat(writtenMapFile).isEqualTo(parsedMapFile)
     }
 
     @ParameterizedTest
@@ -91,29 +90,7 @@ class MapFileWriterTest {
 
         val writtenMapFile = writtenBytes.inputStream().use(MapFileReader()::read)
 
-        assertMapsAreEqual(writtenMapFile, parsedMapFile)
-    }
-
-    private fun assertMapsAreEqual(actual: MapFile, expected: MapFile) {
-
-        assertThat(actual.blendTileData).isEqualTo(expected.blendTileData)
-        assertThat(actual.buildLists).isEqualTo(expected.buildLists)
-        assertThat(actual.cameraAnimations).isEqualTo(expected.cameraAnimations)
-        assertThat(actual.cameras).isEqualTo(expected.cameras)
-        assertThat(actual.environmentData).isEqualTo(expected.environmentData)
-        assertThat(actual.globalLighting).isEqualTo(expected.globalLighting)
-        assertThat(actual.heightMap).isEqualTo(expected.heightMap)
-        assertThat(actual.libraryMapsList).isEqualTo(expected.libraryMapsList)
-        assertThat(actual.multiplayerPositions).isEqualTo(expected.multiplayerPositions)
-        assertThat(actual.objects).isEqualTo(expected.objects)
-        assertThat(actual.playerScriptsList).isEqualTo(expected.playerScriptsList)
-        assertThat(actual.postEffects).isEqualTo(expected.postEffects)
-        assertThat(actual.riverAreas).isEqualTo(expected.riverAreas)
-        assertThat(actual.sides).isEqualTo(expected.sides)
-        assertThat(actual.standingWaterAreas).isEqualTo(expected.standingWaterAreas)
-        assertThat(actual.teams).isEqualTo(expected.teams)
-        assertThat(actual.triggerAreas).isEqualTo(expected.triggerAreas)
-        assertThat(actual.worldInfo).isEqualTo(expected.worldInfo)
+        assertThat(writtenMapFile).isEqualTo(parsedMapFile)
     }
 }
 
