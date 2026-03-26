@@ -6,6 +6,7 @@ import de.darkatra.bfme2.map.serialization.UseSerdeProperties
 import de.darkatra.bfme2.map.serialization.model.ProcessableElement
 import de.darkatra.bfme2.map.toKClass
 import io.goodforgod.graalvm.hint.annotation.ReflectionHint
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -55,6 +56,9 @@ internal class SerdePropertiesArgumentResolver(
         return try {
             convertIfNecessary(annotationProperties.first().getter.call(serdeProperties)!!)
         } catch (e: Exception) {
+            if (e is InvocationTargetException && e.cause is ClassCastException) {
+                throw e
+            }
             getDefaultValue(currentElement)
         }
     }
