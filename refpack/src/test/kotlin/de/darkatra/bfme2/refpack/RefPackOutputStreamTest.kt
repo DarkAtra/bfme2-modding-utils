@@ -9,8 +9,8 @@ class RefPackOutputStreamTest {
     @Test
     fun `should write refpack compressed file`() {
 
-        val inputStream = TestUtils.getInputStream(TestUtils.UNCOMPRESSED)
-        val actual = ByteArrayOutputStream().use { output ->
+        val actual = TestUtils.getInputStream(TestUtils.UNCOMPRESSED).use { inputStream ->
+            val output = ByteArrayOutputStream()
             RefPackOutputStream(output).use { refPackOutputStream ->
                 inputStream.copyTo(refPackOutputStream)
             }
@@ -25,8 +25,8 @@ class RefPackOutputStreamTest {
     @Test
     fun `should write refpack compressed file byte by byte`() {
 
-        val inputStream = TestUtils.getInputStream(TestUtils.UNCOMPRESSED)
-        val actual = ByteArrayOutputStream().use { output ->
+        val actual = TestUtils.getInputStream(TestUtils.UNCOMPRESSED).use { inputStream ->
+            val output = ByteArrayOutputStream()
             RefPackOutputStream(output).use { refPackOutputStream ->
                 var curByte: Int
                 while (inputStream.read().also { curByte = it } != -1) {
@@ -44,8 +44,8 @@ class RefPackOutputStreamTest {
     @Test
     fun `should round-trip refpack compression`() {
 
-        val inputStream = TestUtils.getInputStream(TestUtils.UNCOMPRESSED)
-        val compressed = ByteArrayOutputStream().use { output ->
+        val compressed = TestUtils.getInputStream(TestUtils.UNCOMPRESSED).use { inputStream ->
+            val output = ByteArrayOutputStream()
             RefPackOutputStream(output).use { refPackOutputStream ->
                 inputStream.copyTo(refPackOutputStream)
             }

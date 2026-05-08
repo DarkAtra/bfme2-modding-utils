@@ -33,7 +33,9 @@ class MapFileWriterTest {
         val mapFilePath = TestUtils.ZLIB_COMPRESSED_MAP_PATH
 
         // fileSize in file (after the initial fourCC) - original map
-        val expectedFileSizeAfterFourCC = TestUtils.getInputStream(mapFilePath).readBytes().drop(4).take(4).toByteArray().toLittleEndianInt()
+        val expectedFileSizeAfterFourCC = TestUtils.getInputStream(mapFilePath).use {
+            it.readBytes()
+        }.drop(4).take(4).toByteArray().toLittleEndianInt()
 
         // fileSize in file (after the initial fourCC) - edited map
         val actualFileSizeAfterFourCC = ByteArrayOutputStream().use {

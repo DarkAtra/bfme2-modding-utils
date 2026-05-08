@@ -14,7 +14,7 @@ internal class OutputStreamExtensionsTest {
 
         val outputStream = ByteArrayOutputStream(1)
 
-        outputStream.writeBoolean(true)
+        outputStream.use { it.writeBoolean(true) }
 
         assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x01))
     }
@@ -24,7 +24,7 @@ internal class OutputStreamExtensionsTest {
 
         val outputStream = ByteArrayOutputStream(1)
 
-        outputStream.writeByte(0xF1.toByte())
+        outputStream.use { it.writeByte(0xF1.toByte()) }
 
         assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0xF1.toByte()))
     }
@@ -34,10 +34,12 @@ internal class OutputStreamExtensionsTest {
 
         val outputStream = ByteArrayOutputStream(1)
 
-        outputStream.writeUByte(0u)
-        outputStream.writeUByte(127u)
-        outputStream.writeUByte(128u)
-        outputStream.writeUByte(255u)
+        outputStream.use {
+            it.writeUByte(0u)
+            it.writeUByte(127u)
+            it.writeUByte(128u)
+            it.writeUByte(255u)
+        }
 
         assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0, 127.toByte(), (-128).toByte(), -1))
     }
@@ -50,7 +52,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(2)
 
-            outputStream.writeShort(1)
+            outputStream.use { it.writeShort(1) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x01, 0x00))
         }
@@ -60,7 +62,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(2)
 
-            outputStream.writeUShort(1u)
+            outputStream.use { it.writeUShort(1u) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x01, 0x00))
         }
@@ -70,7 +72,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(4)
 
-            outputStream.writeInt(1)
+            outputStream.use { it.writeInt(1) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x01, 0x00, 0x00, 0x00))
         }
@@ -80,7 +82,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(4)
 
-            outputStream.writeUInt(1u)
+            outputStream.use { it.writeUInt(1u) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x01, 0x00, 0x00, 0x00))
         }
@@ -90,7 +92,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(4)
 
-            outputStream.writeFloat(1f)
+            outputStream.use { it.writeFloat(1f) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(byteArrayOf(0x00, 0x00, 0x80.toByte(), 0x3F))
         }
@@ -105,7 +107,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(expectedBytes.size)
 
-            outputStream.writeUShortPrefixedString("LothlorienGrass05")
+            outputStream.use { it.writeUShortPrefixedString("LothlorienGrass05") }
 
             assertThat(outputStream.toByteArray()).isEqualTo(expectedBytes)
         }
@@ -120,7 +122,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream(expectedBytes.size)
 
-            outputStream.writeUShortPrefixedString("Neutral", StandardCharsets.UTF_16LE)
+            outputStream.use { it.writeUShortPrefixedString("Neutral", StandardCharsets.UTF_16LE) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(expectedBytes)
         }
@@ -132,7 +134,7 @@ internal class OutputStreamExtensionsTest {
 
             val extremelyLongString = (0u.toUShort() until UShort.MAX_VALUE step 1).joinToString("") { "a" }
 
-            outputStream.writeUShortPrefixedString(extremelyLongString)
+            outputStream.use { it.writeUShortPrefixedString(extremelyLongString) }
 
             // expect a byte array starting with 2 bits representing the max value of a UShort
             // followed by 65535 times 97 which represents the letter 'a' in ASCII
@@ -152,7 +154,7 @@ internal class OutputStreamExtensionsTest {
             val extremelyLongString = (0u until UShort.MAX_VALUE.toUInt() + 1u step 1).joinToString("") { "a" }
 
             assertThrows<IllegalArgumentException> {
-                outputStream.writeUShortPrefixedString(extremelyLongString)
+                outputStream.use { it.writeUShortPrefixedString(extremelyLongString) }
             }
         }
 
@@ -161,7 +163,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream()
 
-            outputStream.write7BitInt(Int.MAX_VALUE)
+            outputStream.use { it.write7BitInt(Int.MAX_VALUE) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 // 7 bit encoded, little endian version of Int.MAX_VALUE (0x7FFFFFFF)
@@ -180,7 +182,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream()
 
-            outputStream.write7BitInt(128)
+            outputStream.use { it.write7BitInt(128) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 // 7 bit encoded, little endian version of 128 (0x80)
@@ -196,7 +198,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream()
 
-            outputStream.write7BitInt(0)
+            outputStream.use { it.write7BitInt(0) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 // 7 bit encoded, little endian version of 0 (0x00)
@@ -209,7 +211,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream()
 
-            outputStream.write7BitInt(-1)
+            outputStream.use { it.write7BitInt(-1) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 // 7 bit encoded, little endian version of -1 (0xFFFFFFFF)
@@ -228,7 +230,7 @@ internal class OutputStreamExtensionsTest {
 
             val outputStream = ByteArrayOutputStream()
 
-            outputStream.write7BitInt(Int.MIN_VALUE)
+            outputStream.use { it.write7BitInt(Int.MIN_VALUE) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 // 7 bit encoded, little endian version of Int.MIN_VALUE (0x80000000)
@@ -243,33 +245,13 @@ internal class OutputStreamExtensionsTest {
         }
 
         @Test
-        internal fun `should fail to read 7 bit Int with invalid fifth byte`() {
-
-            val outputStream = ByteArrayOutputStream()
-
-            outputStream.writeBytes(
-                byteArrayOf(
-                    0xFF.toByte(),
-                    0xFF.toByte(),
-                    0xFF.toByte(),
-                    0xFF.toByte(),
-                    0x1F.toByte() // fifth bit has 5 set bits which is invalid for 7 bit encoded ints
-                )
-            )
-
-            assertThrows<NumberFormatException> {
-                outputStream.toByteArray().inputStream().use { it.read7BitInt() }
-            }
-        }
-
-        @Test
         internal fun `should write 7 bit Int prefixed string`() {
 
             val outputStream = ByteArrayOutputStream()
 
             val testString = (0 until 100).joinToString("") { "a" }
 
-            outputStream.write7BitIntPrefixedString(testString)
+            outputStream.use { it.write7BitIntPrefixedString(testString) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 byteArrayOf(
@@ -285,7 +267,7 @@ internal class OutputStreamExtensionsTest {
 
             val testString = (0 until 128).joinToString("") { "a" }
 
-            outputStream.write7BitIntPrefixedString(testString)
+            outputStream.use { it.write7BitIntPrefixedString(testString) }
 
             assertThat(outputStream.toByteArray()).isEqualTo(
                 byteArrayOf(
@@ -301,7 +283,7 @@ internal class OutputStreamExtensionsTest {
 
             val testString = (0 until 128).joinToString("") { "a" }
 
-            outputStream.write7BitIntPrefixedString(testString)
+            outputStream.use { it.write7BitIntPrefixedString(testString) }
 
             assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
@@ -313,7 +295,7 @@ internal class OutputStreamExtensionsTest {
 
             val testString = "ü"
 
-            outputStream.write7BitIntPrefixedString(testString)
+            outputStream.use { it.write7BitIntPrefixedString(testString) }
 
             assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
@@ -325,7 +307,7 @@ internal class OutputStreamExtensionsTest {
 
             val testString = ""
 
-            outputStream.write7BitIntPrefixedString(testString)
+            outputStream.use { it.write7BitIntPrefixedString(testString) }
 
             assertThat(outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }).isEqualTo(testString)
         }
@@ -334,7 +316,7 @@ internal class OutputStreamExtensionsTest {
         internal fun `should fail to read 7 bit Int prefixed string with negative length`() {
 
             val outputStream = ByteArrayOutputStream()
-            outputStream.write7BitInt(-1)
+            outputStream.use { it.write7BitInt(-1) }
 
             assertThrows<IllegalStateException> {
                 outputStream.toByteArray().inputStream().use { it.read7BitIntPrefixedString() }

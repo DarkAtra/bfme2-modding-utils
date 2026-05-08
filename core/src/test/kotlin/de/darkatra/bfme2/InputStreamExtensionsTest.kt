@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
 internal class InputStreamExtensionsTest {
@@ -16,7 +17,7 @@ internal class InputStreamExtensionsTest {
 
         val inputStream = ByteArrayInputStream(bytes)
 
-        assertThat(inputStream.readBoolean()).isEqualTo(true)
+        assertThat(inputStream.use { it.readBoolean() }).isEqualTo(true)
     }
 
     @Test
@@ -28,7 +29,7 @@ internal class InputStreamExtensionsTest {
 
         val inputStream = ByteArrayInputStream(bytes)
 
-        assertThat(inputStream.readByte()).isEqualTo(0xF1.toByte())
+        assertThat(inputStream.use { it.readByte() }).isEqualTo(0xF1.toByte())
     }
 
     @Test
@@ -40,7 +41,7 @@ internal class InputStreamExtensionsTest {
 
         val inputStream = ByteArrayInputStream(bytes)
 
-        assertThat(inputStream.readUByte()).isEqualTo(0xF1.toUByte())
+        assertThat(inputStream.use { it.readUByte() }).isEqualTo(0xF1.toUByte())
     }
 
     @Nested
@@ -53,7 +54,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readShort()).isEqualTo(1)
+            assertThat(inputStream.use { it.readShort() }).isEqualTo(1)
         }
 
         @Test
@@ -63,7 +64,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readUShort()).isEqualTo(1u.toUShort())
+            assertThat(inputStream.use { it.readUShort() }).isEqualTo(1u.toUShort())
         }
 
         @Test
@@ -73,7 +74,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readInt()).isEqualTo(1)
+            assertThat(inputStream.use { it.readInt() }).isEqualTo(1)
         }
 
         @Test
@@ -83,7 +84,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readUInt()).isEqualTo(1u)
+            assertThat(inputStream.use { it.readUInt() }).isEqualTo(1u)
         }
 
         @Test
@@ -93,7 +94,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readULong()).isEqualTo(1uL)
+            assertThat(inputStream.use { it.readULong() }).isEqualTo(1uL)
         }
 
         @Test
@@ -103,7 +104,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readFloat()).isEqualTo(1f)
+            assertThat(inputStream.use { it.readFloat() }).isEqualTo(1f)
         }
 
         @Test
@@ -113,7 +114,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readNullTerminatedString()).isEqualTo("Hello")
+            assertThat(inputStream.use { it.readNullTerminatedString() }).isEqualTo("Hello")
         }
 
         @Test
@@ -124,7 +125,7 @@ internal class InputStreamExtensionsTest {
             val inputStream = ByteArrayInputStream(bytes)
 
             assertThrows<InvalidDataException> {
-                inputStream.readNullTerminatedString()
+                inputStream.use { it.readNullTerminatedString() }
             }
         }
 
@@ -138,7 +139,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readUShortPrefixedString()).isEqualTo("LothlorienGrass05")
+            assertThat(inputStream.use { it.readUShortPrefixedString() }).isEqualTo("LothlorienGrass05")
         }
 
         @Test
@@ -151,7 +152,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.readUShortPrefixedString(StandardCharsets.UTF_16LE)).isEqualTo("Neutral")
+            assertThat(inputStream.use { it.readUShortPrefixedString(StandardCharsets.UTF_16LE) }).isEqualTo("Neutral")
         }
 
         @Test
@@ -168,7 +169,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.read7BitInt()).isEqualTo(Int.MAX_VALUE)
+            assertThat(inputStream.use { it.read7BitInt() }).isEqualTo(Int.MAX_VALUE)
         }
 
         @Test
@@ -182,7 +183,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.read7BitInt()).isEqualTo(128)
+            assertThat(inputStream.use { it.read7BitInt() }).isEqualTo(128)
         }
 
         @Test
@@ -193,7 +194,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.read7BitInt()).isEqualTo(0)
+            assertThat(inputStream.use { it.read7BitInt() }).isEqualTo(0)
         }
 
         @Test
@@ -210,7 +211,7 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.read7BitInt()).isEqualTo(-1)
+            assertThat(inputStream.use { it.read7BitInt() }).isEqualTo(-1)
         }
 
         @Test
@@ -227,7 +228,28 @@ internal class InputStreamExtensionsTest {
 
             val inputStream = ByteArrayInputStream(bytes)
 
-            assertThat(inputStream.read7BitInt()).isEqualTo(Int.MIN_VALUE)
+            assertThat(inputStream.use { it.read7BitInt() }).isEqualTo(Int.MIN_VALUE)
+        }
+
+        @Test
+        internal fun `should fail to read 7 bit Int with invalid fifth byte`() {
+
+            val outputStream = ByteArrayOutputStream()
+            outputStream.use {
+                it.writeBytes(
+                    byteArrayOf(
+                        0xFF.toByte(),
+                        0xFF.toByte(),
+                        0xFF.toByte(),
+                        0xFF.toByte(),
+                        0x1F.toByte() // fifth bit has 5 set bits which is invalid for 7 bit encoded ints
+                    )
+                )
+            }
+
+            assertThrows<NumberFormatException> {
+                outputStream.toByteArray().inputStream().use { it.read7BitInt() }
+            }
         }
     }
 }
