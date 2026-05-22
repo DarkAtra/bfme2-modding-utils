@@ -185,7 +185,7 @@ class MapFileReader(
             MapFileCompression.REFPACK.fourCC -> RefPackInputStream(SkippingInputStream(pushbackInputStream, 4))
             // skip 4 size bytes, we don't need that information
             MapFileCompression.ZLIB.fourCC -> InflaterInputStream(SkippingInputStream(pushbackInputStream, 4))
-            else -> throw UnsupportedEncodingException("Encoding '$fourCCBytes' is not supported.")
+            else -> throw UnsupportedEncodingException("Encoding '0x${fourCCBytes.toHexString()}' is not supported.")
         }
     }
 

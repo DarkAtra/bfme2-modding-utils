@@ -51,6 +51,7 @@
         <module>core</module>
         <module>map</module>
         <module>refpack</module>
+        <module>w3d</module>
     </modules>
 
     <properties>
