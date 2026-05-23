@@ -1,0 +1,7 @@
+{
+    "globs": [
+        {
+            "glob": "models/*.w3d"
+        }
+    ]
+}

@@ -1,10 +1,11 @@
-package de.darkatra.bfme2.w3d.model
+package de.darkatra.bfme2.w3d
 
-import de.darkatra.bfme2.w3d.W3dFileReader
+import de.darkatra.bfme2.w3d.model.W3dChunkType
+import de.darkatra.bfme2.w3d.model.W3dSubChunks
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class W3dFileTest {
+class W3dFileReaderTest {
 
     private val w3dFileReader = W3dFileReader()
 

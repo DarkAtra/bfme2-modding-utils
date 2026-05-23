@@ -1,4 +1,4 @@
-package de.darkatra.bfme2.w3d.model
+package de.darkatra.bfme2.w3d
 
 import java.io.InputStream
 
