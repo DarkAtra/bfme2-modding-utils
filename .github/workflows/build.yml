@@ -99,7 +99,7 @@ jobs:
             @semantic-release/exec
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OSSRH_GPG_SECRET_KEY_PASSWORD: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
 
   publish-maven-central:
     name: Publish to Maven Central
@@ -128,7 +128,8 @@ jobs:
       - name: Publish Package
         run: |
           mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${{ needs.release.outputs.new-release-version }}
-          mvn -B -ntp -Psign-with-gpg -Ppublish-central-portal clean deploy -DskipTests -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+          mvn -B -ntp -Psign-with-gpg -Ppublish-central-portal clean deploy -DskipTests
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_PORTAL_SECRET }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}

@@ -13,8 +13,7 @@
             "@semantic-release/exec",
             {
                 "prepareCmd": "mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}",
-                "publishCmd": "mvn -B -ntp -Psign-with-gpg clean deploy -DskipTests -Dgpg.passphrase=$OSSRH_GPG_SECRET_KEY_PASSWORD",
-                "successCmd": "mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}-SNAPSHOT"
+                "publishCmd": "mvn -B -ntp -Psign-with-gpg clean deploy -DskipTests && mvn -B -ntp versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}-SNAPSHOT"
             }
         ],
         [
