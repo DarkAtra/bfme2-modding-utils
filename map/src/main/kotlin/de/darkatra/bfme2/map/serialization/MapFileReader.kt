@@ -1,10 +1,10 @@
 package de.darkatra.bfme2.map.serialization
 
-import com.google.common.io.ByteStreams
 import com.google.common.io.CountingInputStream
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.PublicApi
 import de.darkatra.bfme2.SkippingInputStream
+import de.darkatra.bfme2.exhaust
 import de.darkatra.bfme2.map.MapFile
 import de.darkatra.bfme2.map.MapFileCompression
 import de.darkatra.bfme2.map.serialization.model.AssetEntry
@@ -151,7 +151,7 @@ class MapFileReader(
         }
 
         bufferedInputStream.mark(Int.MAX_VALUE)
-        val inputStreamSize = ByteStreams.exhaust(decodeIfNecessary(bufferedInputStream))
+        val inputStreamSize = decodeIfNecessary(bufferedInputStream).exhaust()
         bufferedInputStream.reset()
 
         return inputStreamSize

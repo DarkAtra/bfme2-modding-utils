@@ -48,7 +48,7 @@ class MapFileWriterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    @MethodSource("mapsToRoundtrip")
     fun `should produce identical map file when writing a parsed map without compression`(mapPath: String) {
 
         val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
@@ -64,7 +64,7 @@ class MapFileWriterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    @MethodSource("mapsToRoundtrip")
     fun `should produce identical map file when writing a parsed map with zlib compression`(mapPath: String) {
 
         val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
@@ -80,7 +80,7 @@ class MapFileWriterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("de.darkatra.bfme2.map.serialization.MapFileWriterTestKt#mapsToRoundtrip")
+    @MethodSource("mapsToRoundtrip")
     fun `should produce identical map file when writing a parsed map with refpack compression`(mapPath: String) {
 
         val parsedMapFile = TestUtils.getInputStream(mapPath).use(MapFileReader()::read)
@@ -94,15 +94,18 @@ class MapFileWriterTest {
 
         assertThat(writtenMapFile).isEqualTo(parsedMapFile)
     }
-}
 
-fun mapsToRoundtrip(): Stream<String> {
-    return Stream.of(
-        TestUtils.UNCOMPRESSED_MAP_PATH,
-        "/maps/bfme2-rotwk/map mp harlindon.refpack",
-        "/maps/bfme2-rotwk/map mp harlond.zlib",
-        "/maps/bfme2-rotwk/map mp midgewater.zlib",
-        "/maps/bfme2-rotwk/map mp westmarch.zlib",
-        "/maps/bfme2-rotwk/map wor osgiliath.zlib"
-    )
+    companion object {
+        @JvmStatic
+        fun mapsToRoundtrip(): Stream<String> {
+            return Stream.of(
+                TestUtils.UNCOMPRESSED_MAP_PATH,
+                "/maps/bfme2-rotwk/map mp harlindon.refpack",
+                "/maps/bfme2-rotwk/map mp harlond.zlib",
+                "/maps/bfme2-rotwk/map mp midgewater.zlib",
+                "/maps/bfme2-rotwk/map mp westmarch.zlib",
+                "/maps/bfme2-rotwk/map wor osgiliath.zlib"
+            )
+        }
+    }
 }

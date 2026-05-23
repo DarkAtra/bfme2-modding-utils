@@ -6,9 +6,38 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
 internal class InputStreamExtensionsTest {
+
+    @Test
+    internal fun `should readNBytes with UInt length`() {
+
+        val infiniteInputStream = object : InputStream() {
+            override fun read(): Int {
+                return 1
+            }
+        }
+
+        val bytesRead = infiniteInputStream.use { it.readNBytes(1u) }.size
+
+        assertThat(bytesRead).isEqualTo(1)
+    }
+
+    @Test
+    internal fun `should not readNBytes with UInt length that exceeds Int MAX_VALUE`() {
+
+        val infiniteInputStream = object : InputStream() {
+            override fun read(): Int {
+                return 1
+            }
+        }
+
+        assertThrows<IllegalStateException> {
+            infiniteInputStream.use { it.readNBytes(Int.MAX_VALUE.toUInt() + 1u) }
+        }
+    }
 
     @Test
     internal fun `should read boolean`() {
@@ -42,6 +71,66 @@ internal class InputStreamExtensionsTest {
         val inputStream = ByteArrayInputStream(bytes)
 
         assertThat(inputStream.use { it.readUByte() }).isEqualTo(0xF1.toUByte())
+    }
+
+    @Test
+    internal fun `should read null terminated string`() {
+
+        val bytes = "Hello".toByteArray() + 0.toByte()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        assertThat(inputStream.use { it.readNullTerminatedString() }).isEqualTo("Hello")
+    }
+
+    @Test
+    internal fun `should fail to read string without null terminator`() {
+
+        val bytes = "Hello".toByteArray()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        assertThrows<InvalidDataException> {
+            inputStream.use { it.readNullTerminatedString() }
+        }
+    }
+
+    @Test
+    internal fun `should read null terminated string with fixed length`() {
+
+        val bytes = "Hello".toByteArray() + 0.toByte() + 0.toByte() + 0.toByte() + 0.toByte()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        inputStream.use {
+            assertThat(it.readNullTerminatedString(fixedLength = 9u)).isEqualTo("Hello")
+            assertThat(inputStream.available()).isZero()
+        }
+    }
+
+    @Test
+    internal fun `should read null terminated string with fixed length and leave bytes beyond the limit untouched`() {
+
+        val bytes = "Hello".toByteArray() + 0.toByte() + 0.toByte() + 0.toByte() + 0.toByte()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        inputStream.use {
+            assertThat(it.readNullTerminatedString(fixedLength = 7u)).isEqualTo("Hello")
+            assertThat(inputStream.available()).isEqualTo(2)
+        }
+    }
+
+    @Test
+    internal fun `should failed to read null terminated string with fixed length if some bytes could not be read`() {
+
+        val bytes = "Hello".toByteArray() + 0.toByte() + 0.toByte() + 0.toByte() + 0.toByte()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        assertThrows<InvalidDataException> {
+            inputStream.use { it.readNullTerminatedString(fixedLength = 10u) }
+        }
     }
 
     @Nested
@@ -105,28 +194,6 @@ internal class InputStreamExtensionsTest {
             val inputStream = ByteArrayInputStream(bytes)
 
             assertThat(inputStream.use { it.readFloat() }).isEqualTo(1f)
-        }
-
-        @Test
-        internal fun `should read null terminated string`() {
-
-            val bytes = "Hello".toByteArray() + 0.toByte()
-
-            val inputStream = ByteArrayInputStream(bytes)
-
-            assertThat(inputStream.use { it.readNullTerminatedString() }).isEqualTo("Hello")
-        }
-
-        @Test
-        internal fun `should fail to read string without null terminator`() {
-
-            val bytes = "Hello".toByteArray()
-
-            val inputStream = ByteArrayInputStream(bytes)
-
-            assertThrows<InvalidDataException> {
-                inputStream.use { it.readNullTerminatedString() }
-            }
         }
 
         @Test

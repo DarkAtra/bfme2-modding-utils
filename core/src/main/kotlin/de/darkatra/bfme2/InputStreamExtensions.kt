@@ -5,6 +5,14 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import kotlin.experimental.or
 
+fun InputStream.readNBytes(length: UInt): ByteArray {
+    val lengthAsInt = length.toInt()
+    if (lengthAsInt < 0) {
+        throw IllegalStateException("Can not read more than ${Int.MAX_VALUE} bytes.")
+    }
+    return readNBytes(lengthAsInt)
+}
+
 fun InputStream.readByte(): Byte = this.readNBytes(1).first()
 fun InputStream.readUByte(): UByte = this.readByte().toUByte()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
@@ -32,17 +40,31 @@ fun InputStream.readUShortPrefixedString(charset: Charset = StandardCharsets.US_
     return this.readNBytes(amountOfBytesPerCharacter * stringLength.toInt()).toString(charset)
 }
 
-fun InputStream.readNullTerminatedString(): String {
-    val stringBuilder = StringBuilder()
+fun InputStream.readNullTerminatedString(fixedLength: UInt? = null): String {
+
+    val bytes = mutableListOf<Byte>()
     var nextByte = this.read()
     while (nextByte != 0) {
         if (nextByte == -1) {
             throw InvalidDataException("Unexpected end of stream while reading null terminated string.")
         }
-        stringBuilder.append(nextByte.toChar())
+        if (fixedLength != null && bytes.size.toUInt() > fixedLength) {
+            throw InvalidDataException("String exceeds the length limit of ${fixedLength}.")
+        }
+        bytes.add(nextByte.toByte())
         nextByte = this.read()
     }
-    return stringBuilder.toString()
+
+    // read empty padding
+    if (fixedLength != null) {
+        val toRead = fixedLength - bytes.size.toUInt() - 1u
+        val read = readNBytes(toRead).size.toUInt()
+        if (read != toRead) {
+            throw InvalidDataException("Some remaining bytes of fixed length string could not be read, missing ${toRead - read}.")
+        }
+    }
+
+    return bytes.toByteArray().toString(StandardCharsets.US_ASCII)
 }
 
 fun InputStream.read7BitInt(): Int {
@@ -88,4 +110,14 @@ fun InputStream.read7BitIntPrefixedString(): String {
     }
 
     return this.readNBytes(stringLength).toString(StandardCharsets.UTF_8)
+}
+
+fun InputStream.exhaust(): Long {
+    var total = 0L
+    var read: Int
+    val buf = ByteArray(DEFAULT_BUFFER_SIZE)
+    while (read(buf).also { read = it } != -1) {
+        total += read
+    }
+    return total
 }
