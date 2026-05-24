@@ -10,7 +10,7 @@ This project provides functions to read and write some of EA's file formats, suc
 - `.big` [[1]](https://github.com/TheAssemblyArmada/Thyme/wiki/BIG-File-Format)
 - `.map`
 - RefPack [[1]][RefPackQFSResources] [[2]][NiotsoRefPack] [[3]][StuntsCompression]
-- `.w3d`
+- `.w3d` [[1]](https://openw3ddocs.readthedocs.io/en/latest/file-formats/w3d/index.html)
 
 It also comes with support for GraalVM Native Image as of version `1.1.1` (tested against GraalVM 25).
 
