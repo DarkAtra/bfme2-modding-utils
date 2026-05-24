@@ -10,7 +10,7 @@ data class W3dMaterialInfo(
     val textureCount: UInt
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dMaterialInfo {
 

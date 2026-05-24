@@ -9,7 +9,7 @@ data class W3dHLodSubObject(
     val name: String,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dHLodSubObject {
 

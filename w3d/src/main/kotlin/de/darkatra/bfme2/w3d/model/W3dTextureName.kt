@@ -7,7 +7,7 @@ data class W3dTextureName(
     val value: String,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream, length: UInt): W3dTextureName {
 

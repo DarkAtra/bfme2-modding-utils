@@ -47,6 +47,7 @@
     <url>https://github.com/DarkAtra/bfme2-modding-utils</url>
 
     <modules>
+        <module>assetdat</module>
         <module>big</module>
         <module>core</module>
         <module>map</module>
@@ -61,7 +62,6 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <kotlin.version>2.3.10</kotlin.version>
         <java.version>17</java.version>
@@ -209,7 +209,7 @@
                     <jvmTarget>${java.version}</jvmTarget>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-Xannotation-default-target=param-property</arg>
+                        <arg>-Xannotation-default-target=param-property</arg> <!-- remove once this is the default in future kotlin versions -->
                         <arg>-Xemit-jvm-type-annotations</arg>
                     </args>
                 </configuration>

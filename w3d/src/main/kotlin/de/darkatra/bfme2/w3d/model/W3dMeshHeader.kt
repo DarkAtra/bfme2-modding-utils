@@ -26,7 +26,7 @@ data class W3dMeshHeader(
     val sphereRadius: Float,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dMeshHeader {
 

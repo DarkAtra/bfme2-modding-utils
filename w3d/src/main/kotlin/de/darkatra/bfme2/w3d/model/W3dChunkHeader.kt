@@ -10,7 +10,7 @@ data class W3dChunkHeader(
     val hasSubChunks: Boolean,
 ) {
 
-    companion object {
+    internal companion object {
 
         internal fun read(countingInputStream: CountingInputStream): W3dChunkHeader {
 

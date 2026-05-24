@@ -48,7 +48,7 @@ class RefPackInputStream(
 
         // skip compressedSize bytes, we don't need that information
         if (compressedSizePresent) {
-            `in`.skip(if (largeFilesFlagPresent) 4 else 3)
+            `in`.skipNBytes(if (largeFilesFlagPresent) 4 else 3)
         }
 
         // read uncompressed size

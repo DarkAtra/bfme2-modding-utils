@@ -11,7 +11,7 @@ data class W3dHLodHeader(
     val hierarchyName: String,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dHLodHeader {
 

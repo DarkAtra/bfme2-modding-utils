@@ -168,7 +168,7 @@ enum class W3dChunkType(
     W3D_CHUNK_VERTICES_2(0x00000C00u),
     W3D_CHUNK_NORMALS_2(0x00000C01u);
 
-    companion object {
+    internal companion object {
         fun ofTypeId(typeId: UInt): W3dChunkType {
             return entries.find { it.typeId == typeId }
                 ?: throw ConversionException("Could not deserialize W3dChunkType from '$typeId' (UInt)")

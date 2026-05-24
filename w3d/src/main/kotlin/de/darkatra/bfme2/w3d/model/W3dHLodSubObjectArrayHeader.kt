@@ -9,7 +9,7 @@ data class W3dHLodSubObjectArrayHeader(
     val maxScreenSize: Float,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dHLodSubObjectArrayHeader {
 

@@ -125,8 +125,8 @@ class BigArchive(
             return
         }
 
-        path.inputStream().use {
-            it.skip(4) // skip fourCC
+        path.inputStream().buffered().use {
+            it.skipNBytes(4) // skip fourCC
             it.readNBytes(4).toBigEndianUInt() // archive size
             val numberOfEntries = it.readNBytes(4).toBigEndianUInt()
             it.readNBytes(4).toBigEndianUInt() // data start

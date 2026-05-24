@@ -7,7 +7,7 @@ data class W3dVertexMaterialName(
     val value: String,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream, length: UInt): W3dVertexMaterialName {
 

@@ -13,7 +13,7 @@ enum class W3dBoxCollisionType(
     CAMERA(0x80u),
     VEHICLE(0x100u);
 
-    companion object {
+    internal companion object {
         fun ofUInt(uInt: UInt): W3dBoxCollisionType {
             return entries.find { it.uInt == uInt }
                 ?: throw ConversionException("Could not deserialize W3dBoxCollisionType from '$uInt' (UInt)")

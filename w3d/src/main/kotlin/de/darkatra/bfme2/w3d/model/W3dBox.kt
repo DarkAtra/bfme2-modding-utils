@@ -19,7 +19,7 @@ data class W3dBox(
     val extent: Vector3,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
         internal fun read(inputStream: InputStream): W3dBox {
 

@@ -7,9 +7,9 @@ data class W3dChunk(
     val payload: W3dPayload,
 ) {
 
-    companion object {
+    internal companion object {
 
-        fun read(countingInputStream: CountingInputStream): W3dChunk {
+        internal fun read(countingInputStream: CountingInputStream): W3dChunk {
 
             val chunkHeader = W3dChunkHeader.read(countingInputStream)
 

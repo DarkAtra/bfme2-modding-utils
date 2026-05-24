@@ -1,5 +1,6 @@
 package de.darkatra.bfme2
 
+import java.io.EOFException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
@@ -13,7 +14,14 @@ fun InputStream.readNBytes(length: UInt): ByteArray {
     return readNBytes(lengthAsInt)
 }
 
-fun InputStream.readByte(): Byte = this.readNBytes(1).first()
+fun InputStream.readByte(): Byte {
+    val read = this.read()
+    if (read == -1) {
+        throw EOFException("Unexpected end of input stream")
+    }
+    return read.toByte()
+}
+
 fun InputStream.readUByte(): UByte = this.readByte().toUByte()
 fun InputStream.readShort(): Short = this.readNBytes(2).toLittleEndianShort()
 fun InputStream.readUShort(): UShort = this.readNBytes(2).toLittleEndianUShort()

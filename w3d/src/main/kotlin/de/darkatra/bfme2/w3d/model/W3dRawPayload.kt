@@ -7,9 +7,9 @@ data class W3dRawPayload(
     val bytes: List<Byte>,
 ) : W3dPayload {
 
-    companion object {
+    internal companion object {
 
-        fun read(inputStream: InputStream, remaining: UInt): W3dRawPayload {
+        internal fun read(inputStream: InputStream, remaining: UInt): W3dRawPayload {
 
             return W3dRawPayload(
                 bytes = inputStream.readNBytes(remaining).toList()

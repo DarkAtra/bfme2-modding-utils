@@ -9,7 +9,7 @@ enum class W3dBoxType(
     ORIENTED(1u),
     ALIGNED(2u);
 
-    companion object {
+    internal companion object {
         fun ofUByte(uByte: UByte): W3dBoxType {
             return entries.find { it.uByte == uByte }
                 ?: throw ConversionException("Could not deserialize W3dBoxType from '$uByte' (UByte)")

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.EOFException
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
@@ -59,6 +60,18 @@ internal class InputStreamExtensionsTest {
         val inputStream = ByteArrayInputStream(bytes)
 
         assertThat(inputStream.use { it.readByte() }).isEqualTo(0xF1.toByte())
+    }
+
+    @Test
+    internal fun `should not read byte`() {
+
+        val bytes = byteArrayOf()
+
+        val inputStream = ByteArrayInputStream(bytes)
+
+        assertThrows<EOFException> {
+            inputStream.use { it.readByte() }
+        }
     }
 
     @Test
