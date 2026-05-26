@@ -1,10 +1,11 @@
 package de.darkatra.bfme2.assetdat.model
 
-import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.readNBytes
+import de.darkatra.bfme2.assetdat.readUBytePrefixedString
+import de.darkatra.bfme2.assetdat.writeUBytePrefixedString
 import de.darkatra.bfme2.readUInt
+import de.darkatra.bfme2.writeUInt
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
+import java.io.OutputStream
 
 data class Dependency(
     val name: String,
@@ -19,6 +20,14 @@ data class Dependency(
      */
     val extraDependencyNames: List<String>
 )
+
+internal fun Dependency.write(outputStream: OutputStream) {
+
+    outputStream.writeUBytePrefixedString(name)
+    outputStream.writeUInt(kind.uInt)
+    outputStream.writeUInt(offset)
+    outputStream.writeUInt(size)
+}
 
 internal class IncompleteDependency(
     internal val name: String,
@@ -42,7 +51,7 @@ internal class IncompleteDependency(
 
         internal fun read(inputStream: InputStream): IncompleteDependency {
 
-            val name = inputStream.readNBytes(inputStream.readByte().toUInt()).toString(StandardCharsets.ISO_8859_1)
+            val name = inputStream.readUBytePrefixedString()
 
             return IncompleteDependency(
                 name = name,

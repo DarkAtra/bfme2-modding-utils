@@ -19,6 +19,12 @@ import kotlin.io.path.inputStream
 
 class AssetDatFileReader {
 
+    /**
+     * Reads an asset.dat file from the specified [file] and deserializes it into an [AssetDatFile].
+     *
+     * @param file the [Path] to the asset.dat file to read
+     * @return the deserialized [AssetDatFile]
+     */
     @PublicApi
     fun read(file: Path): AssetDatFile {
 
@@ -29,11 +35,25 @@ class AssetDatFileReader {
         return file.inputStream().use(this::read)
     }
 
+    /**
+     * Reads an asset.dat file from the specified [inputStream] and deserializes it into an [AssetDatFile].
+     * The caller is responsible for closing the provided [inputStream] after use.
+     *
+     * @param inputStream the [InputStream] to read the asset.dat file from
+     * @return the deserialized [AssetDatFile]
+     */
     @PublicApi
     fun read(inputStream: InputStream): AssetDatFile {
         return read(inputStream.buffered())
     }
 
+    /**
+     * Reads an asset.dat file from the specified [bufferedInputStream] and deserializes it into an [AssetDatFile].
+     * The caller is responsible for closing the provided [bufferedInputStream] after use.
+     *
+     * @param bufferedInputStream the [BufferedInputStream] to read the asset.dat file from
+     * @return the deserialized [AssetDatFile]
+     */
     @PublicApi
     fun read(bufferedInputStream: BufferedInputStream): AssetDatFile {
 

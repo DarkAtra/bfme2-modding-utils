@@ -15,6 +15,12 @@ import kotlin.io.path.inputStream
 
 class W3dFileReader {
 
+    /**
+     * Reads a w3d file from the specified [file] and deserializes it into a [W3dFile].
+     *
+     * @param file the [Path] to the w3d file to read
+     * @return the deserialized [W3dFile]
+     */
     @PublicApi
     fun read(file: Path): W3dFile {
 
@@ -25,11 +31,25 @@ class W3dFileReader {
         return file.inputStream().use(this::read)
     }
 
+    /**
+     * Reads a w3d file from the specified [inputStream] and deserializes it into a [W3dFile].
+     * The caller is responsible for closing the provided [inputStream] after use.
+     *
+     * @param inputStream the [InputStream] to read the w3d file from
+     * @return the deserialized [W3dFile]
+     */
     @PublicApi
     fun read(inputStream: InputStream): W3dFile {
         return read(inputStream.buffered())
     }
 
+    /**
+     * Reads a w3d file from the specified [bufferedInputStream] and deserializes it into a [W3dFile].
+     * The caller is responsible for closing the provided [bufferedInputStream] after use.
+     *
+     * @param bufferedInputStream the [BufferedInputStream] to read the w3d file from
+     * @return the deserialized [W3dFile]
+     */
     @PublicApi
     fun read(bufferedInputStream: BufferedInputStream): W3dFile {
 

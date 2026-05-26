@@ -1,10 +1,11 @@
 package de.darkatra.bfme2.assetdat.model
 
-import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.readNBytes
+import de.darkatra.bfme2.assetdat.readUBytePrefixedString
+import de.darkatra.bfme2.assetdat.writeUBytePrefixedString
 import de.darkatra.bfme2.readUShort
+import de.darkatra.bfme2.writeUShort
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
+import java.io.OutputStream
 
 internal data class DependencyRecord(
     internal val assetName: String,
@@ -16,13 +17,13 @@ internal data class DependencyRecord(
 
         internal fun read(inputStream: InputStream): DependencyRecord {
 
-            val name = inputStream.readNBytes(inputStream.readByte().toUInt()).toString(StandardCharsets.ISO_8859_1)
-            val dependencyName = inputStream.readNBytes(inputStream.readByte().toUInt()).toString(StandardCharsets.ISO_8859_1)
+            val name = inputStream.readUBytePrefixedString()
+            val dependencyName = inputStream.readUBytePrefixedString()
             val extraCount = inputStream.readUShort().toUInt()
 
             val extraNames = mutableListOf<String>()
             for (i in 0u until extraCount) {
-                val extraName = inputStream.readNBytes(inputStream.readByte().toUInt()).toString(StandardCharsets.ISO_8859_1)
+                val extraName = inputStream.readUBytePrefixedString()
                 extraNames.add(extraName)
             }
 
@@ -32,5 +33,19 @@ internal data class DependencyRecord(
                 extraNames = extraNames
             )
         }
+    }
+}
+
+internal fun DependencyRecord.write(outputStream: OutputStream) {
+
+    outputStream.writeUBytePrefixedString(assetName)
+    outputStream.writeUBytePrefixedString(dependencyName)
+
+    if (extraNames.size.toUInt() > UShort.MAX_VALUE) {
+        throw IllegalArgumentException("Asset '$assetName#$dependencyName' exceeds the max. allowed number of dependencies of ${UShort.MAX_VALUE}.")
+    }
+    outputStream.writeUShort(extraNames.size.toUShort())
+    for (extraName in extraNames) {
+        outputStream.writeUBytePrefixedString(extraName)
     }
 }

@@ -1,12 +1,15 @@
 package de.darkatra.bfme2.assetdat.model
 
 import de.darkatra.bfme2.WindowsFileTimestamp
-import de.darkatra.bfme2.readByte
-import de.darkatra.bfme2.readNBytes
+import de.darkatra.bfme2.assetdat.readUBytePrefixedString
+import de.darkatra.bfme2.assetdat.writeUBytePrefixedString
 import de.darkatra.bfme2.readUInt
 import de.darkatra.bfme2.readUShort
+import de.darkatra.bfme2.toWindowsFileTimestamp
+import de.darkatra.bfme2.writeUInt
+import de.darkatra.bfme2.writeUShort
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
+import java.io.OutputStream
 import java.time.Instant
 
 data class Asset(
@@ -14,6 +17,24 @@ data class Asset(
     val fileTime: Instant,
     val dependencies: List<Dependency>
 )
+
+internal fun Asset.write(outputStream: OutputStream) {
+
+    outputStream.writeUBytePrefixedString(name)
+
+    val windowsFileTimestamp = fileTime.toWindowsFileTimestamp()
+    outputStream.writeUInt(windowsFileTimestamp.lowDateTime)
+    outputStream.writeUInt(windowsFileTimestamp.highDateTime)
+
+    if (dependencies.size.toUInt() > UShort.MAX_VALUE) {
+        throw IllegalArgumentException("Asset '$name' exceeds the max. allowed number of dependencies of ${UShort.MAX_VALUE}.")
+    }
+    outputStream.writeUShort(dependencies.size.toUShort())
+
+    for (dependency in dependencies) {
+        dependency.write(outputStream)
+    }
+}
 
 internal class IncompleteAsset(
     internal val name: String,
@@ -33,7 +54,7 @@ internal class IncompleteAsset(
 
         internal fun read(inputStream: InputStream): IncompleteAsset {
 
-            val name = inputStream.readNBytes(inputStream.readByte().toUInt()).toString(StandardCharsets.ISO_8859_1)
+            val name = inputStream.readUBytePrefixedString()
             val fileTime = WindowsFileTimestamp(
                 lowDateTime = inputStream.readUInt(),
                 highDateTime = inputStream.readUInt(),

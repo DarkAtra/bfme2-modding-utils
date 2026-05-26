@@ -68,7 +68,7 @@ class MapFileWriter(
     fun write(file: Path, mapFile: MapFile, compression: MapFileCompression = MapFileCompression.UNCOMPRESSED) {
 
         if (file.exists()) {
-            throw FileAlreadyExistsException("File '${file.absolutePathString()}' already exist.")
+            throw FileAlreadyExistsException("File '${file.absolutePathString()}' already exists.")
         }
 
         file.outputStream(CREATE_NEW, WRITE).use {
