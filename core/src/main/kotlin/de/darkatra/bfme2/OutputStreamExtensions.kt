@@ -24,17 +24,10 @@ fun OutputStream.writeBooleanAsUInt(boolean: Boolean) {
 }
 
 fun OutputStream.writeUShortPrefixedString(string: String, charset: Charset = StandardCharsets.US_ASCII) {
-    val amountOfBytesPerCharacter = when (charset) {
-        StandardCharsets.UTF_16LE -> 2
-        else -> 1
-    }
-
-    val stringLength = amountOfBytesPerCharacter * string.length
-    if (stringLength.toUInt() > UShort.MAX_VALUE) {
+    if (string.length.toUInt() > UShort.MAX_VALUE) {
         throw IllegalArgumentException("The specified string exceeds the max. allowed length of ${UShort.MAX_VALUE}.")
     }
-
-    this.writeUShort(stringLength.toUShort())
+    this.writeUShort(string.length.toUShort())
     this.write(string.toByteArray(charset))
 }
 
