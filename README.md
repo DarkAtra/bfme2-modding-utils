@@ -87,6 +87,7 @@ Build the project using the following command:
 * [Editing camera settings for all maps](https://github.com/DarkAtra/bfme2-patcher/blob/main/map-builder/src/main/kotlin/de/darkatra/patcher/mapbuilder/MapBuilderApplication.kt)
 * [Extracting files from a big archive](https://github.com/DarkAtra/bfme2-patcher/blob/main/mod-builder/src/main/kotlin/de/darkatra/patcher/modbuilder/ModBaselineExtractorApplication.kt)
 * [Creating new big archives](./big/src/test/kotlin/de/darkatra/bfme2/big/BigArchiveTest.kt)
+* [Merging two asset.dat files](https://github.com/DarkAtra/bfme2-patcher/blob/main/asset-builder/src/main/kotlin/de/darkatra/patcher/assetbuilder/AssetBuilderApplication.kt)
 
 [RefPackQFSResources]: https://github.com/lingeringwillx/RefPack-QFS-Resources/blob/main/FORMATS.md
 

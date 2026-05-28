@@ -25,7 +25,7 @@ data class W3dBox(
 
             val version = inputStream.readUInt()
             val flags = inputStream.readUInt()
-            val name = inputStream.readNullTerminatedString(fixedLength = 16u)
+            val name = inputStream.readNullTerminatedString(fixedLength = 32u)
             val r = inputStream.readByte().toUInt()
             val g = inputStream.readByte().toUInt()
             val b = inputStream.readByte().toUInt()
