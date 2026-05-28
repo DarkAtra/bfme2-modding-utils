@@ -14,6 +14,7 @@ class AssetDatFileReaderTest {
         val assetDatFile = TestUtils.getInputStream("/assetdats/bfme2-asset.dat").use(assetDatFileReader::read)
 
         assertThat(assetDatFile.assets).hasSize(17657)
+        assertThat(assetDatFile.assets.flatMap { it.dependencies }.filter { it.extraDependencyNames.isNotEmpty() }).hasSize(26981)
 
         val aragorn = assetDatFile.assets.find { it.name == "guaragorn_skn.w3d" }!!
         assertThat(aragorn.fileTime).isEqualTo("2005-11-28T19:56:32.485320200Z")
