@@ -99,7 +99,7 @@ class AssetDatFileReader {
         }
 
         return AssetDatFile(
-            assets = assets.map { it.toAsset() },
+            assets = assets.map { it.toAsset() }.sortedBy { it.name },
         )
     }
 

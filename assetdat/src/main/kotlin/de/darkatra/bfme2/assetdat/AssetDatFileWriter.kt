@@ -67,10 +67,11 @@ class AssetDatFileWriter {
         val dependencies = assetDatFile.assets
             .flatMap { asset -> asset.dependencies.map { asset to it } }
             .filter { (_, dependency) -> dependency.extraDependencyNames.isNotEmpty() }
+            .sortedBy { (_, dependency) -> dependency.offset }
 
         bufferedOutputStream.writeUInt(dependencies.size.toUInt())
 
-        for (asset in assetDatFile.assets) {
+        for (asset in assetDatFile.assets.sortedBy { it.name }) {
             asset.write(bufferedOutputStream)
         }
 

@@ -70,7 +70,7 @@ internal class IncompleteAsset(
             return IncompleteAsset(
                 name = name,
                 fileTime = fileTime,
-                dependencies = dependencies
+                dependencies = dependencies.sortedBy { it.offset }
             )
         }
     }
