@@ -6,17 +6,16 @@ import de.darkatra.bfme2.readUInt
 
 data class W3dChunkHeader(
     val type: W3dChunkType,
-    val start: ULong,
-    val end: ULong,
+    val start: UInt,
+    val end: UInt,
     val hasSubChunks: Boolean,
 ) {
 
     val size: UInt by lazy {
-        val size = end - start - (UInt.SIZE_BYTES.toUInt() * 2u)
-        if (size > UInt.MAX_VALUE) {
-            throw InvalidDataException("Chunk is larger than the max. allowed size of ${UInt.MAX_VALUE}")
+        if (end < start) {
+            throw InvalidDataException("Chunk end '$end' is before start '$start'")
         }
-        size.toUInt()
+        end - start - (UInt.SIZE_BYTES.toUInt() * 2u)
     }
 
     internal companion object {
@@ -25,7 +24,12 @@ data class W3dChunkHeader(
 
             val chunkTypeId = countingInputStream.readUInt()
             val rawChunkSize = countingInputStream.readUInt()
-            val chunkStart = countingInputStream.count.toULong()
+
+            if (countingInputStream.count > UInt.MAX_VALUE.toLong()) {
+                throw InvalidDataException("Current input stream position is greater than max allowed chunk offset of ${UInt.MAX_VALUE}")
+            }
+
+            val chunkStart = countingInputStream.count.toUInt()
             val chunkSize = rawChunkSize and 0x7FFFFFFFu
 
             return W3dChunkHeader(

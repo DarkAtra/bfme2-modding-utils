@@ -11,49 +11,49 @@ class W3dFileReaderTest {
     private val w3dFileReader = W3dFileReader()
 
     @Test
-    fun `should read w3d file`() {
+    fun `shoud read w3d file`() {
 
         val w3dFile = TestUtils.getInputStream("/models/gaduz.w3d").use(w3dFileReader::read)
 
         assertThat(w3dFile.chunks).hasSize(3)
         assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_MESH)
         assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[0].start).isEqualTo(0uL)
-        assertThat(w3dFile.chunks[0].end).isEqualTo(60091uL)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(60091u)
         assertThat(w3dFile.chunks[1].type).isEqualTo(W3dChunkType.W3D_CHUNK_MESH)
         assertThat(w3dFile.chunks[1].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[1].start).isEqualTo(60091uL)
-        assertThat(w3dFile.chunks[1].end).isEqualTo(79927uL)
+        assertThat(w3dFile.chunks[1].start).isEqualTo(60091u)
+        assertThat(w3dFile.chunks[1].end).isEqualTo(79927u)
         assertThat(w3dFile.chunks[2].type).isEqualTo(W3dChunkType.W3D_CHUNK_HLOD)
         assertThat(w3dFile.chunks[2].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[2].start).isEqualTo(79927uL)
-        assertThat(w3dFile.chunks[2].end).isEqualTo(80095uL)
+        assertThat(w3dFile.chunks[2].start).isEqualTo(79927u)
+        assertThat(w3dFile.chunks[2].end).isEqualTo(80095u)
 
         val subChunk1 = w3dFile.chunks[0].payload as W3dSubChunks
         assertThat(subChunk1.children).hasSize(13)
     }
 
     @Test
-    fun `should read chunk start and end correctly`() {
+    fun `shoud read chunk start and end correctly`() {
 
         val w3dFile = TestUtils.getInputStream("/models/guaragorn_skn.w3d").use(w3dFileReader::read)
 
         assertThat(w3dFile.chunks).hasSize(4)
         assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_MESH)
         assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[0].start).isEqualTo(0uL)
-        assertThat(w3dFile.chunks[0].end).isEqualTo(47356uL)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(47356u)
         assertThat(w3dFile.chunks[1].type).isEqualTo(W3dChunkType.W3D_CHUNK_MESH)
         assertThat(w3dFile.chunks[1].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[1].start).isEqualTo(47356uL)
-        assertThat(w3dFile.chunks[1].end).isEqualTo(49294uL)
+        assertThat(w3dFile.chunks[1].start).isEqualTo(47356u)
+        assertThat(w3dFile.chunks[1].end).isEqualTo(49294u)
         assertThat(w3dFile.chunks[2].type).isEqualTo(W3dChunkType.W3D_CHUNK_BOX)
         assertThat(w3dFile.chunks[2].payload).isInstanceOf(W3dBox::class.java)
-        assertThat(w3dFile.chunks[2].start).isEqualTo(49294uL)
-        assertThat(w3dFile.chunks[2].end).isEqualTo(49370uL)
+        assertThat(w3dFile.chunks[2].start).isEqualTo(49294u)
+        assertThat(w3dFile.chunks[2].end).isEqualTo(49370u)
         assertThat(w3dFile.chunks[3].type).isEqualTo(W3dChunkType.W3D_CHUNK_HLOD)
         assertThat(w3dFile.chunks[3].payload).isInstanceOf(W3dSubChunks::class.java)
-        assertThat(w3dFile.chunks[3].start).isEqualTo(49370uL)
-        assertThat(w3dFile.chunks[3].end).isEqualTo(49582uL)
+        assertThat(w3dFile.chunks[3].start).isEqualTo(49370u)
+        assertThat(w3dFile.chunks[3].end).isEqualTo(49582u)
     }
 }

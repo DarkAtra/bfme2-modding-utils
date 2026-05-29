@@ -5,8 +5,8 @@ import com.google.common.io.CountingInputStream
 data class W3dChunk(
     val type: W3dChunkType,
     val payload: W3dPayload,
-    val start: ULong,
-    val end: ULong,
+    val start: UInt,
+    val end: UInt,
 ) {
 
     internal companion object {
