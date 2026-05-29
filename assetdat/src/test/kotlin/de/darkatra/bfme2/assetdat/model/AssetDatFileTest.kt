@@ -50,13 +50,13 @@ class AssetDatFileTest {
 
         assertThat(asset2.assets).hasSize(3)
         assertThat(asset2.assets.map { it.name }).containsExactlyInAnyOrder("gaduz.tga", "gaduz.w3d", "gaduzdrum.tga")
-        assertThat(asset2.assets.find { it.name == "gaduz.w3d" }!!.dependencies.sumOf { it.size }).isEqualTo(65282u)
+        assertThat(asset2.assets.find { it.name == "gaduz.w3d" }!!.assetEntries.sumOf { it.size }).isEqualTo(65282u)
 
         val asset3 = TestUtils.getInputStream("/assetdats/asset-3.dat").use(assetDatFileReader::read)
 
         assertThat(asset3.assets).hasSize(3)
         assertThat(asset3.assets.map { it.name }).containsExactlyInAnyOrder("gaduz.tga", "gaduz.w3d", "gaduzdrum2.tga")
-        assertThat(asset3.assets.find { it.name == "gaduz.w3d" }!!.dependencies.sumOf { it.size }).isEqualTo(65283u)
+        assertThat(asset3.assets.find { it.name == "gaduz.w3d" }!!.assetEntries.sumOf { it.size }).isEqualTo(65283u)
 
         val expectedAssetMerged = TestUtils.getInputStream("/assetdats/asset-2-3-merged.dat").use(assetDatFileReader::read)
 
@@ -67,7 +67,7 @@ class AssetDatFileTest {
             "gaduzdrum.tga",
             "gaduzdrum2.tga",
         )
-        assertThat(expectedAssetMerged.assets.find { it.name == "gaduz.w3d" }!!.dependencies.sumOf { it.size }).isEqualTo(65283u)
+        assertThat(expectedAssetMerged.assets.find { it.name == "gaduz.w3d" }!!.assetEntries.sumOf { it.size }).isEqualTo(65283u)
 
         val assetMerged = asset2.merge(asset3)
 

@@ -2,9 +2,9 @@ package de.darkatra.bfme2.assetdat.model
 
 import de.darkatra.bfme2.ConversionException
 
-enum class DependencyKind(
+enum class AssetEntryKind(
     internal val uInt: UInt,
-    internal val allowsExtraDependencies: Boolean,
+    internal val allowsDependencies: Boolean,
 ) {
 
     MESH(0x4D455348u, true),
@@ -17,7 +17,7 @@ enum class DependencyKind(
     PARTICLE(0x50415254u, true);
 
     internal companion object {
-        internal fun ofUInt(uInt: UInt): DependencyKind {
+        internal fun ofUInt(uInt: UInt): AssetEntryKind {
             return entries.find { it.uInt == uInt }
                 ?: throw ConversionException("Could not deserialize DependencyKind from '$uInt' (UInt)")
         }

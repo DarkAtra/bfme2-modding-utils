@@ -15,7 +15,7 @@ import java.time.Instant
 data class Asset(
     val name: String,
     val fileTime: Instant,
-    val dependencies: List<Dependency>
+    val assetEntries: List<AssetEntry>
 )
 
 internal fun Asset.write(outputStream: OutputStream) {
@@ -26,27 +26,27 @@ internal fun Asset.write(outputStream: OutputStream) {
     outputStream.writeUInt(windowsFileTimestamp.lowDateTime)
     outputStream.writeUInt(windowsFileTimestamp.highDateTime)
 
-    if (dependencies.size.toUInt() > UShort.MAX_VALUE) {
-        throw IllegalArgumentException("Asset '$name' exceeds the max. allowed number of dependencies of ${UShort.MAX_VALUE}.")
+    if (assetEntries.size.toUInt() > UShort.MAX_VALUE) {
+        throw IllegalArgumentException("Asset '$name' exceeds the max. allowed number of components of ${UShort.MAX_VALUE}.")
     }
-    outputStream.writeUShort(dependencies.size.toUShort())
+    outputStream.writeUShort(assetEntries.size.toUShort())
 
-    for (dependency in dependencies) {
-        dependency.write(outputStream)
+    for (assetEntry in assetEntries) {
+        assetEntry.write(outputStream)
     }
 }
 
 internal class IncompleteAsset(
     internal val name: String,
     internal val fileTime: Instant,
-    internal val dependencies: List<IncompleteDependency>
+    internal val assetEntries: List<IncompleteAssetEntry>
 ) {
 
     internal fun toAsset(): Asset {
         return Asset(
             name = name,
             fileTime = fileTime,
-            dependencies = dependencies.map { it.toDependency() },
+            assetEntries = assetEntries.map { it.toAssetEntry() },
         )
     }
 
@@ -60,17 +60,17 @@ internal class IncompleteAsset(
                 highDateTime = inputStream.readUInt(),
             ).toInstant()
 
-            val dependencyCount = inputStream.readUShort().toUInt()
-            val dependencies = mutableListOf<IncompleteDependency>()
+            val assetEntryCount = inputStream.readUShort().toUInt()
+            val assetEntries = mutableListOf<IncompleteAssetEntry>()
 
-            for (i in 0u until dependencyCount) {
-                dependencies.add(IncompleteDependency.read(inputStream))
+            for (i in 0u until assetEntryCount) {
+                assetEntries.add(IncompleteAssetEntry.read(inputStream))
             }
 
             return IncompleteAsset(
                 name = name,
                 fileTime = fileTime,
-                dependencies = dependencies.sortedBy { it.offset }
+                assetEntries = assetEntries.sortedBy { it.offset }
             )
         }
     }

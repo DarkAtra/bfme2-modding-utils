@@ -7,21 +7,21 @@ import de.darkatra.bfme2.writeUInt
 import java.io.InputStream
 import java.io.OutputStream
 
-data class Dependency(
+data class AssetEntry(
     val name: String,
-    val kind: DependencyKind,
+    val kind: AssetEntryKind,
     val offset: UInt,
     val size: UInt,
     /**
-     * Only present for .w3d assets and only for specific dependency kinds:
+     * Only present for .w3d assets and only for specific kinds:
      * * MESH -> usually texture references
      * * HLOD -> usually subobject / hierarchy / render object references
      * * PART -> likely particle texture/material references
      */
-    val extraDependencyNames: List<String>
+    val dependencyNames: List<String>
 )
 
-internal fun Dependency.write(outputStream: OutputStream) {
+internal fun AssetEntry.write(outputStream: OutputStream) {
 
     outputStream.writeUBytePrefixedString(name)
     outputStream.writeUInt(kind.uInt)
@@ -29,33 +29,33 @@ internal fun Dependency.write(outputStream: OutputStream) {
     outputStream.writeUInt(size)
 }
 
-internal class IncompleteDependency(
+internal class IncompleteAssetEntry(
     internal val name: String,
-    internal val kind: DependencyKind,
+    internal val kind: AssetEntryKind,
     internal val offset: UInt,
     internal val size: UInt,
-    internal val extraDependencyNames: MutableList<String> = mutableListOf()
+    internal val dependencyNames: MutableList<String> = mutableListOf()
 ) {
 
-    internal fun toDependency(): Dependency {
-        return Dependency(
+    internal fun toAssetEntry(): AssetEntry {
+        return AssetEntry(
             name = name,
             kind = kind,
             offset = offset,
             size = size,
-            extraDependencyNames = extraDependencyNames,
+            dependencyNames = dependencyNames,
         )
     }
 
     internal companion object {
 
-        internal fun read(inputStream: InputStream): IncompleteDependency {
+        internal fun read(inputStream: InputStream): IncompleteAssetEntry {
 
             val name = inputStream.readUBytePrefixedString()
 
-            return IncompleteDependency(
+            return IncompleteAssetEntry(
                 name = name,
-                kind = DependencyKind.ofUInt(inputStream.readUInt()),
+                kind = AssetEntryKind.ofUInt(inputStream.readUInt()),
                 offset = inputStream.readUInt(),
                 size = inputStream.readUInt(),
             )

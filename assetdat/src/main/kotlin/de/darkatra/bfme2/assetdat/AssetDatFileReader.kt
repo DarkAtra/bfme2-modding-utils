@@ -81,17 +81,17 @@ class AssetDatFileReader {
                 ?: continue
 
             if (!asset.name.endsWith(".w3d")) {
-                throw InvalidDataException("Unexpected extra dependency for asset '${asset.name}'.")
+                throw InvalidDataException("Unexpected dependency for asset '${asset.name}'.")
             }
 
-            val dependency = asset.dependencies.find { it.name == dependencyRecord.dependencyName }
+            val assetEntry = asset.assetEntries.find { it.name == dependencyRecord.dependencyName }
                 ?: continue
 
-            if (!dependency.kind.allowsExtraDependencies) {
-                throw InvalidDataException("Unexpected extra dependency for asset '${asset.name}#${dependency.name} (${dependency.kind})'.")
+            if (!assetEntry.kind.allowsDependencies) {
+                throw InvalidDataException("Unexpected dependency for asset '${asset.name}#${assetEntry.name} (${assetEntry.kind})'.")
             }
 
-            dependency.extraDependencyNames.addAll(dependencyRecord.extraNames)
+            assetEntry.dependencyNames.addAll(dependencyRecord.extraNames)
         }
 
         if (countingInputStream.count != inputStreamSize) {

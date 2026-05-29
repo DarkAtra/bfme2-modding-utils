@@ -64,31 +64,31 @@ class AssetDatFileWriter {
 
         bufferedOutputStream.writeUInt(assetDatFile.assets.size.toUInt())
 
-        val dependencies = assetDatFile.assets
-            .flatMap { asset -> asset.dependencies.map { asset to it } }
-            .filter { (_, dependency) -> dependency.extraDependencyNames.isNotEmpty() }
-            .sortedBy { (_, dependency) -> dependency.offset }
+        val assetEntriesWithDependencies = assetDatFile.assets
+            .flatMap { asset -> asset.assetEntries.map { asset to it } }
+            .filter { (_, assetEntry) -> assetEntry.dependencyNames.isNotEmpty() }
+            .sortedBy { (_, assetEntry) -> assetEntry.offset }
 
-        bufferedOutputStream.writeUInt(dependencies.size.toUInt())
+        bufferedOutputStream.writeUInt(assetEntriesWithDependencies.size.toUInt())
 
         for (asset in assetDatFile.assets.sortedBy { it.name }) {
             asset.write(bufferedOutputStream)
         }
 
-        for ((asset, dependency) in dependencies) {
+        for ((asset, assetEntry) in assetEntriesWithDependencies) {
 
             if (!asset.name.endsWith(".w3d")) {
-                throw InvalidDataException("Unexpected extra dependency for asset '${asset.name}'.")
+                throw InvalidDataException("Unexpected dependency for asset '${asset.name}'.")
             }
 
-            if (!dependency.kind.allowsExtraDependencies) {
-                throw InvalidDataException("Unexpected extra dependency for asset '${asset.name}#${dependency.name} (${dependency.kind})'.")
+            if (!assetEntry.kind.allowsDependencies) {
+                throw InvalidDataException("Unexpected dependency for asset '${asset.name}#${assetEntry.name} (${assetEntry.kind})'.")
             }
 
             val dependencyRecord = DependencyRecord(
                 assetName = asset.name,
-                dependencyName = dependency.name,
-                extraNames = dependency.extraDependencyNames
+                dependencyName = assetEntry.name,
+                extraNames = assetEntry.dependencyNames
             )
 
             dependencyRecord.write(bufferedOutputStream)

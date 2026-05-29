@@ -23,7 +23,7 @@ Add the following dependencies to your `pom.xml` according to your needs:
 <dependency>
   <groupId>de.darkatra.bfme2</groupId>
   <artifactId>assetdat</artifactId>
-  <version>1.5.0</version> <!-- please check if this is the current version -->
+  <version>1.8.0</version> <!-- please check if this is the current version -->
 </dependency>
 ```
 
@@ -31,7 +31,7 @@ Add the following dependencies to your `pom.xml` according to your needs:
 <dependency>
   <groupId>de.darkatra.bfme2</groupId>
   <artifactId>big</artifactId>
-  <version>1.5.0</version> <!-- please check if this is the current version -->
+  <version>1.8.0</version> <!-- please check if this is the current version -->
 </dependency>
 ```
 
@@ -39,7 +39,7 @@ Add the following dependencies to your `pom.xml` according to your needs:
 <dependency>
   <groupId>de.darkatra.bfme2</groupId>
   <artifactId>map</artifactId>
-  <version>1.5.0</version> <!-- please check if this is the current version -->
+  <version>1.8.0</version> <!-- please check if this is the current version -->
 </dependency>
 ```
 
@@ -47,7 +47,7 @@ Add the following dependencies to your `pom.xml` according to your needs:
 <dependency>
   <groupId>de.darkatra.bfme2</groupId>
   <artifactId>refpack</artifactId>
-  <version>1.5.0</version> <!-- please check if this is the current version -->
+  <version>1.8.0</version> <!-- please check if this is the current version -->
 </dependency>
 ```
 
@@ -55,7 +55,7 @@ Add the following dependencies to your `pom.xml` according to your needs:
 <dependency>
   <groupId>de.darkatra.bfme2</groupId>
   <artifactId>w3d</artifactId>
-  <version>1.5.0</version> <!-- please check if this is the current version -->
+  <version>1.8.0</version> <!-- please check if this is the current version -->
 </dependency>
 ```
 [//]: # (@formatter:on)
