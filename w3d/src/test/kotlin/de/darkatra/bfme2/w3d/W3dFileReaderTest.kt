@@ -11,7 +11,7 @@ class W3dFileReaderTest {
     private val w3dFileReader = W3dFileReader()
 
     @Test
-    fun `shoud read w3d file`() {
+    fun `should read w3d file`() {
 
         val w3dFile = TestUtils.getInputStream("/models/gaduz.w3d").use(w3dFileReader::read)
 
@@ -34,7 +34,7 @@ class W3dFileReaderTest {
     }
 
     @Test
-    fun `shoud read chunk start and end correctly`() {
+    fun `should read chunk start and end correctly`() {
 
         val w3dFile = TestUtils.getInputStream("/models/guaragorn_skn.w3d").use(w3dFileReader::read)
 

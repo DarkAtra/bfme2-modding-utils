@@ -24,6 +24,9 @@ data class W3dChunk(
                 W3dChunkType.W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER -> W3dHLodSubObjectArrayHeader.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_HLOD_SUB_OBJECT -> W3dHLodSubObject.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_BOX -> W3dBox.read(countingInputStream)
+                W3dChunkType.W3D_CHUNK_VERTEX_MAPPER_ARGS0,
+                W3dChunkType.W3D_CHUNK_VERTEX_MAPPER_ARGS1 -> W3dRawPayload.read(countingInputStream, chunkHeader.size)
+
                 else -> when (chunkHeader.hasSubChunks) {
                     false -> W3dRawPayload.read(countingInputStream, chunkHeader.size)
                     true -> W3dSubChunks(
