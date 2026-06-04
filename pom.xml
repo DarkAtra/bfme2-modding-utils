@@ -70,7 +70,7 @@
         <graalvm-hint.version>1.2.0</graalvm-hint.version>
 
         <assertj.version>3.27.7</assertj.version>
-        <junit.version>6.1.0</junit.version>
+        <junit.version>6.0.3</junit.version>
 
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
