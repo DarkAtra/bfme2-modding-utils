@@ -83,6 +83,25 @@ class W3dFileReaderTest {
     }
 
     @Test
+    fun `should read hierarchy chunk without subchunks correctly`() {
+
+        val w3dFile = TestUtils.getInputStream("/models/iuwargarch_skl.w3d").use(w3dFileReader::read)
+
+        assertThat(w3dFile.chunks).hasSize(1)
+        assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_HIERARCHY)
+        assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(3120u)
+
+        val subChunks = w3dFile.chunks[0].payload as W3dSubChunks
+        assertThat(subChunks.children).hasSize(2)
+        assertThat(subChunks.children[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_HIERARCHY_HEADER)
+        assertThat(subChunks.children[0].payload).isInstanceOf(W3dHierarchyHeader::class.java)
+        assertThat((subChunks.children[0].payload as W3dHierarchyHeader).name).isEqualTo("IUWARGARCH_SKL")
+        assertThat(subChunks.children[1].type).isEqualTo(W3dChunkType.W3D_CHUNK_PIVOTS)
+    }
+
+    @Test
     fun `should read animation chunk correctly`() {
 
         val w3dFile = TestUtils.getInputStream("/models/guaragorn_pala.w3d").use(w3dFileReader::read)

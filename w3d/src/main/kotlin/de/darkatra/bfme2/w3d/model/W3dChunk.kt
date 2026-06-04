@@ -29,6 +29,7 @@ data class W3dChunk(
                 W3dChunkType.W3D_CHUNK_HLOD_HEADER -> W3dHLodHeader.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_HLOD_SUB_OBJECT_ARRAY_HEADER -> W3dHLodSubObjectArrayHeader.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_HLOD_SUB_OBJECT -> W3dHLodSubObject.read(countingInputStream)
+                W3dChunkType.W3D_CHUNK_HIERARCHY -> parseSubChunks(countingInputStream, chunkHeader)
                 W3dChunkType.W3D_CHUNK_HIERARCHY_HEADER -> W3dHierarchyHeader.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_ANIMATION_HEADER -> W3dAnimationHeader.read(countingInputStream)
                 W3dChunkType.W3D_CHUNK_COMPRESSED_ANIMATION_HEADER -> W3dCompressedAnimationHeader.read(countingInputStream)
@@ -38,13 +39,7 @@ data class W3dChunk(
 
                 else -> when (chunkHeader.hasSubChunks) {
                     false -> W3dRawPayload.read(countingInputStream, chunkHeader.size)
-                    true -> W3dSubChunks(
-                        children = buildList {
-                            while (countingInputStream.count.toULong() < chunkHeader.end) {
-                                add(read(countingInputStream))
-                            }
-                        }
-                    )
+                    true -> parseSubChunks(countingInputStream, chunkHeader)
                 }
             }
 
@@ -53,6 +48,16 @@ data class W3dChunk(
                 payload = payload,
                 start = chunkHeader.start,
                 end = chunkHeader.end,
+            )
+        }
+
+        private fun parseSubChunks(countingInputStream: CountingInputStream, chunkHeader: W3dChunkHeader): W3dSubChunks {
+            return W3dSubChunks(
+                children = buildList {
+                    while (countingInputStream.count.toULong() < chunkHeader.end) {
+                        add(read(countingInputStream))
+                    }
+                }
             )
         }
     }
