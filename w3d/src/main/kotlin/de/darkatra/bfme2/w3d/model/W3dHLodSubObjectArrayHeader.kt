@@ -1,11 +1,15 @@
 package de.darkatra.bfme2.w3d.model
 
+import de.darkatra.bfme2.ExperimentalApi
 import de.darkatra.bfme2.readFloat
 import de.darkatra.bfme2.readUInt
 import java.io.InputStream
 
+@ExperimentalApi
 data class W3dHLodSubObjectArrayHeader(
+    @ExperimentalApi
     val modelCount: UInt,
+    @ExperimentalApi
     val maxScreenSize: Float,
 ) : W3dPayload {
 

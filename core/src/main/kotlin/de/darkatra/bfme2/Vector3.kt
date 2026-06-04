@@ -6,5 +6,5 @@ import io.goodforgod.graalvm.hint.annotation.ReflectionHint
 data class Vector3(
     val x: Float,
     val y: Float,
-    val z: Float
+    val z: Float,
 )

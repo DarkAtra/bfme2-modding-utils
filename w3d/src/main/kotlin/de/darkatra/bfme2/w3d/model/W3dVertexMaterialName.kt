@@ -1,9 +1,12 @@
 package de.darkatra.bfme2.w3d.model
 
+import de.darkatra.bfme2.ExperimentalApi
 import de.darkatra.bfme2.readNullTerminatedString
 import java.io.InputStream
 
+@ExperimentalApi
 data class W3dVertexMaterialName(
+    @ExperimentalApi
     val value: String,
 ) : W3dPayload {
 

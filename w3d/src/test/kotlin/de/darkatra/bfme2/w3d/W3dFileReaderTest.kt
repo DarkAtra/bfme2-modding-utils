@@ -1,7 +1,13 @@
+@file:OptIn(ExperimentalApi::class)
+
 package de.darkatra.bfme2.w3d
 
+import de.darkatra.bfme2.ExperimentalApi
+import de.darkatra.bfme2.w3d.model.W3dAnimationHeader
 import de.darkatra.bfme2.w3d.model.W3dBox
 import de.darkatra.bfme2.w3d.model.W3dChunkType
+import de.darkatra.bfme2.w3d.model.W3dCompressedAnimationHeader
+import de.darkatra.bfme2.w3d.model.W3dHierarchyHeader
 import de.darkatra.bfme2.w3d.model.W3dSubChunks
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -55,5 +61,62 @@ class W3dFileReaderTest {
         assertThat(w3dFile.chunks[3].payload).isInstanceOf(W3dSubChunks::class.java)
         assertThat(w3dFile.chunks[3].start).isEqualTo(49370u)
         assertThat(w3dFile.chunks[3].end).isEqualTo(49582u)
+    }
+
+    @Test
+    fun `should read hierarchy chunk correctly`() {
+
+        val w3dFile = TestUtils.getInputStream("/models/guaragorn_skl.w3d").use(w3dFileReader::read)
+
+        assertThat(w3dFile.chunks).hasSize(1)
+        assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_HIERARCHY)
+        assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(1860u)
+
+        val subChunks = w3dFile.chunks[0].payload as W3dSubChunks
+        assertThat(subChunks.children).hasSize(2)
+        assertThat(subChunks.children[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_HIERARCHY_HEADER)
+        assertThat(subChunks.children[0].payload).isInstanceOf(W3dHierarchyHeader::class.java)
+        assertThat((subChunks.children[0].payload as W3dHierarchyHeader).name).isEqualTo("GUARAGORN_SKL")
+        assertThat(subChunks.children[1].type).isEqualTo(W3dChunkType.W3D_CHUNK_PIVOTS)
+    }
+
+    @Test
+    fun `should read animation chunk correctly`() {
+
+        val w3dFile = TestUtils.getInputStream("/models/guaragorn_pala.w3d").use(w3dFileReader::read)
+
+        assertThat(w3dFile.chunks).hasSize(1)
+        assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_ANIMATION)
+        assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(126540u)
+
+        val subChunks = w3dFile.chunks[0].payload as W3dSubChunks
+        assertThat(subChunks.children).hasSize(81)
+        assertThat(subChunks.children[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_ANIMATION_HEADER)
+        assertThat(subChunks.children[0].payload).isInstanceOf(W3dAnimationHeader::class.java)
+        assertThat((subChunks.children[0].payload as W3dAnimationHeader).name).isEqualTo("GUARAGORN_PALA")
+        assertThat((subChunks.children[0].payload as W3dAnimationHeader).hierarchyName).isEqualTo("GUISILDUR_SKL")
+    }
+
+    @Test
+    fun `should read compressed animation chunk correctly`() {
+
+        val w3dFile = TestUtils.getInputStream("/models/guaragorn_idla.w3d").use(w3dFileReader::read)
+
+        assertThat(w3dFile.chunks).hasSize(1)
+        assertThat(w3dFile.chunks[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_COMPRESSED_ANIMATION)
+        assertThat(w3dFile.chunks[0].payload).isInstanceOf(W3dSubChunks::class.java)
+        assertThat(w3dFile.chunks[0].start).isEqualTo(0u)
+        assertThat(w3dFile.chunks[0].end).isEqualTo(12183u)
+
+        val subChunks = w3dFile.chunks[0].payload as W3dSubChunks
+        assertThat(subChunks.children).hasSize(60)
+        assertThat(subChunks.children[0].type).isEqualTo(W3dChunkType.W3D_CHUNK_COMPRESSED_ANIMATION_HEADER)
+        assertThat(subChunks.children[0].payload).isInstanceOf(W3dCompressedAnimationHeader::class.java)
+        assertThat((subChunks.children[0].payload as W3dCompressedAnimationHeader).name).isEqualTo("GUARAGORN_IDLA")
+        assertThat((subChunks.children[0].payload as W3dCompressedAnimationHeader).hierarchyName).isEqualTo("GUARAGORN_SKL")
     }
 }

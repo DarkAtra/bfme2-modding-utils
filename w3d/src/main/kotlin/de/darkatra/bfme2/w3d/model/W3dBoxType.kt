@@ -1,7 +1,9 @@
 package de.darkatra.bfme2.w3d.model
 
 import de.darkatra.bfme2.ConversionException
+import de.darkatra.bfme2.ExperimentalApi
 
+@ExperimentalApi
 enum class W3dBoxType(
     internal val uByte: UByte
 ) {

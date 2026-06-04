@@ -1,7 +1,7 @@
 package de.darkatra.bfme2.w3d
 
 import com.google.common.io.CountingInputStream
-import de.darkatra.bfme2.PublicApi
+import de.darkatra.bfme2.ExperimentalApi
 import de.darkatra.bfme2.exhaust
 import de.darkatra.bfme2.w3d.model.W3dChunk
 import de.darkatra.bfme2.w3d.model.W3dFile
@@ -21,7 +21,7 @@ class W3dFileReader {
      * @param file the [Path] to the w3d file to read
      * @return the deserialized [W3dFile]
      */
-    @PublicApi
+    @ExperimentalApi
     fun read(file: Path): W3dFile {
 
         if (!file.exists()) {
@@ -38,7 +38,7 @@ class W3dFileReader {
      * @param inputStream the [InputStream] to read the w3d file from
      * @return the deserialized [W3dFile]
      */
-    @PublicApi
+    @ExperimentalApi
     fun read(inputStream: InputStream): W3dFile {
         return read(inputStream.buffered())
     }
@@ -50,7 +50,7 @@ class W3dFileReader {
      * @param bufferedInputStream the [BufferedInputStream] to read the w3d file from
      * @return the deserialized [W3dFile]
      */
-    @PublicApi
+    @ExperimentalApi
     fun read(bufferedInputStream: BufferedInputStream): W3dFile {
 
         val inputStreamSize = getInputStreamSize(bufferedInputStream)

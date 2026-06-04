@@ -1,6 +1,7 @@
 package de.darkatra.bfme2.w3d.model
 
 import de.darkatra.bfme2.Color
+import de.darkatra.bfme2.ExperimentalApi
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.Vector3
 import de.darkatra.bfme2.readByte
@@ -9,13 +10,21 @@ import de.darkatra.bfme2.readNullTerminatedString
 import de.darkatra.bfme2.readUInt
 import java.io.InputStream
 
+@ExperimentalApi
 data class W3dBox(
+    @ExperimentalApi
     val version: UInt,
+    @ExperimentalApi
     val boxType: W3dBoxType,
+    @ExperimentalApi
     val collisionFlags: W3dBoxCollisionType,
+    @ExperimentalApi
     val name: String,
+    @ExperimentalApi
     val color: Color,
+    @ExperimentalApi
     val center: Vector3,
+    @ExperimentalApi
     val extent: Vector3,
 ) : W3dPayload {
 
@@ -47,12 +56,12 @@ data class W3dBox(
                 center = Vector3(
                     x = inputStream.readFloat(),
                     y = inputStream.readFloat(),
-                    z = inputStream.readFloat()
+                    z = inputStream.readFloat(),
                 ),
                 extent = Vector3(
                     x = inputStream.readFloat(),
                     y = inputStream.readFloat(),
-                    z = inputStream.readFloat()
+                    z = inputStream.readFloat(),
                 ),
             )
         }

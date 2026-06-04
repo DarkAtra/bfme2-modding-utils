@@ -209,7 +209,6 @@
                     <jvmTarget>${java.version}</jvmTarget>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-Xannotation-default-target=param-property</arg> <!-- remove once this is the default in future kotlin versions -->
                         <arg>-Xemit-jvm-type-annotations</arg>
                     </args>
                 </configuration>

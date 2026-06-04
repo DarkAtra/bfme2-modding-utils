@@ -1,13 +1,19 @@
 package de.darkatra.bfme2.w3d.model
 
 import com.google.common.io.CountingInputStream
+import de.darkatra.bfme2.ExperimentalApi
 import de.darkatra.bfme2.InvalidDataException
 import de.darkatra.bfme2.readUInt
 
+@ExperimentalApi
 data class W3dChunkHeader(
+    @ExperimentalApi
     val type: W3dChunkType,
+    @ExperimentalApi
     val start: UInt,
+    @ExperimentalApi
     val end: UInt,
+    @ExperimentalApi
     val hasSubChunks: Boolean,
 ) {
 
