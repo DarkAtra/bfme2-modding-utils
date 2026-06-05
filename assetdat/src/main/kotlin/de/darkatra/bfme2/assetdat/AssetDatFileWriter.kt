@@ -13,6 +13,7 @@ import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption.CREATE_NEW
 import java.nio.file.StandardOpenOption.WRITE
+import java.util.Locale
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
@@ -67,7 +68,7 @@ class AssetDatFileWriter {
         val assetEntriesWithDependencies = assetDatFile.assets
             .flatMap { asset -> asset.assetEntries.map { asset to it } }
             .filter { (_, assetEntry) -> assetEntry.dependencyNames.isNotEmpty() }
-            .sortedBy { (_, assetEntry) -> assetEntry.name }
+            .sortedBy { (_, assetEntry) -> assetEntry.name.lowercase(Locale.ROOT) }
 
         bufferedOutputStream.writeUInt(assetEntriesWithDependencies.size.toUInt())
 
