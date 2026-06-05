@@ -12,7 +12,7 @@
         [
             "@semantic-release/exec",
             {
-                "prepareCmd": "mvn -B -ntp clean versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version}-SNAPSHOT",
+                "prepareCmd": "mvn -B -ntp clean versions:set -DgenerateBackupPoms=false -DnewVersion=dev-SNAPSHOT",
                 "publishCmd": "mvn -B -ntp clean versions:set -DgenerateBackupPoms=false -DnewVersion=${nextRelease.version} && mvn -B -ntp -Psign-with-gpg clean deploy -DskipTests"
             }
         ],
