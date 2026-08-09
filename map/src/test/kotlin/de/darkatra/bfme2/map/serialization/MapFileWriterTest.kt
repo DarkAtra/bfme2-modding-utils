@@ -104,7 +104,8 @@ class MapFileWriterTest {
                 "/maps/bfme2-rotwk/map mp harlond.zlib",
                 "/maps/bfme2-rotwk/map mp midgewater.zlib",
                 "/maps/bfme2-rotwk/map mp westmarch.zlib",
-                "/maps/bfme2-rotwk/map wor osgiliath.zlib"
+                "/maps/bfme2-rotwk/map wor osgiliath.zlib",
+                "/maps/bfme2-rotwk/cin amon sul - castle pan.map"
             )
         }
     }
