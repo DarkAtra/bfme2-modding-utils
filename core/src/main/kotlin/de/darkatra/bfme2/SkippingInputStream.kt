@@ -9,6 +9,6 @@ class SkippingInputStream(
 ) : FilterInputStream(input) {
 
     init {
-        skip(bytesToSkip)
+        skipNBytes(bytesToSkip)
     }
 }
