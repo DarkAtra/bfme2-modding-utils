@@ -3,8 +3,8 @@
 This module provides functions to read and write Battle for Middle-Earth 2 and Battle for Middle-Earth 2 Rise of the Witch King map files.
 The motivation is to make it possible to change settings for multiple maps using small and readable scripts instead of doing it manually in EA's World Builder.
 
-Please note, that this implementation is specifically designed to support BfME2 and RotWK map files. Map files of other Sage games are not officially supported.
-If you need to read map files for other Sage games you can have a look at [OpenSage](https://github.com/OpenSAGE/OpenSAGE). Their implementation should cover
+Please note that this implementation is specifically designed to support BfME2 and RotWK map files. Map files of other Sage games are not officially supported.
+If you need to read map files for other Sage games, you can have a look at [OpenSage](https://github.com/OpenSAGE/OpenSAGE). Their implementation should cover
 all Sage games. This module is heavily inspired by their phenomenal work and would've taken a lot longer without their reference implementation.
 
 ## Usage
