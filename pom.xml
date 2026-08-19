@@ -66,7 +66,7 @@
         <kotlin.version>2.4.10</kotlin.version>
         <java.version>17</java.version>
 
-        <guava.version>33.6.0-jre</guava.version>
+        <guava.version>33.7.1-jre</guava.version>
         <graalvm-hint.version>1.2.0</graalvm-hint.version>
 
         <assertj.version>3.27.7</assertj.version>
@@ -78,7 +78,7 @@
         <dokka-maven-plugin.version>2.2.0</dokka-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
-        <native-build-tools-plugin.version>1.1.8</native-build-tools-plugin.version>
+        <native-build-tools-plugin.version>1.1.10</native-build-tools-plugin.version>
     </properties>
 
     <dependencyManagement>
