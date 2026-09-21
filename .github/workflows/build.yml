@@ -30,7 +30,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v6.0.0
         with:
-          java-version: '17'
+          java-version: '26'
           distribution: 'temurin'
           cache: maven
 
@@ -56,7 +56,7 @@ jobs:
       - name: Setup GraalVM
         uses: graalvm/setup-graalvm@v1.6.6
         with:
-          java-version: '25'
+          java-version: '26'
           distribution: 'graalvm-community'
 
       - name: Run Tests
@@ -85,7 +85,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v6.0.0
         with:
-          java-version: '17'
+          java-version: '26'
           distribution: 'temurin'
           cache: maven
 
@@ -118,7 +118,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v6.0.0
         with:
-          java-version: '17'
+          java-version: '26'
           distribution: 'temurin'
           cache: maven
           server-id: central
