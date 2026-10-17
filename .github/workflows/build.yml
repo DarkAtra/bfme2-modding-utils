@@ -97,7 +97,7 @@ jobs:
 
       - id: semantic-release
         name: Create new Release
-        uses: cycjimmy/semantic-release-action@v6.0.0
+        uses: cycjimmy/semantic-release-action@03595b5eaf44910cf239ff20904cc52d410f97d4 # v8.1.2
         with:
           extra_plugins: |
             @semantic-release/git
