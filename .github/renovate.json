@@ -8,14 +8,29 @@
         ":semanticCommits",
         ":labels(dependencies)",
         "group:allNonMajor",
-        "schedule:weekly"
+        "schedule:weekly",
+        "helpers:pinGitHubActionDigests"
     ],
     "packageRules": [
         {
+            "description": "Don't suggest Pre-Release Versions",
             "allowedVersions": "!/-.+\\.[0-9]+$/",
             "matchPackageNames": [
                 "*"
             ]
+        },
+        {
+            "description": "Disable Major Updates for the JDK",
+            "matchDatasources": [
+                "java-version"
+            ],
+            "matchPackageNames": [
+                "java-jdk"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "enabled": false
         }
     ],
     "hostRules": [
