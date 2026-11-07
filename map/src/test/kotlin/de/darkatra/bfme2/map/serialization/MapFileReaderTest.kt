@@ -97,7 +97,7 @@ internal class MapFileReaderTest {
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].activeInHard).isTrue
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].orConditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].orConditions[0].conditions).isNotEmpty
-        assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.TRUE)
+        assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.CONDITION_TRUE)
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].orConditions[0].conditions[0].inverted).isFalse
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].falseActions).isEmpty()
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[0].actions).isNotEmpty
@@ -108,7 +108,7 @@ internal class MapFileReaderTest {
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].activeInHard).isFalse
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].orConditions).isNotEmpty
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].orConditions[0].conditions).isNotEmpty
-        assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.TRUE)
+        assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].orConditions[0].conditions[0].type).isEqualTo(ScriptConditionType.CONDITION_TRUE)
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].orConditions[0].conditions[0].inverted).isTrue
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].actions).isEmpty()
         assertThat(map.playerScriptsList.scriptLists[0].scriptFolders[0].scripts[1].falseActions).isNotEmpty
